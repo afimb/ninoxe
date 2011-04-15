@@ -7,7 +7,6 @@ Gem::Specification.new do |s|
   #s.add_runtime_dependency('yaml')
   s.add_runtime_dependency('activerecord')
   s.add_runtime_dependency('actionpack')
-  s.add_runtime_dependency('pg')
 
   s.name        = "chouette-ninoxe"
   s.version     = Chouette::VERSION

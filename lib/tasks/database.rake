@@ -39,10 +39,27 @@ namespace :db do
       create_database(Chouette::ActiveRecord.configurations[Chouette.env])
     end
 
+    # See gems/activerecord-.../lib/active_record/railties/databases.rake
     def create_database(config)
       begin
-        ActiveRecord::Base.establish_connection(config)
-        ActiveRecord::Base.connection
+        if config['adapter'] =~ /sqlite/
+          if File.exist?(config['database'])
+            $stderr.puts "#{config['database']} already exists sqllite"
+          else
+            begin
+              # Create the SQLite database
+              ActiveRecord::Base.establish_connection(config)
+              ActiveRecord::Base.connection
+            rescue Exception => e
+              $stderr.puts e, *(e.backtrace)
+              $stderr.puts "Couldn't create database for #{config.inspect}"
+            end
+          end
+          return # Skip the else clause of begin/rescue
+        else
+          ActiveRecord::Base.establish_connection(config)
+          ActiveRecord::Base.connection
+        end
       rescue
         case config['adapter']
         when 'postgresql'
@@ -57,16 +74,38 @@ namespace :db do
           end
         end
       else
-        $stderr.puts "#{config['database']} already exists"
+        $stderr.puts "#{config['database']} already exists fin"
       end
     end
 
     desc "Migrate the 'chouette_database' through gem's scripts in db/migrate. Target specific version with VERSION=x"
     task :migrate => :environment do
       if Chouette.enabled?
-        ActiveRecord::Base.establish_connection( Chouette::ActiveRecord.configuration)
-        ActiveRecord::Migration.verbose = ENV["VERBOSE"] ? ENV["VERBOSE"] == "true" : true
-        ActiveRecord::Migrator.migrate(File.join(root_path, "db","migrate"), ENV["VERSION"] ? ENV["VERSION"].to_i : nil )
+        begin
+          config = Chouette::ActiveRecord.configuration
+          dir = Pathname.new(__FILE__) + ".." + ".." + ".." + "db"
+          file = if config['adapter'] =~ /sqlite/
+            "empty_database_sqlite.sql"
+          elsif config['adapter'] = "postgresql"
+            "empty_database.sql"
+          else
+            raise "No dump for such a database adapter #{config['adapter']}"
+          end
+
+          if config['adapter'] =~ /sqlite/
+            system("#{config['adapter']} #{config['database']} < #{dir+file}")
+          elsif config['adapter'] = "postgresql"
+            ENV['PGHOST']     = config["host"] if config["host"]
+            ENV['PGPORT']     = config["port"].to_s if config["port"]
+            ENV['PGPASSWORD'] = config["password"].to_s if config["password"]
+            system("psql -U #{config['username']} -f #{dir+file} #{config['database']}")
+          end
+
+          puts "success !!!"
+        rescue => e
+          puts "Echec #{e.inspect}"
+          puts e.backtrace.join("\n")
+        end
       end
     end
 
