@@ -78,8 +78,8 @@ namespace :db do
       end
     end
 
-    desc "Migrate the 'chouette_database' through gem's scripts in db/migrate. Target specific version with VERSION=x"
-    task :migrate => :environment do
+    desc "Restore an empty 'chouette_database' through an sql backup."
+    task :restore_empty => :environment do
       if Chouette.enabled?
         begin
           config = Chouette::ActiveRecord.configuration
