@@ -1,5 +1,9 @@
 require 'composite_primary_keys'
 
+module Chouette
+
+end
+
 require File.expand_path('../chouette-ninoxe/active_record', __FILE__)
 require File.expand_path('../chouette-ninoxe/loader', __FILE__)
 require File.expand_path('../chouette-ninoxe/line', __FILE__)

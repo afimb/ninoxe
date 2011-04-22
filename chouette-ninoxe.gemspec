@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('pg')
   s.add_development_dependency('database_cleaner')
 
-  s.add_runtime_dependency('rails')
+  s.add_runtime_dependency('activerecord')
   s.add_runtime_dependency('composite_primary_keys')
 
   s.name        = "chouette-ninoxe"
