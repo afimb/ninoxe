@@ -5,7 +5,7 @@ module Chouette #:nodoc:
     end
     initializer "initialize connection to Chouette" do
       config.after_initialize do
-        Chouette::ActiveRecord.init_db_connection
+        Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration[ "chouette"]
       end
     end
   end

@@ -39,5 +39,6 @@ describe Chouette::Loader do
       end
     end
   end
+
 end
 
