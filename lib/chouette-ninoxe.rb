@@ -22,12 +22,15 @@ module Chouette
   end
 end
 
+require 'composite_primary_keys'
+
+require 'pathname'
 Pathname.new("chouette-ninoxe").tap do |gem_root|
   require gem_root + "active_record"
   require gem_root + "loader"
   require gem_root + "line"
   require gem_root + "company"
-  require gem_root + "pt_network"
+  require gem_root + "network"
   require gem_root + "route"
   require gem_root + "journey_pattern"
   require gem_root + "stop_area"

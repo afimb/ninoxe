@@ -4,9 +4,9 @@ require "chouette-ninoxe/version"
 
 Gem::Specification.new do |s|
   s.add_development_dependency('rspec')
-  #s.add_runtime_dependency('yaml')
   s.add_runtime_dependency('activerecord')
   s.add_runtime_dependency('actionpack')
+  s.add_runtime_dependency('composite_primary_keys')
 
   s.name        = "chouette-ninoxe"
   s.version     = Chouette::VERSION
@@ -19,11 +19,8 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = s.name
 
-  s.files         = [ "Gemfile", "Rakefile", "chouette-ninoxe.gemspec", "lib/chouette-ninoxe.rb", "lib/chouette-ninoxe/version.rb"]
-#  s.files         = `git ls-files`.split("\n")
-  s.test_files    = []
-#  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = []
-#  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 end
