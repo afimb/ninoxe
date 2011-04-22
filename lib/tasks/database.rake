@@ -74,9 +74,9 @@ namespace :db do
         config = configuration
         dir = Pathname.new(__FILE__) + ".." + ".." + ".." + "db"
         file = if config['adapter'] =~ /sqlite/
-          "empty_database.sql"
+          "schema.sql"
         elsif config['adapter'] = "postgresql"
-          "empty_database.sql"
+          "schema.sql"
         else
           raise "No dump for such a database adapter #{config['adapter']}"
         end
