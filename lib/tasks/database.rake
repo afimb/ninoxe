@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
+require 'erb'
+
 namespace :db do
   namespace "chouette-ninoxe".to_sym do
     root_path = File.dirname(File.dirname(File.dirname(__FILE__)))
     
     task :load_model do
       require File.join(root_path,"lib","chouette-ninoxe")
-    end
-    
-    task :environment => [:load_rails, :load_model] do
-      Chouette::ActiveRecord.init_db_connection
-#      if Chouette.enabled?
-#        Chouette::ActiveRecord.logger ||= Logger.new('log/database.log')
-#      end
     end
 
     task :load_rails do
@@ -24,23 +19,18 @@ namespace :db do
       rails_environment.invoke if rails_environment
     end
 
-    desc 'Load database schema for test purpose'
-    task :dataless_restore => :environment do
-      result = Chouette::Loader.load( Pathname.new(__FILE__)+".."+".."+".."+"db"+"empty_database.sql")
-      puts ( result ? "sucess" : "failure")
-    end
-
-    desc 'Create the database from config/database.yml for the current Rails.env (use db:create:all to create all dbs in the config)'
-    task :create => :environment do
-      # Make the test database at the same time as the development one, if it exists
-      if Chouette.env=="development" && Chouette::ActiveRecord.configurations['test']
-        create_database(Chouette::ActiveRecord.configurations['test'])
-      end
-      create_database(Chouette::ActiveRecord.configurations[Chouette.env])
+    def configuration
+      if defined?( Rails)
+        Rails.configuration.database_configuration[ "chouette"]
+      else
+        YAML::load( ERB.new( IO.read( File.expand_path('../../../config/database.yml', __FILE__))).result)["default"]
+      end.stringify_keys
     end
 
     # See gems/activerecord-.../lib/active_record/railties/databases.rake
-    def create_database(config)
+    desc 'Create the database from config/database.yml for the current Rails.env (use db:create:all to create all dbs in the config)'
+    task :create => [:load_rails, :load_model] do
+      config = configuration
       begin
         if config['adapter'] =~ /sqlite/
           if File.exist?(config['database'])
@@ -79,33 +69,31 @@ namespace :db do
     end
 
     desc "Restore an empty 'chouette_database' through an sql backup."
-    task :restore_empty => :environment do
-      if Chouette.enabled?
-        begin
-          config = Chouette::ActiveRecord.configuration
-          dir = Pathname.new(__FILE__) + ".." + ".." + ".." + "db"
-          file = if config['adapter'] =~ /sqlite/
-            "empty_database_sqlite.sql"
-          elsif config['adapter'] = "postgresql"
-            "empty_database.sql"
-          else
-            raise "No dump for such a database adapter #{config['adapter']}"
-          end
-
-          if config['adapter'] =~ /sqlite/
-            system("#{config['adapter']} #{config['database']} < #{dir+file}")
-          elsif config['adapter'] = "postgresql"
-            ENV['PGHOST']     = config["host"] if config["host"]
-            ENV['PGPORT']     = config["port"].to_s if config["port"]
-            ENV['PGPASSWORD'] = config["password"].to_s if config["password"]
-            system("psql -U #{config['username']} -f #{dir+file} #{config['database']}")
-          end
-
-          puts "success !!!"
-        rescue => e
-          puts "Echec #{e.inspect}"
-          puts e.backtrace.join("\n")
+    task :restore_empty => [:load_rails, :load_model] do
+      begin
+        config = configuration
+        dir = Pathname.new(__FILE__) + ".." + ".." + ".." + "db"
+        file = if config['adapter'] =~ /sqlite/
+          "empty_database.sql"
+        elsif config['adapter'] = "postgresql"
+          "empty_database.sql"
+        else
+          raise "No dump for such a database adapter #{config['adapter']}"
         end
+
+        if config['adapter'] =~ /sqlite/
+          system("#{config['adapter']} #{config['database']} < #{dir+file}")
+        elsif config['adapter'] = "postgresql"
+          ENV['PGHOST']     = config["host"] if config["host"]
+          ENV['PGPORT']     = config["port"].to_s if config["port"]
+          ENV['PGPASSWORD'] = config["password"].to_s if config["password"]
+          system("psql -U #{config['username']} -f #{dir+file} #{config['database']}")
+        end
+
+        puts "success !!!"
+      rescue => e
+        puts "Echec #{e.inspect}"
+        puts e.backtrace.join("\n")
       end
     end
 

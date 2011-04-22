@@ -2,6 +2,12 @@ class Chouette::Loader
   def initialize( schema, backup_path)
     @schema = schema
     @backup_path = backup_path
+
+    Chouette::ActiveRecord.connection_pool.spec.config.tap do |config|
+      @database = config[:database]
+      @user = config[:username]
+      @password = config[:password]
+    end
   end
 
   def backup_path
@@ -12,16 +18,24 @@ class Chouette::Loader
     @schema
   end
 
-  def self.load(path)
-    # TODO: Hoptoad en cas d'échec
-    system("psql -f #{path} #{Chouette::ActiveRecord.configuration["database"]}")
+  def database
+    @database
+  end
+
+  def user
+    @user
+  end
+
+  def password
+    @password
   end
 
   # Load dump where datas are in schema 'chouette'
   def load_chouette_dump(path)
     self.drop_chouette 
     # TODO: Hoptoad en cas d'échec
-    system("cat #{path} | sed -e 's/ chouette/ #{self.schema}/' | psql #{Chouette::ActiveRecord.configuration["database"]}")
+    ENV['PGPASSWORD'] = self.password.to_s if self.password
+    system("cat #{path} | sed -e 's/ chouette/ #{self.schema}/' | sed -e 's/ agilis/ #{self.user}/' | psql -U #{self.user} #{ self.database}")
   end
 
   def backup_chouette
@@ -31,12 +45,14 @@ class Chouette::Loader
     pathname.dirname.mkpath unless pathname.dirname.exist? 
     pathname.delete if pathname.exist?
     # TODO: Hoptoad en cas d'échec
-    system("pg_dump -n #{self.schema} #{Chouette::ActiveRecord.configuration["database"]} > #{pathname}")
+    ENV['PGPASSWORD'] = self.password.to_s if self.password
+    system("pg_dump -U #{self.user} -n #{self.schema} #{self.database} > #{pathname}")
   end
 
   def drop_chouette
     self.backup_chouette
     # TODO: Hoptoad en cas d'échec
-    system("psql -c 'DROP SCHEMA #{self.schema} CASCADE;' #{Chouette::ActiveRecord.configuration["database"]}")
+    ENV['PGPASSWORD'] = self.password.to_s if self.password
+    system( "psql -U #{self.user} -c 'DROP SCHEMA #{self.schema} CASCADE;' #{self.database}")
   end
 end
