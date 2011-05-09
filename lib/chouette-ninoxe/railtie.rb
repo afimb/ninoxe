@@ -8,7 +8,9 @@ module Chouette #:nodoc:
         Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration[ "chouette"]
         # get connection effective
         # raise PGError if connection fails
-        Rails.logger.debug("Chouette db counts #{Chouette::Line.count} lines")
+        # 
+        # When test db doesn't exists, exception should not be risen
+        # Rails.logger.debug("Chouette db counts #{Chouette::Line.count} lines")
       end
     end
   end
