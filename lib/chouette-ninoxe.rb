@@ -1,13 +1,14 @@
-unless defined? Rails
-  require "rubygems"
-  require "active_record"
+require 'composite_primary_keys'
+
+module Chouette
+
 end
 
 require File.expand_path('../chouette-ninoxe/active_record', __FILE__)
 require File.expand_path('../chouette-ninoxe/loader', __FILE__)
 require File.expand_path('../chouette-ninoxe/line', __FILE__)
 require File.expand_path('../chouette-ninoxe/company', __FILE__)
-require File.expand_path('../chouette-ninoxe/pt_network', __FILE__)
+require File.expand_path('../chouette-ninoxe/network', __FILE__)
 require File.expand_path('../chouette-ninoxe/route', __FILE__)
 require File.expand_path('../chouette-ninoxe/journey_pattern', __FILE__)
 require File.expand_path('../chouette-ninoxe/stop_area', __FILE__)

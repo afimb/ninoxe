@@ -1,5 +1,5 @@
 class Chouette::TimeTable < Chouette::ActiveRecord
-  set_table_name :timetable
-  
+  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position
+  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position
 end
 
