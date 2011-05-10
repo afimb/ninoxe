@@ -10,333 +10,15 @@ SET client_min_messages = warning;
 SET escape_string_warning = off;
 
 --
--- Name: public; Type: SCHEMA; Schema: -; Owner: sim
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: postgres
 --
+
+CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
+
+
+ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO postgres;
 
 SET search_path = public, pg_catalog;
-
-SET default_tablespace = '';
-
-SET default_with_oids = false;
-
---
--- Name: company; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE company (
-    id bigint NOT NULL,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    name character varying(255),
-    shortname character varying(255),
-    organizationalunit character varying(255),
-    operatingdepartmentname character varying(255),
-    code character varying(255),
-    phone character varying(255),
-    fax character varying(255),
-    email character varying(255),
-    registrationnumber character varying(255)
-);
-
-
-ALTER TABLE public.company OWNER TO sim;
-
---
--- Name: connectionlink; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE connectionlink (
-    id bigint NOT NULL,
-    departureid bigint,
-    arrivalid bigint,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    name character varying(255),
-    comment character varying(255),
-    linkdistance numeric(19,2),
-    linktype character varying(255),
-    defaultduration time without time zone,
-    frequenttravellerduration time without time zone,
-    occasionaltravellerduration time without time zone,
-    mobilityrestrictedtravellerduration time without time zone,
-    mobilityrestrictedsuitability boolean,
-    stairsavailability boolean,
-    liftavailability boolean
-);
-
-
-ALTER TABLE public.connectionlink OWNER TO sim;
-
---
--- Name: routingconstraint; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE routingconstraint (
-    id bigint NOT NULL,
-    objectid character varying(255),
-    lineid bigint,
-    name character varying(255)
-);
-
-
-ALTER TABLE public.routingconstraint OWNER TO sim;
-
---
--- Name: routingconstraint_stoparea; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE routingconstraint_stoparea (
-    routingconstraintid bigint NOT NULL,
-    stopareaid bigint,
-    "position" integer NOT NULL
-);
-
-
-ALTER TABLE public.routingconstraint_stoparea OWNER TO sim;
-
---
--- Name: journeypattern; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE journeypattern (
-    id bigint NOT NULL,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    registrationnumber character varying(255),
-    name character varying(255),
-    publishedname character varying(255),
-    comment character varying(255)
-);
-
-
-ALTER TABLE public.journeypattern OWNER TO sim;
-
---
--- Name: line; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE line (
-    id bigint NOT NULL,
-    ptnetworkid bigint,
-    companyid bigint,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    name character varying(255),
-    number character varying(255),
-    publishedname character varying(255),
-    transportmodename character varying(255),
-    registrationnumber character varying(255),
-    comment character varying(255)
-);
-
-
-ALTER TABLE public.line OWNER TO sim;
-
---
--- Name: ptnetwork; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE ptnetwork (
-    id bigint NOT NULL,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    versiondate date,
-    description character varying(255),
-    name character varying(255),
-    registrationnumber character varying(255),
-    sourcename character varying(255),
-    sourceidentifier character varying(255),
-    comment character varying(255)
-);
-
-
-ALTER TABLE public.ptnetwork OWNER TO sim;
-
---
--- Name: route; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE route (
-    id bigint NOT NULL,
-    oppositerouteid bigint,
-    lineid bigint,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    name character varying(255),
-    publishedname character varying(255),
-    number character varying(255),
-    direction character varying(255),
-    comment character varying(255),
-    wayback character varying(255)
-);
-
-
-ALTER TABLE public.route OWNER TO sim;
-
---
--- Name: stoparea; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE stoparea (
-    id bigint NOT NULL,
-    parentid bigint,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    name character varying(255),
-    comment character varying(255),
-    areatype character varying(255),
-    registrationnumber character varying(255),
-    nearesttopicname character varying(255),
-    farecode integer,
-    longitude numeric(19,16),
-    latitude numeric(19,16),
-    longlattype character varying(255),
-    x numeric(19,2),
-    y numeric(19,2),
-    projectiontype character varying(255),
-    countrycode character varying(255),
-    streetname character varying(255),
-    modes integer DEFAULT 0
-);
-
-
-ALTER TABLE public.stoparea OWNER TO sim;
-
---
--- Name: stoppoint; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE stoppoint (
-    id bigint NOT NULL,
-    routeid bigint,
-    stopareaid bigint,
-    ismodified boolean,
-    "position" integer,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255)
-);
-
-
-ALTER TABLE public.stoppoint OWNER TO sim;
-
---
--- Name: timetable; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE timetable (
-    id bigint NOT NULL,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    version character varying(255),
-    comment character varying(255),
-    intdaytypes integer
-);
-
-
-ALTER TABLE public.timetable OWNER TO sim;
-
---
--- Name: timetable_date; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE timetable_date (
-    timetableid bigint NOT NULL,
-    date date,
-    "position" integer NOT NULL
-);
-
-
-ALTER TABLE public.timetable_date OWNER TO sim;
-
---
--- Name: timetable_period; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE timetable_period (
-    timetableid bigint NOT NULL,
-    periodstart date,
-    periodend date,
-    "position" integer NOT NULL
-);
-
-
-ALTER TABLE public.timetable_period OWNER TO sim;
-
---
--- Name: timetablevehiclejourney; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE timetablevehiclejourney (
-    id bigint NOT NULL,
-    timetableid bigint,
-    vehiclejourneyid bigint
-);
-
-
-ALTER TABLE public.timetablevehiclejourney OWNER TO sim;
-
---
--- Name: vehiclejourney; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE vehiclejourney (
-    id bigint NOT NULL,
-    routeid bigint,
-    journeypatternid bigint,
-    objectid character varying(255),
-    objectversion bigint,
-    creationtime timestamp without time zone,
-    creatorid character varying(255),
-    publishedjourneyname character varying(255),
-    publishedjourneyidentifier character varying(255),
-    transportmode character varying(255),
-    vehicletypeidentifier character varying(255),
-    statusvalue character varying(255),
-    facility character varying(255),
-    number bigint,
-    comment character varying(255)
-);
-
-
-ALTER TABLE public.vehiclejourney OWNER TO sim;
-
---
--- Name: vehiclejourneyatstop; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
---
-
-CREATE TABLE vehiclejourneyatstop (
-    id bigint NOT NULL,
-    vehiclejourneyid bigint,
-    stoppointid bigint,
-    ismodified boolean,
-    arrivaltime time without time zone,
-    departuretime time without time zone,
-    waitingtime time without time zone,
-    connectingserviceid character varying(255),
-    boardingalightingpossibility character varying(255),
-    isdeparture boolean
-);
-
-
-ALTER TABLE public.vehiclejourneyatstop OWNER TO sim;
 
 --
 -- Name: address_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
@@ -380,6 +62,10 @@ CREATE SEQUENCE cities_id_seq
 
 ALTER TABLE public.cities_id_seq OWNER TO sim;
 
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
 --
 -- Name: cities; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
 --
@@ -398,6 +84,86 @@ CREATE TABLE cities (
 
 
 ALTER TABLE public.cities OWNER TO sim;
+
+--
+-- Name: company_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE company_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.company_id_seq OWNER TO sim;
+
+--
+-- Name: company; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE company (
+    id bigint DEFAULT nextval('company_id_seq'::regclass) NOT NULL,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    name character varying(255),
+    shortname character varying(255),
+    organizationalunit character varying(255),
+    operatingdepartmentname character varying(255),
+    code character varying(255),
+    phone character varying(255),
+    fax character varying(255),
+    email character varying(255),
+    registrationnumber character varying(255)
+);
+
+
+ALTER TABLE public.company OWNER TO sim;
+
+--
+-- Name: connectionlink_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE connectionlink_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.connectionlink_id_seq OWNER TO sim;
+
+--
+-- Name: connectionlink; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE connectionlink (
+    id bigint DEFAULT nextval('connectionlink_id_seq'::regclass) NOT NULL,
+    departureid bigint,
+    arrivalid bigint,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    name character varying(255),
+    comment character varying(255),
+    linkdistance numeric(19,2),
+    linktype character varying(255),
+    defaultduration time without time zone,
+    frequenttravellerduration time without time zone,
+    occasionaltravellerduration time without time zone,
+    mobilityrestrictedtravellerduration time without time zone,
+    mobilityrestrictedsuitability boolean,
+    stairsavailability boolean,
+    liftavailability boolean
+);
+
+
+ALTER TABLE public.connectionlink OWNER TO sim;
 
 --
 -- Name: geocoder_locations_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
@@ -488,6 +254,20 @@ CREATE SEQUENCE ign_routes_gid_seq
 ALTER TABLE public.ign_routes_gid_seq OWNER TO sim;
 
 --
+-- Name: ign_routes_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE ign_routes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ign_routes_id_seq OWNER TO sim;
+
+--
 -- Name: ign_routes; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
 --
 
@@ -500,7 +280,7 @@ CREATE TABLE ign_routes (
     largeur double precision,
     z_ini double precision,
     z_fin double precision,
-    id character varying(255),
+    id character varying(255) DEFAULT nextval('ign_routes_id_seq'::regclass),
     nature character varying(255),
     numero character varying(255),
     importance character varying(255),
@@ -568,6 +348,76 @@ CREATE TABLE journey_pattern_stop_points (
 ALTER TABLE public.journey_pattern_stop_points OWNER TO sim;
 
 --
+-- Name: journeypattern_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE journeypattern_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.journeypattern_id_seq OWNER TO sim;
+
+--
+-- Name: journeypattern; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE journeypattern (
+    id bigint DEFAULT nextval('journeypattern_id_seq'::regclass) NOT NULL,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    registrationnumber character varying(255),
+    name character varying(255),
+    publishedname character varying(255),
+    comment character varying(255)
+);
+
+
+ALTER TABLE public.journeypattern OWNER TO sim;
+
+--
+-- Name: line_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE line_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.line_id_seq OWNER TO sim;
+
+--
+-- Name: line; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE line (
+    id bigint DEFAULT nextval('line_id_seq'::regclass) NOT NULL,
+    ptnetworkid bigint,
+    companyid bigint,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    name character varying(255),
+    number character varying(255),
+    publishedname character varying(255),
+    transportmodename character varying(255),
+    registrationnumber character varying(255),
+    comment character varying(255)
+);
+
+
+ALTER TABLE public.line OWNER TO sim;
+
+--
 -- Name: place_types_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
 --
 
@@ -630,11 +480,61 @@ CREATE TABLE places (
 ALTER TABLE public.places OWNER TO sim;
 
 --
+-- Name: ptnetwork_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE ptnetwork_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.ptnetwork_id_seq OWNER TO sim;
+
+--
+-- Name: ptnetwork; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE ptnetwork (
+    id bigint DEFAULT nextval('ptnetwork_id_seq'::regclass) NOT NULL,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    versiondate date,
+    description character varying(255),
+    name character varying(255),
+    registrationnumber character varying(255),
+    sourcename character varying(255),
+    sourceidentifier character varying(255),
+    comment character varying(255)
+);
+
+
+ALTER TABLE public.ptnetwork OWNER TO sim;
+
+--
+-- Name: road_sections_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE road_sections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.road_sections_id_seq OWNER TO sim;
+
+--
 -- Name: road_sections; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
 --
 
 CREATE TABLE road_sections (
-    id integer DEFAULT nextval('address_sections_id_seq'::regclass) NOT NULL,
+    id integer DEFAULT nextval('road_sections_id_seq'::regclass) NOT NULL,
     road_id integer,
     ign_route_id integer,
     number_begin integer,
@@ -645,11 +545,25 @@ CREATE TABLE road_sections (
 ALTER TABLE public.road_sections OWNER TO sim;
 
 --
+-- Name: roads_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE roads_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.roads_id_seq OWNER TO sim;
+
+--
 -- Name: roads; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
 --
 
 CREATE TABLE roads (
-    id integer DEFAULT nextval('addresses_id_seq'::regclass) NOT NULL,
+    id integer DEFAULT nextval('roads_id_seq'::regclass) NOT NULL,
     name character varying(255),
     number_begin integer,
     number_end integer,
@@ -658,6 +572,98 @@ CREATE TABLE roads (
 
 
 ALTER TABLE public.roads OWNER TO sim;
+
+--
+-- Name: route_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE route_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.route_id_seq OWNER TO sim;
+
+--
+-- Name: route; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE route (
+    id bigint DEFAULT nextval('route_id_seq'::regclass) NOT NULL,
+    oppositerouteid bigint,
+    lineid bigint,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    name character varying(255),
+    publishedname character varying(255),
+    number character varying(255),
+    direction character varying(255),
+    comment character varying(255),
+    wayback character varying(255)
+);
+
+
+ALTER TABLE public.route OWNER TO sim;
+
+--
+-- Name: routingconstraint_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE routingconstraint_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.routingconstraint_id_seq OWNER TO sim;
+
+--
+-- Name: routingconstraint; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE routingconstraint (
+    id bigint DEFAULT nextval('routingconstraint_id_seq'::regclass) NOT NULL,
+    objectid character varying(255),
+    lineid bigint,
+    name character varying(255)
+);
+
+
+ALTER TABLE public.routingconstraint OWNER TO sim;
+
+--
+-- Name: routingconstraint_stoparea; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE routingconstraint_stoparea (
+    routingconstraintid bigint NOT NULL,
+    stopareaid bigint,
+    "position" integer NOT NULL
+);
+
+
+ALTER TABLE public.routingconstraint_stoparea OWNER TO sim;
+
+--
+-- Name: routingconstraint_stoparea_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE routingconstraint_stoparea_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.routingconstraint_stoparea_id_seq OWNER TO sim;
 
 --
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
@@ -669,6 +675,20 @@ CREATE TABLE schema_migrations (
 
 
 ALTER TABLE public.schema_migrations OWNER TO sim;
+
+--
+-- Name: schema_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE schema_migrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.schema_migrations_id_seq OWNER TO sim;
 
 --
 -- Name: stop_area_places_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
@@ -699,6 +719,271 @@ CREATE TABLE stop_area_places (
 
 
 ALTER TABLE public.stop_area_places OWNER TO sim;
+
+--
+-- Name: stoparea_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE stoparea_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stoparea_id_seq OWNER TO sim;
+
+--
+-- Name: stoparea; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE stoparea (
+    id bigint DEFAULT nextval('stoparea_id_seq'::regclass) NOT NULL,
+    parentid bigint,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    name character varying(255),
+    comment character varying(255),
+    areatype character varying(255),
+    registrationnumber character varying(255),
+    nearesttopicname character varying(255),
+    farecode integer,
+    longitude numeric(19,16),
+    latitude numeric(19,16),
+    longlattype character varying(255),
+    x numeric(19,2),
+    y numeric(19,2),
+    projectiontype character varying(255),
+    countrycode character varying(255),
+    streetname character varying(255),
+    modes integer DEFAULT 0
+);
+
+
+ALTER TABLE public.stoparea OWNER TO sim;
+
+--
+-- Name: stoppoint_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE stoppoint_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.stoppoint_id_seq OWNER TO sim;
+
+--
+-- Name: stoppoint; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE stoppoint (
+    id bigint DEFAULT nextval('stoppoint_id_seq'::regclass) NOT NULL,
+    routeid bigint,
+    stopareaid bigint,
+    ismodified boolean,
+    "position" integer,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255)
+);
+
+
+ALTER TABLE public.stoppoint OWNER TO sim;
+
+--
+-- Name: timetable_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE timetable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.timetable_id_seq OWNER TO sim;
+
+--
+-- Name: timetable; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE timetable (
+    id bigint DEFAULT nextval('timetable_id_seq'::regclass) NOT NULL,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    version character varying(255),
+    comment character varying(255),
+    intdaytypes integer
+);
+
+
+ALTER TABLE public.timetable OWNER TO sim;
+
+--
+-- Name: timetable_date; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE timetable_date (
+    timetableid bigint NOT NULL,
+    date date,
+    "position" integer NOT NULL
+);
+
+
+ALTER TABLE public.timetable_date OWNER TO sim;
+
+--
+-- Name: timetable_date_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE timetable_date_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.timetable_date_id_seq OWNER TO sim;
+
+--
+-- Name: timetable_period; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE timetable_period (
+    timetableid bigint NOT NULL,
+    periodstart date,
+    periodend date,
+    "position" integer NOT NULL
+);
+
+
+ALTER TABLE public.timetable_period OWNER TO sim;
+
+--
+-- Name: timetable_period_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE timetable_period_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.timetable_period_id_seq OWNER TO sim;
+
+--
+-- Name: timetablevehiclejourney_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE timetablevehiclejourney_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.timetablevehiclejourney_id_seq OWNER TO sim;
+
+--
+-- Name: timetablevehiclejourney; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE timetablevehiclejourney (
+    id bigint DEFAULT nextval('timetablevehiclejourney_id_seq'::regclass) NOT NULL,
+    timetableid bigint,
+    vehiclejourneyid bigint
+);
+
+
+ALTER TABLE public.timetablevehiclejourney OWNER TO sim;
+
+--
+-- Name: vehiclejourney_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE vehiclejourney_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.vehiclejourney_id_seq OWNER TO sim;
+
+--
+-- Name: vehiclejourney; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE vehiclejourney (
+    id bigint DEFAULT nextval('vehiclejourney_id_seq'::regclass) NOT NULL,
+    routeid bigint,
+    journeypatternid bigint,
+    objectid character varying(255),
+    objectversion bigint,
+    creationtime timestamp without time zone,
+    creatorid character varying(255),
+    publishedjourneyname character varying(255),
+    publishedjourneyidentifier character varying(255),
+    transportmode character varying(255),
+    vehicletypeidentifier character varying(255),
+    statusvalue character varying(255),
+    facility character varying(255),
+    number bigint,
+    comment character varying(255)
+);
+
+
+ALTER TABLE public.vehiclejourney OWNER TO sim;
+
+--
+-- Name: vehiclejourneyatstop_id_seq; Type: SEQUENCE; Schema: public; Owner: sim
+--
+
+CREATE SEQUENCE vehiclejourneyatstop_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.vehiclejourneyatstop_id_seq OWNER TO sim;
+
+--
+-- Name: vehiclejourneyatstop; Type: TABLE; Schema: public; Owner: sim; Tablespace: 
+--
+
+CREATE TABLE vehiclejourneyatstop (
+    id bigint DEFAULT nextval('vehiclejourneyatstop_id_seq'::regclass) NOT NULL,
+    vehiclejourneyid bigint,
+    stoppointid bigint,
+    ismodified boolean,
+    arrivaltime time without time zone,
+    departuretime time without time zone,
+    waitingtime time without time zone,
+    connectingserviceid character varying(255),
+    boardingalightingpossibility character varying(255),
+    isdeparture boolean
+);
+
+
+ALTER TABLE public.vehiclejourneyatstop OWNER TO sim;
 
 --
 -- Name: address_sections_pkey; Type: CONSTRAINT; Schema: public; Owner: sim; Tablespace: 
@@ -1169,6 +1454,16 @@ ALTER TABLE ONLY timetable_period
 
 ALTER TABLE ONLY timetable_date
     ADD CONSTRAINT fkd767940c5cb6a412 FOREIGN KEY (timetableid) REFERENCES timetable(id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
