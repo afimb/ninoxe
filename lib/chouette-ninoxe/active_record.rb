@@ -27,16 +27,14 @@ class Chouette::ActiveRecord < ::ActiveRecord::Base
        [ /^network/, "ptnetwork" ]
       ]
     
-    def self.chouettify(name)
+    def chouettify(name)
       @@rewrites.inject(name) do |name, rewrite|
         pattern, replace = rewrite
         name.gsub pattern, replace
       end
     end
 
-    def chouettify(name)
-      Inflector.chouettify(name)
-    end
+    module_function :chouettify
 
   end
 

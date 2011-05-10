@@ -2,41 +2,32 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 describe Chouette::Loader do
 
-  let(:schema) { "schema-test"}
-  let(:backup_path) { "bck"}
-  let(:loader) { Chouette::Loader.new(schema, backup_path)}
+  subject { Chouette::Loader.new("test") }
 
-  subject { loader}
-
-  describe "#load_chouette_dump" do
-    it "should call #drop_chouette before system" do
-      loader.should_receive(:drop_chouette).and_raise( Exception.new)
-      loader.should_not_receive(:system)
-      lambda { loader.load_chouette_dump("titi") }.should raise_error
-    end
+  before(:each) do
+    subject.stub :execute! => true
   end
 
-  describe "#drop_chouette" do
-    it "should call #backup_chouette before system" do
-      loader.should_receive(:backup_chouette).and_raise( Exception.new)
-      loader.should_not_receive(:system)
-      lambda { loader.drop_chouette }.should raise_error
-    end
+  describe "#load_dump" do
+
   end
 
-  describe "#backup_chouette" do
-    context "if #backup_path is nil" do
-      before { loader.stub(:backup_path => nil) }
-      it "should not call #system" do
-        loader.should_not_receive(:system)
-        loader.backup_chouette
-      end
+  describe "#drop" do
+    
+  end
+
+  describe "#backup" do
+
+    let(:file) { "/dev/null" }
+
+    it "should call pg_dump" do
+      subject.should_receive(:execute!).with(/^pg_dump/)
+      subject.backup file
     end
-    context "if #backup_path is not nil" do
-      it "should call #system" do
-        loader.should_receive(:system)
-        loader.backup_chouette
-      end
+
+    it "should dump in specified file" do
+      subject.should_receive(:execute!).with(/-f #{file}/)
+      subject.backup file
     end
   end
 
