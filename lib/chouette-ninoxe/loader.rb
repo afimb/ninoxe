@@ -82,9 +82,15 @@ class Chouette::Loader
     @logger ||= available_loggers.first
   end
 
+  def max_output_length
+    2000
+  end
+
   def execute!(command)
     logger.debug "execute '#{command}'"
+
     output = `#{command} 2>&1`
+    output = "[...] #{output[-max_output_length,max_output_length]}" if output.length > max_output_length
     logger.debug output unless output.empty?
 
     if $? != 0
