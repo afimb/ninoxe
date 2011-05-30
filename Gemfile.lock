@@ -1,13 +1,14 @@
 PATH
   remote: .
   specs:
-    chouette-ninoxe (0.0.4)
+    chouette-ninoxe (0.0.6)
       activerecord
       composite_primary_keys
 
 GEM
   remote: http://rubygems.org/
   specs:
+    ZenTest (4.5.0)
     activemodel (3.0.7)
       activesupport (= 3.0.7)
       builder (~> 2.1.2)
@@ -18,10 +19,13 @@ GEM
       arel (~> 2.0.2)
       tzinfo (~> 0.3.23)
     activesupport (3.0.7)
-    arel (2.0.9)
+    arel (2.0.10)
+    autotest (4.4.6)
+      ZenTest (>= 4.4.1)
     builder (2.1.2)
-    composite_primary_keys (3.1.6)
-      activerecord (>= 3.0.5)
+    composite_primary_keys (3.1.7)
+      activerecord (>= 3.0.5, ~> 3.0.0)
+      arel (~> 2.0.0)
     database_cleaner (0.6.7)
     diff-lcs (1.1.2)
     i18n (0.5.0)
@@ -43,9 +47,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord
+  autotest
   chouette-ninoxe!
-  composite_primary_keys
   database_cleaner
   pg
   rspec
