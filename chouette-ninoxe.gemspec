@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('sqlite3-ruby')
   s.add_development_dependency('database_cleaner')
   s.add_development_dependency('autotest')
+  s.add_development_dependency('rake', '< 0.9')
 
   s.add_runtime_dependency('activerecord')
   s.add_runtime_dependency('composite_primary_keys')
