@@ -4,4 +4,9 @@ class Chouette::StopArea < Chouette::ActiveRecord
   def self.commercial
     where :areatype => "CommercialStopPoint"
   end
+
+  def to_lat_lng
+    Geokit::LatLng.new latitude, longitude
+  end
+
 end
