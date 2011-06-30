@@ -87,7 +87,8 @@ namespace :db do
           ENV['PGHOST']     = config["host"] if config["host"]
           ENV['PGPORT']     = config["port"].to_s if config["port"]
           ENV['PGPASSWORD'] = config["password"].to_s if config["password"]
-          system("psql -U #{config['username']} -f #{dir+file} #{config['database']}")
+          user_option = "-U config['username']" if config['username']
+          system("psql #{user_option} -f #{dir+file} #{config['database']}")
         end
 
         puts "success !!!"

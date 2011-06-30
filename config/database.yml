@@ -1,8 +1,5 @@
 default:
-  adapter: sqlite3
-  database: 'db/test.sqlite'
-#  adapter: postgresql
-#  database: 'chouette-ninoxe-test'
-#  username: sim
-#  password: sim0
+  adapter: postgresql
+  database: 'ninoxe-test'
+
 
