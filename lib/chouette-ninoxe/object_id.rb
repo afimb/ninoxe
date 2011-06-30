@@ -29,6 +29,7 @@ class Chouette::ObjectId < String
   end
 
   def self.new(string)
+    string ||= ""
     self === string ? string : super
   end
 

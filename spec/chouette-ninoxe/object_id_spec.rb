@@ -82,7 +82,11 @@ describe Chouette::ObjectId do
   describe ".new" do
     
     it "should return an existing ObjectId" do
-      Chouette::ObjectId.new(objectid).should equal(objectid)
+      Chouette::ObjectId.new(objectid).should == objectid
+    end
+
+    it "should create an empty ObjectId with nil" do
+      Chouette::ObjectId.new(nil).should be_empty
     end
 
   end
