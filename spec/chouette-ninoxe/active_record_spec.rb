@@ -24,6 +24,11 @@ describe Chouette::ActiveRecord do
 
   end
 
+  it "should support method with additionnal underscores" do
+    stop_area = Chouette::StopArea.new
+    stop_area.area_type.should == stop_area.areatype
+  end
+
   describe "create_reflection" do
 
     let(:macro) { :has_many }

@@ -7,6 +7,15 @@ class Chouette::ActiveRecord < ::ActiveRecord::Base
     Inflector.chouettify super.singularize
   end
 
+  def method_missing(method, *args, &block)
+    method_with_underscore = method.to_s.gsub('_','')
+    if respond_to?(method_with_underscore)
+      send(method_with_underscore, *args, &block)
+    else
+      super
+    end
+  end
+
   class << self
     alias_method :create_reflection_without_chouette_naming, :create_reflection
 
