@@ -49,6 +49,8 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
+
+    Chouette::ActiveRecord.logger = Logger.new("log/test.log")
   end
 
   config.before(:each) do
