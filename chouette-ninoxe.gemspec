@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('activerecord')
   s.add_runtime_dependency('composite_primary_keys')
+  s.add_runtime_dependency('GeoRuby')
+  s.add_runtime_dependency('geokit')
 
   s.name        = "chouette-ninoxe"
   s.version     = Chouette::VERSION

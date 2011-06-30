@@ -1,4 +1,5 @@
 require 'composite_primary_keys'
+require 'geokit'
 
 module Chouette
 
