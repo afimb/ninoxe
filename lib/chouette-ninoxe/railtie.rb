@@ -6,6 +6,8 @@ module Chouette #:nodoc:
     initializer "initialize connection to Chouette" do
       config.after_initialize do
         Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration[ "chouette"]
+
+        Chouette::ActiveRecord.logger = Rails.logger
         # get connection effective
         # raise PGError if connection fails
         # 
