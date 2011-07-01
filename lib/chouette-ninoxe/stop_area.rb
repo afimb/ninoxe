@@ -8,11 +8,11 @@ class Chouette::StopArea < Chouette::ActiveRecord
   end
 
   def to_lat_lng
-    Geokit::LatLng.new latitude, longitude
+    Geokit::LatLng.new(latitude, longitude) if latitude and longitude
   end
 
   def geometry
-    GeoRuby::SimpleFeatures::Point.from_lon_lat to_lat_lng.lng, to_lat_lng.lat, 4326
+    GeoRuby::SimpleFeatures::Point.from_lon_lat(to_lat_lng.lng, to_lat_lng.lat, 4326) if to_lat_lng
   end
 
   def objectid

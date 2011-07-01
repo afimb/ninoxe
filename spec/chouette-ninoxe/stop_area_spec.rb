@@ -17,4 +17,27 @@ describe Chouette::StopArea do
 
   end
 
+  describe "#to_lat_lng" do
+    
+    it "should return nil if latitude is nil" do
+      subject.latitude = nil
+      subject.to_lat_lng.should be_nil
+    end
+
+    it "should return nil if longitude is nil" do
+      subject.longitude = nil
+      subject.to_lat_lng.should be_nil
+    end
+
+  end
+
+  describe "#geometry" do
+    
+    it "should be nil when to_lat_lng is nil" do
+      subject.stub :to_lat_lng => nil
+      subject.geometry.should be_nil
+    end
+
+  end
+
 end
