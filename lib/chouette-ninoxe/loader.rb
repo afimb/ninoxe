@@ -62,7 +62,7 @@ class Chouette::Loader
 
   def binarize(period, target_directory)
     # TODO check these computed daybefore/dayafter
-    day_before = period.begin - Date.today
+    day_before = Date.today - period.begin
     day_after = period.end - period.begin
 
     execute! "#{binarisation_command} --host=#{host} --dbname=#{database} --user=#{user} --password=#{password} --schema=#{schema} --daybefore=#{day_before} --dayafter=#{day_after} --targetdirectory=#{target_directory}"
