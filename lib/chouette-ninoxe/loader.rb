@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+require 'tmpdir'
+
 class Chouette::Loader
 
   attr_reader :schema, :database, :user, :password, :host
@@ -23,6 +24,28 @@ class Chouette::Loader
     self
   end
 
+  @@chouette_command = "chouette"
+  cattr_accessor :chouette_command
+
+  def import(file)
+    logger.info "Import #{file} in schema #{schema}"
+    Dir.mktmpdir do |config_dir|
+      open(File.join(config_dir, "chouette.properties"), "w") do |f|
+        f.puts "database.name = #{database}"
+        f.puts "database.schema = #{schema}"
+        f.puts "hibernate.username = #{user}"
+        f.puts "hibernate.password = #{password}"
+        f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
+        f.puts "jdbc.username = #{user}"
+        f.puts "jdbc.password = #{password}"
+        f.puts "database.hbm2ddl.auto=create"
+      end
+      puts IO.read(File.join(config_dir, "chouette.properties"))
+      execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{file} -c save"
+      # -validateXML 
+    end
+  end
+
   def backup(file)
     logger.info "Backup schema #{schema} in #{file}"
 
@@ -36,8 +59,17 @@ class Chouette::Loader
   def pg_options
     [].tap do |options|
       options << "-U #{user}" if user
+      options << "-h #{host}" if host
       options << database
     end.join(" ")
+  end
+
+  def create
+    logger.info "Create schema #{schema}"
+    with_pg_password do
+      execute!("psql -c 'CREATE SCHEMA #{schema};' #{pg_options}")
+    end
+    self
   end
 
   def drop
