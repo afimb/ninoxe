@@ -11,7 +11,7 @@ class Chouette::Loader
       @database = config[:database]
       @user = config[:username]
       @password = config[:password]
-      @host = (config[:host] or "localhost")
+      @host = config[:host]
     end
   end
 
