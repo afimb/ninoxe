@@ -19,7 +19,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
     Chouette::ObjectId.new read_attribute(:objectid)
   end
 
-  def self.near(origin, distance = 0.2)
+  def self.near(origin, distance = 0.3)
     origin = origin.to_lat_lng
 
     lat_degree_units = units_per_latitude_degree(:kms)
