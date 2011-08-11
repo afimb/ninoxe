@@ -33,16 +33,19 @@ class Chouette::Loader
       open(File.join(config_dir, "chouette.properties"), "w") do |f|
         f.puts "database.name = #{database}"
         f.puts "database.schema = #{schema}"
+        f.puts "database.showsql = true"
         f.puts "hibernate.username = #{user}"
-        f.puts "hibernate.password = #{password}"
-        f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
+        f.puts "hibernate.password = #{password}" if password
+        if host
+          f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
+        else
+          f.puts "jdbc.url=jdbc:postgresql:#{database}"
+        end
         f.puts "jdbc.username = #{user}"
-        f.puts "jdbc.password = #{password}"
+        f.puts "jdbc.password = #{password}" if password
         f.puts "database.hbm2ddl.auto=create"
       end
-      puts IO.read(File.join(config_dir, "chouette.properties"))
-      execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{file} -c save"
-      # -validateXML 
+      execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{File.expand_path(file)} -c save -propagate"
     end
   end
 
