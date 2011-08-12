@@ -11,7 +11,7 @@ class Chouette::Loader
       @database = config[:database]
       @user = config[:username]
       @password = config[:password]
-      @host = config[:host]
+      @host = config[:host] or "localhost"
     end
   end
 
@@ -35,14 +35,10 @@ class Chouette::Loader
         f.puts "database.schema = #{schema}"
         f.puts "database.showsql = true"
         f.puts "hibernate.username = #{user}"
-        f.puts "hibernate.password = #{password}" if password
-        if host
-          f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
-        else
-          f.puts "jdbc.url=jdbc:postgresql:#{database}"
-        end
+        f.puts "hibernate.password = #{password}"
+        f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
         f.puts "jdbc.username = #{user}"
-        f.puts "jdbc.password = #{password}" if password
+        f.puts "jdbc.password = #{password}"
         f.puts "database.hbm2ddl.auto=create"
       end
       execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{File.expand_path(file)} -c save -propagate"
