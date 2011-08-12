@@ -11,7 +11,7 @@ class Chouette::Loader
       @database = config[:database]
       @user = config[:username]
       @password = config[:password]
-      @host = config[:host] or "localhost"
+      @host = (config[:host] or "localhost")
     end
   end
 
@@ -30,7 +30,8 @@ class Chouette::Loader
   def import(file)
     logger.info "Import #{file} in schema #{schema}"
     Dir.mktmpdir do |config_dir|
-      open(File.join(config_dir, "chouette.properties"), "w") do |f|
+      chouette_properties = File.join(config_dir, "chouette.properties")
+      open(chouette_properties, "w") do |f|
         f.puts "database.name = #{database}"
         f.puts "database.schema = #{schema}"
         f.puts "database.showsql = true"
@@ -41,6 +42,8 @@ class Chouette::Loader
         f.puts "jdbc.password = #{password}"
         f.puts "database.hbm2ddl.auto=create"
       end
+
+      logger.debug "chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"
       execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{File.expand_path(file)} -c save -propagate"
     end
   end
