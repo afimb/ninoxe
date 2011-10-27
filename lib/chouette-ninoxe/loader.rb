@@ -19,7 +19,7 @@ class Chouette::Loader
   def load_dump(file)
     logger.info "Load #{file} in schema #{schema}"
     with_pg_password do
-      execute!("sed -e 's/ chouette/ #{schema}/' -e 's/ OWNER TO .*;/ OWNER TO #{user};/' #{file} | psql #{pg_options} --set ON_ERROR_ROLLBACK=1 --set ON_ERROR_STOP=1")
+      execute!("sed -e 's/ chouette/ \"#{schema}\"/' -e 's/ OWNER TO .*;/ OWNER TO #{user};/' #{file} | psql #{pg_options} --set ON_ERROR_ROLLBACK=1 --set ON_ERROR_STOP=1")
     end
     self
   end
@@ -69,7 +69,7 @@ class Chouette::Loader
   def create
     logger.info "Create schema #{schema}"
     with_pg_password do
-      execute!("psql -c 'CREATE SCHEMA #{schema};' #{pg_options}")
+      execute!("psql -c 'CREATE SCHEMA \"#{schema}\";' #{pg_options}")
     end
     self
   end
@@ -77,7 +77,7 @@ class Chouette::Loader
   def drop
     logger.info "Drop schema #{schema}"
     with_pg_password do
-      execute!("psql -c 'DROP SCHEMA #{schema} CASCADE;' #{pg_options}")
+      execute!("psql -c 'DROP SCHEMA \"#{schema}\" CASCADE;' #{pg_options}")
     end
     self
   end

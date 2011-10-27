@@ -12,7 +12,21 @@ describe Chouette::Loader do
 
   end
 
+  describe "#create" do
+    
+    it "should quote schema name" do
+      subject.should_receive(:execute!).with(/"test"/)
+      subject.create
+    end
+
+  end
+
   describe "#drop" do
+
+    it "should quote schema name" do
+      subject.should_receive(:execute!).with(/"test"/)
+      subject.drop
+    end
     
   end
 
