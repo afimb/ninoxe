@@ -1,4 +1,5 @@
 require 'composite_primary_keys'
+require 'geo_ruby'
 require 'geokit'
 
 module Chouette

@@ -40,4 +40,14 @@ describe Chouette::StopArea do
 
   end
 
+  describe ".bounds" do
+    
+    it "should return transform coordinates in floats" do
+      Chouette::StopArea.connection.stub :select_rows => [["113.5292500000000000", "22.1127580000000000", "113.5819330000000000", "22.2157050000000000"]]
+      GeoRuby::SimpleFeatures::Envelope.should_receive(:from_coordinates).with([[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]])
+      Chouette::StopArea.bounds
+    end
+
+  end
+
 end

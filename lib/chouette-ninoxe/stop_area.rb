@@ -38,9 +38,10 @@ class Chouette::StopArea < Chouette::ActiveRecord
     min_and_max.compact!
     return nil unless min_and_max.size == 4
 
+    min_and_max.collect! { |n| n.to_f }
 
     # We need something like :
-    # [["113.5292500000000000", "22.1127580000000000"], ["113.5819330000000000", "22.2157050000000000"]]
+    # [[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]]
     coordinates = min_and_max.each_slice(2).to_a
 
     GeoRuby::SimpleFeatures::Envelope.from_coordinates coordinates
