@@ -24,9 +24,23 @@ describe Chouette::ActiveRecord do
 
   end
 
-  it "should support method with additionnal underscores" do
-    stop_area = Chouette::StopArea.new
-    stop_area.area_type.should == stop_area.areatype
+  describe "method_missing" do
+    
+    it "should support method with additionnal underscores" do
+      stop_area = Chouette::StopArea.new
+      stop_area.area_type.should == stop_area.areatype
+    end
+
+  end
+
+
+  describe "respond_to?" do
+    
+    it "should respond to method with additionnal underscores" do
+      stop_area = Chouette::StopArea.new
+      stop_area.respond_to?(area_type).should be_true
+    end
+
   end
 
   describe "create_reflection" do

@@ -8,12 +8,17 @@ class Chouette::ActiveRecord < ::ActiveRecord::Base
   end
 
   def method_missing(method, *args, &block)
-    method_with_underscore = method.to_s.gsub('_','')
-    if respond_to?(method_with_underscore)
-      send(method_with_underscore, *args, &block)
+    method_without_underscore = method.to_s.gsub('_','')
+    if respond_to?(method_without_underscore)
+      send(method_without_underscore, *args, &block)
     else
       super
     end
+  end
+
+  def respond_to?(method, include_private = false)
+    method_without_underscore = method.to_s.gsub('_','')
+    super || super(method_without_underscore, include_private)
   end
 
   class << self
