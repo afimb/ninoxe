@@ -1,6 +1,10 @@
 require "active_record"
 
 class Chouette::ActiveRecord < ::ActiveRecord::Base
+
+  @@establish_chouette_connection = true
+  cattr_accessor :establish_chouette_connection
+
   self.abstract_class = true
 
   def self.compute_table_name

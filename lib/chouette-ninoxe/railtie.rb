@@ -4,8 +4,8 @@ module Chouette #:nodoc:
       load Pathname.new(__FILE__) + ".." + ".." + "tasks" + "database.rake"
     end
     initializer "initialize connection to Chouette" do
-      config.after_initialize do
-        Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration[ "chouette"]
+      config.after_initialize do        
+        Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration[ "chouette"] if Chouette::ActiveRecord.establish_chouette_connection
 
         Chouette::ActiveRecord.logger = Rails.logger
         # get connection effective
