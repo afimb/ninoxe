@@ -1,4 +1,7 @@
 class Chouette::VehicleJourney < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
+
   belongs_to :route
 
   has_many :time_table_vehicle_journeys
