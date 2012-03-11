@@ -30,8 +30,8 @@ class Chouette::TransportMode < ActiveSupport::StringInquirer
   end
 
   @@definitions = [
-    ["interchange", -1],
-    ["unknown", 0],
+    # ["interchange", -1],
+    # ["unknown", 0],
     ["coach", 1],
     ["air", 2],
     ["waterborne", 3],
