@@ -38,6 +38,21 @@ class Chouette::Line < Chouette::ActiveRecord
     self.version ||= 1
   end
 
+  def transport_mode
+    Chouette::TransportMode.new transport_mode_name.underscore
+  end
+
+  def transport_mode=(transport_mode)
+    self.transport_mode_name = (transport_mode ? transport_mode.name : nil)
+  end
+
+  @@transport_modes = nil
+  def self.transport_modes
+    @@transport_modes ||= Chouette::TransportMode.all.select do |transport_mode|
+      transport_mode.to_i > 0
+    end
+  end
+
   def valid?(*args)
     super.tap do |valid|
       errors[:registration_number] = errors[:registrationnumber]

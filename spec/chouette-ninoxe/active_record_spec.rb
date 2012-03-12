@@ -38,7 +38,7 @@ describe Chouette::ActiveRecord do
     
     it "should respond to method with additionnal underscores" do
       stop_area = Chouette::StopArea.new
-      stop_area.respond_to?(area_type).should be_true
+      stop_area.respond_to?(:area_type).should be_true
     end
 
   end

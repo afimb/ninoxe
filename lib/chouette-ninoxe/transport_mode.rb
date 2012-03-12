@@ -29,9 +29,13 @@ class Chouette::TransportMode < ActiveSupport::StringInquirer
     "#{to_s}/#{to_i}"
   end
 
+  def name
+    camelize
+  end
+
   @@definitions = [
-    # ["interchange", -1],
-    # ["unknown", 0],
+    ["interchange", -1],
+    ["unknown", 0],
     ["coach", 1],
     ["air", 2],
     ["waterborne", 3],
@@ -46,12 +50,19 @@ class Chouette::TransportMode < ActiveSupport::StringInquirer
     ["train", 12],
     ["long_distance_train", 13],
     ["tramway", 14],
-    ["trolley_bus", 15],
+    ["trolleybus", 15],
     ["private_vehicle", 16],
     ["bicycle", 17],
     ["other", 18]
   ]
   cattr_reader :definitions
+
+  @@all = nil
+  def self.all
+    @@all ||= definitions.collect do |text_code, numerical_code|
+      new(text_code, numerical_code)
+    end
+  end
 
   def public_transport?
     not interchange?

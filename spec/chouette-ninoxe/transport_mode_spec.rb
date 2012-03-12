@@ -39,7 +39,6 @@ describe Chouette::TransportMode do
     
   end
 
-
   describe "#public_transport?" do
     
     it "should return false for interchange" do
@@ -48,6 +47,16 @@ describe Chouette::TransportMode do
 
     it "should return true for other modes" do
       mode("unknown").should be_public_transport
+    end
+
+  end
+
+  describe ".all" do
+    
+    Chouette::TransportMode.definitions.each do |text_code, numerical_code|
+      it "should include a TransportMode #{text_code}" do
+        Chouette::TransportMode.all.should include(Chouette::TransportMode.new(text_code))
+      end
     end
 
   end
