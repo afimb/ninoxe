@@ -1,4 +1,7 @@
 class Chouette::StopArea < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
+
   include Geokit::Mappable
 
   has_many :stop_points, :dependent => :destroy
