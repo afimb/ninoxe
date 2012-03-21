@@ -34,7 +34,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   def self.bounds
     # Give something like :
     # [["113.5292500000000000", "22.1127580000000000", "113.5819330000000000", "22.2157050000000000"]]
-    min_and_max = connection.select_rows("select min(longitude), min(latitude), max(longitude), max(latitude) from #{table_name} where latitude is not null and longitude is not null").first
+    min_and_max = connection.select_rows("select min(longitude) as min_lon, min(latitude) as min_lat, max(longitude) as max_lon, max(latitude) as max_lat from #{table_name} where latitude is not null and longitude is not null").first
     return nil unless min_and_max
 
     # Ignore [nil, nil, nil, nil]
@@ -46,7 +46,6 @@ class Chouette::StopArea < Chouette::ActiveRecord
     # We need something like :
     # [[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]]
     coordinates = min_and_max.each_slice(2).to_a
-
     GeoRuby::SimpleFeatures::Envelope.from_coordinates coordinates
   end
 

@@ -66,5 +66,9 @@ class Chouette::Line < Chouette::ActiveRecord
   def timestamp_attributes_for_create #:nodoc:
     [:creationtime]
   end
+  
+  def stop_areas
+    self.routes.collect(&:stop_points).flatten.collect(&:stop_area).flatten.uniq
+  end
 
 end
