@@ -5,7 +5,49 @@ class Chouette::StopArea < Chouette::ActiveRecord
   include Geokit::Mappable
 
   has_many :stop_points, :dependent => :destroy
+
+  validates_presence_of :registrationnumber
+  validates_uniqueness_of :registrationnumber
+  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
+
+  validates_presence_of :name
+
+  validates_presence_of :objectid
+  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Line:[0-9A-Za-z_-]+\Z}
+
+  validates_numericality_of :version
+
+  def lines
+    self.stop_points.collect(&:route).flatten.collect(&:line).flatten.uniq
+  end
+
+  def version
+    self.objectversion
+  end
+
+  def version=(version)
+    self.objectversion = version
+  end
+
+  before_validation :default_values, :on => :create
+  def default_values
+    self.version ||= 1
+  end
+
+  def valid?(*args)
+    super.tap do |valid|
+      errors[:registration_number] = errors[:registrationnumber]
+    end
+  end
+
+  def timestamp_attributes_for_update #:nodoc:
+    [:creationtime]
+  end
   
+  def timestamp_attributes_for_create #:nodoc:
+    [:creationtime]
+  end
+
   def self.commercial
     where :areatype => "CommercialStopPoint"
   end
@@ -47,6 +89,21 @@ class Chouette::StopArea < Chouette::ActiveRecord
     # [[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]]
     coordinates = min_and_max.each_slice(2).to_a
     GeoRuby::SimpleFeatures::Envelope.from_coordinates coordinates
+  end
+
+  def type
+    Chouette::AreaType.new area_type.underscore
+  end
+
+  def type=(area_type)
+    self.area_type = (area_type ? area_type.name : nil)
+  end
+
+  @@types = nil
+  def self.types
+    @@types ||= Chouette::AreaType.all.select do |area_type|
+      area_type.to_i > 0
+    end
   end
 
 end
