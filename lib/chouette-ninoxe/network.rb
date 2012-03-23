@@ -3,5 +3,9 @@ class Chouette::Network < Chouette::ActiveRecord
   set_primary_key :id
 
   has_many :lines
+
+  def stop_areas
+    Chouette::StopArea.joins(:stop_points => [:route => [:lines => :network] ]).where(:ptnetwork => {:id => self.id})
+  end
 end
 
