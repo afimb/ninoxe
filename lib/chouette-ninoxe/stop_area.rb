@@ -6,14 +6,15 @@ class Chouette::StopArea < Chouette::ActiveRecord
 
   has_many :stop_points, :dependent => :destroy
 
-  validates_presence_of :registrationnumber
   validates_uniqueness_of :registrationnumber
   validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
 
   validates_presence_of :name
 
   validates_presence_of :objectid
-  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Line:[0-9A-Za-z_-]+\Z}
+  validates_uniqueness_of :objectid
+  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:StopArea:[0-9A-Za-z_-]+\Z}
+
 
   validates_numericality_of :version
 
