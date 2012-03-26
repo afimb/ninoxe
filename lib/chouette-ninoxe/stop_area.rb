@@ -95,14 +95,14 @@ class Chouette::StopArea < Chouette::ActiveRecord
     Chouette::AreaType.new area_type.underscore
   end
 
-  def type=(area_type)
-    self.area_type = (area_type ? area_type.name : nil)
+  def type=(type)
+    self.area_type = (type ? type.name : nil)
   end
 
   @@types = nil
   def self.types
-    @@types ||= Chouette::AreaType.all.select do |area_type|
-      area_type.to_i >= 0
+    @@types ||= Chouette::AreaType.all.select do |type|
+      type.to_i >= 0
     end
   end
 
