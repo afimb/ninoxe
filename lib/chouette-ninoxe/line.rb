@@ -49,7 +49,7 @@ class Chouette::Line < Chouette::ActiveRecord
   @@transport_modes = nil
   def self.transport_modes
     @@transport_modes ||= Chouette::TransportMode.all.select do |transport_mode|
-      transport_mode.to_i > 0
+      transport_mode.to_i >= 0
     end
   end
 
