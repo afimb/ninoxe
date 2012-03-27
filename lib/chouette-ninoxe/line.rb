@@ -14,13 +14,14 @@ class Chouette::Line < Chouette::ActiveRecord
 
   validates_presence_of :company
 
-  validates_presence_of :registrationnumber
-  validates_uniqueness_of :registrationnumber
-  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
+  validates_presence_of :registration_number
+  validates_uniqueness_of :registration_number
+  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
 
   validates_presence_of :name
 
   validates_presence_of :objectid
+  validates_uniqueness_of :objectid
   validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Line:[0-9A-Za-z_-]+\Z}
 
   validates_numericality_of :version
@@ -49,7 +50,7 @@ class Chouette::Line < Chouette::ActiveRecord
   @@transport_modes = nil
   def self.transport_modes
     @@transport_modes ||= Chouette::TransportMode.all.select do |transport_mode|
-      transport_mode.to_i > 0
+      transport_mode.to_i >= 0
     end
   end
 
@@ -65,6 +66,10 @@ class Chouette::Line < Chouette::ActiveRecord
   
   def timestamp_attributes_for_create #:nodoc:
     [:creationtime]
+  end
+  
+  def stop_areas
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id})
   end
 
 end
