@@ -5,14 +5,15 @@ describe Chouette::StopArea do
 
   describe ".near" do
 
-    let(:stop_area) { Chouette::StopArea.create! :latitude => 1, :longitude => 1 }
+    let(:stop_area) { Chouette::StopArea.create! :name => "StopArea", :registration_number => 1, :object_id => "HastusTUR:StopArea:PHYTTOURE1", :latitude => 1, :longitude => 1 }
+    let(:stop_area2) { Chouette::StopArea.create! :name => "StopArea", :registration_number => 2, :object_id => "HastusTUR:StopArea:PHYTTOURE2", :latitude => 1, :longitude => 1 }
     
     it "should find a StopArea at 300m from given origin" do
       Chouette::StopArea.near(stop_area.to_lat_lng.endpoint(0, 0.250, :units => :kms)).should == [stop_area]
     end
 
     it "should not find a StopArea at more than 300m from given origin" do
-      Chouette::StopArea.near(stop_area.to_lat_lng.endpoint(0, 0.350, :units => :kms)).should be_empty
+      Chouette::StopArea.near(stop_area2.to_lat_lng.endpoint(0, 0.350, :units => :kms)).should be_empty
     end
 
   end
