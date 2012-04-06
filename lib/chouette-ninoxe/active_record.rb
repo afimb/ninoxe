@@ -44,6 +44,48 @@ class Chouette::ActiveRecord < ::ActiveRecord::Base
     end
   end
 
+  module ObjectIdManagement
+    # triggers to generate objectId and objectVersion 
+    # TODO setting prefix in referential object
+    def before_validation
+      if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
+        puts 'start before_validation : '+self.objectid.to_s
+        if self.objectid.to_s.empty?
+          self.objectid = 'NINOXE:'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
+        elsif not self.objectid.include? ':'
+          self.objectid += ':'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
+        end
+        puts 'end before_validation : '+self.objectid
+      end
+      if defined? self.object_version
+        # initialize or update version
+        if self.object_version.nil?
+          self.object_version = 1
+        #else
+        #  self.object_version += 1
+        end
+      end
+      if defined? self.creation_time
+        self.creation_time = Time.now
+      end
+      if defined? self.creator_id
+        self.creator_id = 'chouette'
+      end
+    end
+     
+    def after_create
+      if defined? self.objectid
+        puts 'start after_create : '+self.objectid
+        if self.objectid.include? ':__pending_id__'
+          tokens = self.objectid.rpartition(":")
+          self.objectid = tokens[0]+":"+self.id.to_s
+        end
+        #self.save
+        puts 'end after_create : '+self.objectid
+      end
+    end
+  end
+
   module Inflector
 
     @@rewrites = 

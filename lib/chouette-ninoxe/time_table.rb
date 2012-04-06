@@ -1,6 +1,12 @@
 class Chouette::TimeTable < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
+  
   has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position
   has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position
+
+  accepts_nested_attributes_for :dates, :allow_destroy => :true
+  accepts_nested_attributes_for :periods, :allow_destroy => :true
 
   def self.start_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodstart)).min
