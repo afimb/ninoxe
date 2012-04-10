@@ -38,14 +38,13 @@ group :development do
   gem 'guard-rspec'
   gem 'guard-bundler'
 
-  if RUBY_PLATFORM =~ /linux/
-    gem 'rb-inotify' 
-    gem 'libnotify' 
-  end       
+  group :linux do
+    gem 'rb-inotify'
+    gem 'libnotify'
+  end
 end
 
 group :test do
-  gem 'autotest'
   gem 'rspec-rails', '2.8.1'
   gem 'shoulda-matchers'
   gem 'factory_girl_rails'
