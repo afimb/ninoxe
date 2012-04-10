@@ -47,6 +47,6 @@ end
 group :test do
   gem 'rspec-rails', '2.8.1'
   gem 'shoulda-matchers'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', '1.7.0'
   gem 'database_cleaner'
 end
