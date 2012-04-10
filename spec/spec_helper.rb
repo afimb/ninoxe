@@ -1,54 +1,49 @@
-require 'rspec'
+# Configure Rails Envinronment
+ENV["RAILS_ENV"] = "test"
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
-require File.expand_path('../../lib/chouette-ninoxe', __FILE__)
+require 'rspec/rails'
+require 'rspec/autorun'
 
-require 'erb'
+require 'shoulda-matchers'
+require 'factory_girl_rails'
+
 require 'database_cleaner'
+require 'geo_ruby'
 
-# Patch DatabaseCleaner
-# to target the right connection
-module DatabaseCleaner
-  module ActiveRecord
-    module BaseFix
-      def self.included( base )
-        base.send :include, InstanceMethods
-        base.class_eval do
-          alias_method :connection_klass, :connection_klass_fix
-        end
-      end
-        
-      module InstanceMethods
-        def create_connection_klass
-          Chouette::ActiveRecord
-        end
-        def connection_klass_fix
-          load_config if connection_hash.nil?
+ENGINE_RAILS_ROOT=File.join(File.dirname(__FILE__), '../')
 
-          return ::ActiveRecord::Base if connection_hash.nil?
-          klass = create_connection_klass
-          klass.send( :establish_connection, connection_hash) unless klass.send( :connected?)
-          klass
-        end
-      end
-    end
-    class Transaction
-      include BaseFix
-    end
-    class Truncation
-      include BaseFix
-    end
-  end
-end
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[File.join(ENGINE_RAILS_ROOT, "spec/support/**/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
+  DatabaseCleaner.logger = Rails.logger
+  # == Mock Framework
+  #
+  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
+  #
+  # config.mock_with :mocha
+  # config.mock_with :flexmock
+  # config.mock_with :rr
+  config.mock_with :rspec
 
-  config.before(:all) do
-    Chouette::ActiveRecord.establish_connection( YAML::load( ERB.new( IO.read( File.expand_path('../../config/database.yml', __FILE__))).result)["default"] )
-  end
+  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  # If you're not using ActiveRecord, or you'd prefer not to run each of your
+  # examples within a transaction, remove the following line or assign false
+  # instead of true.
+  config.use_transactional_fixtures = true
+
+  # If true, the base class of anonymous controllers will be inferred
+  # automatically. This will be the default behavior in future versions of
+  # rspec-rails.
+  config.infer_base_class_for_anonymous_controllers = false
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    #DatabaseCleaner.clean_with( :truncation, {:except => %w[spatial_ref_sys geometry_columns]} )
 
     Chouette::ActiveRecord.logger = Logger.new("log/test.log")
   end

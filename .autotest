@@ -1,7 +1,0 @@
-Autotest.add_hook :initialize do |autotest|
-  %w{coverage log script tasks \.git db}.each do |directory|
-    autotest.add_exception(%r{^\./#{directory}})
-  end
-end
-
-
