@@ -1,17 +1,1 @@
-development:
-  adapter: postgresql
-  database: ninoxe_dev
-  username: <%= ENV['USER'] %>
-  schema_search_path: public
-  
-test:
-  adapter: postgresql
-  database: ninoxe_test
-  username: <%= ENV['USER'] %>
-  schema_search_path: public
-
-production:
-  adapter: postgresql
-  database: ninoxe_prod
-  username: <%= ENV['USER'] %>
-  schema_search_path: public
+../../../config/database.yml
