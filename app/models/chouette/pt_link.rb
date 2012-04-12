@@ -1,6 +1,8 @@
 require 'geokit'
 
 class Chouette::PtLink < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
   include Geokit::Mappable
 
   def geometry

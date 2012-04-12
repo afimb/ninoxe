@@ -8,6 +8,10 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   accepts_nested_attributes_for :dates, :allow_destroy => :true
   accepts_nested_attributes_for :periods, :allow_destroy => :true
 
+  def self.model_name
+    ActiveModel::Name.new Chouette::TimeTable, Chouette, "TimeTable"
+  end
+
   def self.start_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodstart)).min
   end

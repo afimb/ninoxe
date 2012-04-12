@@ -1,4 +1,6 @@
 class Chouette::Line < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
 
   belongs_to :company
   belongs_to :network
@@ -26,7 +28,7 @@ class Chouette::Line < Chouette::ActiveRecord
   validates_numericality_of :objectversion
 
   def self.model_name
-    ActiveModel::Name.new Chouette::Line, Chouette
+    ActiveModel::Name.new Chouette::Line, Chouette, "Line"
   end
 
   def objectid
