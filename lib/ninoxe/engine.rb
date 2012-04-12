@@ -7,7 +7,6 @@ module Ninoxe
     end
         
     initializer "ninoxe", :after => :eager_load! do
-      puts Rails.configuration.database_configuration["chouette"].inspect
       ::Chouette::ActiveRecord.establish_connection Rails.configuration.database_configuration["chouette"] if Rails.configuration.database_configuration["chouette"].present?
 
       ::Chouette::ActiveRecord.logger = Rails.logger

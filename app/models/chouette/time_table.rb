@@ -17,6 +17,9 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   validates_presence_of :objectversion
   validates_numericality_of :objectversion
 
+  def self.model_name
+    ActiveModel::Name.new Chouette::TimeTable, Chouette, "TimeTable"
+  end
 
   def self.start_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodstart)).min

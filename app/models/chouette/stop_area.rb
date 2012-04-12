@@ -1,6 +1,9 @@
 require 'geokit'
+require 'geo_ruby'
 
 class Chouette::StopArea < Chouette::ActiveRecord
+  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
+  set_primary_key :id
   include Geokit::Mappable
 
   OBJECT_ID_KEY='StopArea'
@@ -26,7 +29,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   validates_numericality_of :version
 
   def self.model_name
-    ActiveModel::Name.new Chouette::StopArea, Chouette
+    ActiveModel::Name.new Chouette::StopArea, Chouette, "StopArea"
   end
 
   def lines
