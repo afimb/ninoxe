@@ -2,8 +2,6 @@ class Chouette::Network < Chouette::ActiveRecord
   
   OBJECT_ID_KEY='GroupOfLine'
   
-  include Chouette::ActiveRecord::ObjectIdManagement
-
   has_many :lines
 
   validates_presence_of :registrationnumber
@@ -21,6 +19,7 @@ class Chouette::Network < Chouette::ActiveRecord
   validates_presence_of :objectid
   validates_uniqueness_of :objectid
   validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:GroupOfLine:[0-9A-Za-z_-]+\Z}
+  
 
   def self.model_name
     ActiveModel::Name.new Chouette::Network, Chouette

@@ -3,6 +3,9 @@ require 'geokit'
 class Chouette::StopArea < Chouette::ActiveRecord
   include Geokit::Mappable
 
+  OBJECT_ID_KEY='StopArea'
+  
+
   has_many :stop_points, :dependent => :destroy
 
   validates_uniqueness_of :registrationnumber

@@ -1,5 +1,7 @@
 class Chouette::Line < Chouette::ActiveRecord
 
+  OBJECT_ID_KEY='Line'
+  
   belongs_to :company
   belongs_to :network
   has_many :routes, :dependent => :destroy

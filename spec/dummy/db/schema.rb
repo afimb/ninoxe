@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406144221) do
+ActiveRecord::Schema.define(:version => 20120411144209) do
 
   create_table "company", :force => true do |t|
     t.string   "objectid"
@@ -30,16 +30,6 @@ ActiveRecord::Schema.define(:version => 20120406144221) do
 
   add_index "company", ["objectid"], :name => "company_objectid_key", :unique => true
   add_index "company", ["registrationnumber"], :name => "company_registrationnumber_key", :unique => true
-
-  create_table "geometry_columns", :id => false, :force => true do |t|
-    t.string  "f_table_catalog",   :limit => 256, :null => false
-    t.string  "f_table_schema",    :limit => 256, :null => false
-    t.string  "f_table_name",      :limit => 256, :null => false
-    t.string  "f_geometry_column", :limit => 256, :null => false
-    t.integer "coord_dimension",                  :null => false
-    t.integer "srid",                             :null => false
-    t.string  "type",              :limit => 30,  :null => false
-  end
 
   create_table "line", :force => true do |t|
     t.integer  "ptnetworkid",                :limit => 8
@@ -78,14 +68,6 @@ ActiveRecord::Schema.define(:version => 20120406144221) do
   add_index "ptnetwork", ["objectid"], :name => "ptnetwork_objectid_key", :unique => true
   add_index "ptnetwork", ["registrationnumber"], :name => "ptnetwork_registrationnumber_key", :unique => true
 
-  create_table "spatial_ref_sys", :id => false, :force => true do |t|
-    t.integer "srid",                      :null => false
-    t.string  "auth_name", :limit => 256
-    t.integer "auth_srid"
-    t.string  "srtext",    :limit => 2048
-    t.string  "proj4text", :limit => 2048
-  end
-
   create_table "stoparea", :force => true do |t|
     t.integer  "parentid",           :limit => 8
     t.string   "objectid"
@@ -111,5 +93,34 @@ ActiveRecord::Schema.define(:version => 20120406144221) do
 
   add_index "stoparea", ["objectid"], :name => "stoparea_objectid_key", :unique => true
   add_index "stoparea", ["parentid"], :name => "index_stoparea_on_parentid"
+
+  create_table "timetable", :force => true do |t|
+    t.string   "objectid",                     :null => false
+    t.integer  "objectversion", :default => 1
+    t.datetime "creationtime"
+    t.string   "creatorid"
+    t.string   "version"
+    t.string   "comment"
+    t.integer  "intdaytypes",   :default => 0
+  end
+
+  add_index "timetable", ["objectid"], :name => "timetable_objectid_key", :unique => true
+
+  create_table "timetable_date", :id => false, :force => true do |t|
+    t.integer "timetableid", :limit => 8, :null => false
+    t.date    "date"
+    t.integer "position",                 :null => false
+  end
+
+  add_index "timetable_date", ["timetableid"], :name => "index_timetable_date_on_timetableid"
+
+  create_table "timetable_period", :id => false, :force => true do |t|
+    t.integer "timetableid", :limit => 8, :null => false
+    t.date    "periodstart"
+    t.date    "periodend"
+    t.integer "position",                 :null => false
+  end
+
+  add_index "timetable_period", ["timetableid"], :name => "index_timetable_period_on_timetableid"
 
 end
