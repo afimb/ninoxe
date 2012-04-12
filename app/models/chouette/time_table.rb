@@ -55,10 +55,10 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   end
   
   def set_day(day,flag)
-    if (day) 
+    if (day == '1') 
       self.intdaytypes |= flag
     else
-      self.intdaytypes ^= flag
+      self.intdaytypes &= ~flag
     end
   end
   
