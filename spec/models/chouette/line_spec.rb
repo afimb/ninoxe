@@ -39,7 +39,7 @@ describe Chouette::Line do
   describe "#transport_mode=" do
     
     it "should change transport_mode_name with TransportMode#name" do
-      subject.transport_mode = mock(:name => "Test")
+      subject.transport_mode = "Test"
       subject.transport_mode_name.should == "Test"
     end
 
