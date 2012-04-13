@@ -3,6 +3,9 @@
 module Chouette
   class ActiveRecord < ::ActiveRecord::Base
 
+    before_validation :prepare_auto_columns
+    after_create :build_objectid
+
     self.abstract_class = true
 
     def human_attribute_name(*args)
@@ -44,23 +47,24 @@ module Chouette
 
     # triggers to generate objectId and objectVersion 
     # TODO setting prefix in referential object
-    def before_validation
-      logger.info 'calling before_validation'
+    
+    def prepare_auto_columns
+      # logger.info 'calling before_validation'
       if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
-        logger.info 'start before_validation : '+self.objectid.to_s
+        # logger.info 'start before_validation : '+self.objectid.to_s
         if self.objectid.to_s.empty?
           self.objectid = 'NINOXE:'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
         elsif not self.objectid.include? ':'
           self.objectid += ':'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
         end
-        logger.info 'end before_validation : '+self.objectid
+        # logger.info 'end before_validation : '+self.objectid
       end
       if defined? self.objectversion
         # initialize or update version
         if self.objectversion.nil?
           self.objectversion = 1
-          #else
-          #  self.object_version += 1
+        else
+          self.object_version += 1
         end
       end
       if defined? self.creationtime
@@ -71,15 +75,16 @@ module Chouette
       end
     end
     
-    def after_create
+    def build_objectid
       if defined? self.objectid
-        logger.info 'start after_create : '+self.objectid
+        # logger.info 'start after_create : '+self.objectid
         if self.objectid.include? ':__pending_id__'
           tokens = self.objectid.rpartition(":")
           self.objectid = tokens[0]+":"+self.id.to_s
+          self.object_version += 1
+          self.save
         end
-        #self.save
-        logger.info 'end after_create : '+self.objectid
+        # logger.info 'end after_create : '+self.objectid
       end
     end
 
