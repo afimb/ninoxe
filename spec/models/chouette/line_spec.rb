@@ -12,11 +12,11 @@ describe Chouette::Line do
 
   it { should validate_presence_of :name }
 
-  it { should validate_presence_of :objectid }
+  # it { should validate_presence_of :objectid }
   it { should validate_uniqueness_of :objectid }
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
-  it { should validate_numericality_of :objectversion }
+  # it { should validate_numericality_of :objectversion }
 
   describe "#transport_mode" do
 

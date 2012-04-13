@@ -6,7 +6,7 @@ describe Chouette::TimeTable do
 
   it { should validate_presence_of :comment }
 
-  it { should validate_presence_of :objectid }
+  # it { should validate_presence_of :objectid }
   it { should validate_uniqueness_of :objectid }
 
 
