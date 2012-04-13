@@ -2,6 +2,8 @@ class Chouette::Line < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
+  attr_accessor :transport_mode
+
   OBJECT_ID_KEY='Line'
   
   belongs_to :company
@@ -55,7 +57,7 @@ class Chouette::Line < Chouette::ActiveRecord
   end
 
   def transport_mode=(transport_mode)
-    self.transport_mode_name = (transport_mode ? transport_mode.name.camelcase : nil)
+    self.transport_mode_name = (transport_mode ? transport_mode.camelcase : nil)
   end
 
   @@transport_modes = nil

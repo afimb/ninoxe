@@ -5,6 +5,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   include Geokit::Mappable
+  attr_accessor :type
 
   OBJECT_ID_KEY='StopArea'
   
@@ -111,7 +112,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   end
 
   def type=(type)
-    self.area_type = (type ? type.name.camelcase : nil)
+    self.area_type = (type ? type.camelcase : nil)
   end
 
   @@types = nil
