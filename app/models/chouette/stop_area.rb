@@ -108,7 +108,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   end
 
   def type=(type)
-    self.area_type = (type ? type.name : nil)
+    self.area_type = (type ? type.name.camelcase : nil)
   end
 
   @@types = nil

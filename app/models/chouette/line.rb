@@ -53,7 +53,7 @@ class Chouette::Line < Chouette::ActiveRecord
   end
 
   def transport_mode=(transport_mode)
-    self.transport_mode_name = (transport_mode ? transport_mode.name : nil)
+    self.transport_mode_name = (transport_mode ? transport_mode.name.camelcase : nil)
   end
 
   @@transport_modes = nil
