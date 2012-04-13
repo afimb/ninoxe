@@ -1,12 +1,21 @@
 class Chouette::TimeTable < Chouette::ActiveRecord
-  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  
+  OBJECT_ID_KEY='Timetable'
   
   has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position
   has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position
 
   accepts_nested_attributes_for :dates, :allow_destroy => :true
   accepts_nested_attributes_for :periods, :allow_destroy => :true
+
+  validates_presence_of :comment
+
+  validates_presence_of :objectid
+  validates_uniqueness_of :objectid
+  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Timetable:[0-9A-Za-z_-]+\Z}
+
+  validates_presence_of :objectversion
+  validates_numericality_of :objectversion
 
   def self.model_name
     ActiveModel::Name.new Chouette::TimeTable, Chouette, "TimeTable"
@@ -20,7 +29,7 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   end
 
   def day_by_mask(flag)
-    int_day_types & flag == flag
+    intdaytypes & flag == flag
   end
 
   def monday
@@ -46,10 +55,10 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   end
   
   def set_day(day,flag)
-    if (day) 
-      self.int_day_types |= flag
+    if (day == '1') 
+      self.intdaytypes |= flag
     else
-      self.int_day_types ^= flag
+      self.intdaytypes &= ~flag
     end
   end
   

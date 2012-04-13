@@ -9,7 +9,7 @@ describe Chouette::Network do
 
   it { should validate_presence_of :name }
 
-  it { should validate_presence_of :objectid }
+  # it { should validate_presence_of :objectid }
   it { should validate_uniqueness_of :objectid }
 
 end

@@ -7,6 +7,7 @@ development:
   
 test:
   adapter: postgresql
+  host: localhost
   database: ninoxe_test
   username: chouette
   password: chouette

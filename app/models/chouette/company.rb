@@ -1,4 +1,7 @@
 class Chouette::Company < Chouette::ActiveRecord
+
+  OBJECT_ID_KEY='Company'
+  
   has_many :lines
   
   validates_presence_of :registrationnumber

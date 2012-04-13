@@ -2,6 +2,8 @@ class Chouette::Line < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
+  OBJECT_ID_KEY='Line'
+  
   belongs_to :company
   belongs_to :network
   has_many :routes, :dependent => :destroy

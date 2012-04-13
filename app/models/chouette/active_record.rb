@@ -3,6 +3,9 @@
 module Chouette
   class ActiveRecord < ::ActiveRecord::Base
 
+    before_validation :prepare_auto_columns
+    after_create :build_objectid
+
     self.abstract_class = true
 
     def human_attribute_name(*args)
@@ -42,45 +45,46 @@ module Chouette
       end
     end
 
-    module ObjectIdManagement
-      # triggers to generate objectId and objectVersion 
-      # TODO setting prefix in referential object
-      def before_validation
-        if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
-          puts 'start before_validation : '+self.objectid.to_s
-          if self.objectid.to_s.empty?
-            self.objectid = 'NINOXE:'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
-          elsif not self.objectid.include? ':'
-            self.objectid += ':'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
-          end
-          puts 'end before_validation : '+self.objectid
+    # triggers to generate objectId and objectVersion 
+    # TODO setting prefix in referential object
+    
+    def prepare_auto_columns
+      # logger.info 'calling before_validation'
+      if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
+        # logger.info 'start before_validation : '+self.objectid.to_s
+        if self.objectid.to_s.empty?
+          self.objectid = 'NINOXE:'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
+        elsif not self.objectid.include? ':'
+          self.objectid += ':'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
         end
-        if defined? self.object_version
-          # initialize or update version
-          if self.object_version.nil?
-            self.object_version = 1
-            #else
-            #  self.object_version += 1
-          end
-        end
-        if defined? self.creation_time
-          self.creation_time = Time.now
-        end
-        if defined? self.creator_id
-          self.creator_id = 'chouette'
+        # logger.info 'end before_validation : '+self.objectid
+      end
+      if defined? self.objectversion
+        # initialize or update version
+        if self.objectversion.nil?
+          self.objectversion = 1
+        else
+          self.object_version += 1
         end
       end
-      
-      def after_create
-        if defined? self.objectid
-          puts 'start after_create : '+self.objectid
-          if self.objectid.include? ':__pending_id__'
-            tokens = self.objectid.rpartition(":")
-            self.objectid = tokens[0]+":"+self.id.to_s
-          end
-          #self.save
-          puts 'end after_create : '+self.objectid
+      if defined? self.creationtime
+        self.creationtime = Time.now
+      end
+      if defined? self.creatorid
+        self.creatorid = 'chouette'
+      end
+    end
+    
+    def build_objectid
+      if defined? self.objectid
+        # logger.info 'start after_create : '+self.objectid
+        if self.objectid.include? ':__pending_id__'
+          tokens = self.objectid.rpartition(":")
+          self.objectid = tokens[0]+":"+self.id.to_s
+          self.object_version += 1
+          self.save
         end
+        # logger.info 'end after_create : '+self.objectid
       end
     end
 
