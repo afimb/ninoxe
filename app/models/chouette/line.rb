@@ -53,7 +53,8 @@ class Chouette::Line < Chouette::ActiveRecord
   end
 
   def transport_mode
-    Chouette::TransportMode.new transport_mode_name.underscore
+    # return nil if transport_mode_name is nil
+    transport_mode_name && Chouette::TransportMode.new( transport_mode_name.underscore)
   end
 
   def transport_mode=(transport_mode)
