@@ -7,5 +7,12 @@ Factory.define :route, :class => "Chouette::Route" do |route|
   route.sequence(:objectid) { |n| "test:Route:#{n}" }
 
   route.association :line, :factory => :line
+
+  route.after_create do |r|
+    0.upto(4) do |i|
+      Factory(:stop_point, :position => i, :route => r)
+    end
+  end
+  
 end
 
