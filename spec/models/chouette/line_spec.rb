@@ -33,6 +33,12 @@ describe Chouette::Line do
         end
       end
     end
+    context "when transport_mode_name is nil" do
+      it "should be nil" do
+        subject.transport_mode_name = nil
+        subject.transport_mode.should be_nil
+      end
+    end
 
   end
 
