@@ -108,7 +108,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   end
 
   def type
-    Chouette::AreaType.new area_type.underscore
+    Chouette::AreaType.new area_type.underscore if area_type
   end
 
   def type=(type)
