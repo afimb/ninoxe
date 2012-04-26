@@ -8,6 +8,28 @@ describe Chouette::Route do
 
   it { should validate_presence_of :name }
 
+  describe "#stop_areas" do
+    let(:line){ Factory(:line)}
+    let(:route_1){ Factory(:route, :line => line)}
+    let(:route_2){ Factory(:route, :line => line)}
+    it "should retreive all stop_area on route" do
+      route_1.stop_areas.each do |sa|
+        sa.stop_points.map(&:route_id).uniq.should == [route_1.id]
+      end
+    end
+
+    context "when route is looping: last and first stop area are the same" do
+      it "should retreive same stop_area one last and first position" do
+        route_loop = Factory(:route, :line => line)
+        first_stop = Chouette::StopPoint.where( :routeid => route_loop.id, :position => 0).first
+        last_stop = Factory(:stop_point, :route => route_loop, :position => 5, :stop_area => first_stop.stop_area)
+
+        route_loop.stop_areas.size.should == 6
+        route_loop.stop_areas.select {|s| s.id == first_stop.stop_area.id}.size.should == 2
+      end
+    end
+  end
+
   describe "#direction_code" do
     def self.legacy_directions
       %w{A R CLOCKWISE ANTICLOCKWISE NORTH NORTH_WEST WEST SOUTH_WEST SOUTH SOUTH_EAST EAST NORTH_EAST}
