@@ -9,6 +9,13 @@ describe Chouette::StopArea do
 
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
+  describe ".parent" do
+    it "should check if parent method exists" do
+      subject = Factory :stop_area, :parent_id => commercial_stop_point.id
+      subject.parent.should == commercial_stop_point
+    end
+  end
+
   describe ".possible_children" do    
     
     it "should find no possible descendant for stop area type quay" do
