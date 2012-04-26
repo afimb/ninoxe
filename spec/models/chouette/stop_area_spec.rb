@@ -1,7 +1,63 @@
 require 'spec_helper'
 
 describe Chouette::StopArea do
+  let!(:quay) { Factory :stop_area, :area_type => "Quay" }
+  let!(:boarding_position) { Factory :stop_area, :area_type => "BoardingPosition" }
+  let!(:commercial_stop_point) { Factory :stop_area, :area_type => "CommercialStopPoint" }
+  let!(:stop_place) { Factory :stop_area, :area_type => "StopPlace" }
+  let!(:itl) { Factory :stop_area, :area_type => "ITL" }
+
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
+
+  describe ".possible_children" do    
+    
+    it "should find no possible descendant for stop area type quay" do
+      subject = Factory :stop_area, :area_type => "Quay"
+      subject.possible_children.should == [] 
+    end
+
+    it "should find no possible descendant for stop area type boarding position" do
+      subject = Factory :stop_area, :area_type => "BoardingPosition"
+      subject.possible_children.should == [] 
+    end
+
+    it "should find descendant of type quay or boarding position for stop area type commercial stop point" do
+      subject = Factory :stop_area, :area_type => "CommercialStopPoint"
+      subject.possible_children.should =~ [quay, boarding_position] 
+    end
+
+    it "should find no children of type stop place or commercial stop point for stop area type stop place" do
+      subject = Factory :stop_area, :area_type => "StopPlace"
+      subject.possible_children.should =~ [stop_place, commercial_stop_point] 
+    end
+
+  end
+
+  describe ".possible_parents" do
+
+    it "should find parent type commercial stop point for stop area type boarding position" do
+      subject = Factory :stop_area, :area_type => "BoardingPosition"
+      subject.possible_parent.should == [commercial_stop_point] 
+    end
+
+    it "should find parent type commercial stop point for stop area type quay" do
+      subject = Factory :stop_area, :area_type => "Quay"
+      subject.possible_parent.should == [commercial_stop_point] 
+    end    
+
+    it "should find parent type stop place for stop area type commercial stop point" do
+      subject = Factory :stop_area, :area_type => "CommercialStopPoint"
+      subject.possible_parent.should == [stop_place] 
+    end    
+
+    it "should find parent type stop place for stop area type stop place" do
+      subject = Factory :stop_area, :area_type => "StopPlace"
+      subject.possible_parent.should == [stop_place] 
+    end    
+
+
+  end
+
 
   describe ".near" do
 

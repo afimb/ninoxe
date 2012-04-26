@@ -9,18 +9,12 @@ class Chouette::StopArea < Chouette::ActiveRecord
 
   OBJECT_ID_KEY='StopArea'
   
-
   has_many :stop_points, :dependent => :destroy
+
+  acts_as_tree :foreign_key => 'parentid'
 
   validates_uniqueness_of :registrationnumber
   validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
-
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
-    end
-  end
-
   validates_presence_of :name
 
   validates_presence_of :objectid
@@ -28,6 +22,31 @@ class Chouette::StopArea < Chouette::ActiveRecord
   validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:StopArea:[0-9A-Za-z_-]+\Z}
 
   validates_numericality_of :version
+
+  def possible_children
+    case area_type
+      when "BoardingPosition" then []
+      when "Quay" then []
+      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => ['Quay', 'BoardingPosition']) - [self]
+      when "StopPlace" then Chouette::StopArea.where(:areatype => ['StopPlace', 'CommercialStopPoint']) - [self]
+    end
+      
+  end
+
+  def possible_parent
+    case area_type
+      when "BoardingPosition" then Chouette::StopArea.where(:areatype => "CommercialStopPoint")  - [self]
+      when "Quay" then Chouette::StopArea.where(:areatype => "CommercialStopPoint") - [self]
+      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
+      when "StopPlace" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
+    end
+  end
+
+  def valid?(*args)
+    super.tap do |valid|
+      errors[:registration_number] = errors[:registrationnumber]
+    end
+  end
 
   def self.model_name
     ActiveModel::Name.new Chouette::StopArea, Chouette, "StopArea"
