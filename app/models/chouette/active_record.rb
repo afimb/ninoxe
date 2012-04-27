@@ -53,9 +53,11 @@ module Chouette
       if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
         # logger.info 'start before_validation : '+self.objectid.to_s
         if self.objectid.to_s.empty?
+          # if empty, generate a pending objectid which will be completed after creation
           self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:__pending_id__#{rand(1000)}"
         elsif not self.objectid.include? ':'
-          self.objectid = "#{self.objectid}:#{self.class::OBJECT_ID_KEY}:__pending_id__#{rand(1000)}"
+          # if one token : technical token : completed by prefix and key
+          self.objectid = "NINOXE::#{self.class::OBJECT_ID_KEY}:#{self.objectid}"
         end
         # logger.info 'end before_validation : '+self.objectid
       end
