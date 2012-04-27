@@ -30,7 +30,7 @@ class Chouette::ConnectionLinkType < ActiveSupport::StringInquirer
   end
 
   def name
-    to_s
+    camelize
   end
 
   @@definitions = [

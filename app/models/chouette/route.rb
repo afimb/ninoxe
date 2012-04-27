@@ -56,16 +56,16 @@ class Chouette::Route < Chouette::ActiveRecord
   def self.direction_binding
     { "A" => "straight_forward", 
       "R" => "backward",
-      "CLOCKWISE" => "clockwise",
-      "ANTICLOCKWISE" => "anticlockwise",
-      "NORTH" => "north",
-      "NORTH_WEST" => "north_west", 
-      "WEST" => "west",
-      "SOUTH_WEST" => "south_west",
-      "SOUTH" => "south",
-      "SOUTH_EAST" => "south_east",
-      "EAST" => "east",
-      "NORTH_EAST" => "north_east"}
+      "ClockWise" => "clockwise",
+      "CounterClockWise" => "anticlockwise",
+      "North" => "north",
+      "NorthWest" => "north_west", 
+      "West" => "west",
+      "SouthWest" => "south_west",
+      "South" => "south",
+      "SouthEast" => "south_east",
+      "East" => "east",
+      "NorthEast" => "north_east"}
   end
   def direction_code
     return nil if self.class.direction_binding[direction].nil?

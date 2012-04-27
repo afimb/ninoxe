@@ -2,7 +2,7 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
-  attr_accessor :link_type_code
+  attr_accessor :connection_link_type
 
   belongs_to :departure, :class_name => 'Chouette::StopArea'
   belongs_to :arrival, :class_name => 'Chouette::StopArea'
@@ -51,25 +51,20 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
     [:creationtime]
   end
 
-  def self.link_type_binding
-    { "UNDERGROUND" => "underground", 
-      "MIXED" => "mixed",
-      "OVERGROUND" => "overground"}
+  def connection_link_type
+    # return nil if transport_mode_name is nil
+    link_type && Chouette::ConnectionLinkType.new( link_type.underscore)
   end
-  def link_type_code
-    return nil if self.class.link_type_binding[link_type].nil?
-    Chouette::ConnectionLinkType.new( self.class.link_type_binding[link_type])
+
+  def connection_link_type=(connection_link_type)
+    self.link_type = (connection_link_type ? connection_link_type.camelcase : nil)
   end
-  def link_type_code=(link_type_code)
-    self.link_type = nil
-    self.class.link_type_binding.each do |k,v| 
-      self.link_type = k if v==link_type_code
-    end
+
+  @@connection_link_types = nil
+  def self.connection_link_types
+    @@connection_link_types ||= Chouette::TransportMode.all
   end
-  @@link_types = nil
-  def self.link_types
-    @@link_types ||= Chouette::ConnectionLinkType.all
-  end
+
   
 end
 
