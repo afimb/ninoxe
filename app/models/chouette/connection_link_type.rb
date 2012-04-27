@@ -1,4 +1,4 @@
-class Chouette::Direction < ActiveSupport::StringInquirer
+class Chouette::ConnectionLinkType < ActiveSupport::StringInquirer
 
   def initialize(text_code, numerical_code)
     super text_code.to_s
@@ -30,22 +30,13 @@ class Chouette::Direction < ActiveSupport::StringInquirer
   end
 
   def name
-    to_s
+    camelize
   end
 
   @@definitions = [
-    ["straight_forward", 0],
-    ["backward", 1],
-    ["clock_wise", 2],
-    ["counter_clock_wise", 3],
-    ["north", 4],
-    ["north_west", 5],
-    ["west", 6],
-    ["south_west", 7],
-    ["south", 8],
-    ["south_east", 9],
-    ["east", 10],
-    ["north_east", 11]
+    ["underground", 0],
+    ["mixed", 1],
+    ["overground", 2]
   ]
   cattr_reader :definitions
 

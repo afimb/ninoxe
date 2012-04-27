@@ -32,7 +32,8 @@ describe Chouette::Route do
 
   describe "#direction_code" do
     def self.legacy_directions
-      %w{A R CLOCKWISE ANTICLOCKWISE NORTH NORTH_WEST WEST SOUTH_WEST SOUTH SOUTH_EAST EAST NORTH_EAST}
+      %w{A R ClockWise CounterClockWise North NorthWest West SouthWest 
+        South SouthEast East NorthEast}
     end
     legacy_directions.each do |direction|
       context "when direction is #{direction}" do
@@ -60,7 +61,7 @@ describe Chouette::Route do
     context "when an existing direction (west) is provided" do
       it "should change direction Direction.west" do
         subject.direction_code = "west"
-        subject.direction.should == "WEST"
+        subject.direction.should == "West"
       end
     end
   end

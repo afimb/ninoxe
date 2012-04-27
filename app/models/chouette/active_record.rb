@@ -53,9 +53,11 @@ module Chouette
       if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
         # logger.info 'start before_validation : '+self.objectid.to_s
         if self.objectid.to_s.empty?
-          self.objectid = 'NINOXE:'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
+          # if empty, generate a pending objectid which will be completed after creation
+          self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:__pending_id__#{rand(1000)}"
         elsif not self.objectid.include? ':'
-          self.objectid += ':'+self.class::OBJECT_ID_KEY+':__pending_id__'+rand(1000).to_s;
+          # if one token : technical token : completed by prefix and key
+          self.objectid = "NINOXE::#{self.class::OBJECT_ID_KEY}:#{self.objectid}"
         end
         # logger.info 'end before_validation : '+self.objectid
       end
@@ -76,16 +78,13 @@ module Chouette
     end
     
     def build_objectid
-      if defined? self.objectid
-        # logger.info 'start after_create : '+self.objectid
-        if self.objectid.include? ':__pending_id__'
-          tokens = self.objectid.rpartition(":")
-          self.objectid = tokens[0]+":"+self.id.to_s
-          self.object_version += 1
-          self.save
-        end
-        # logger.info 'end after_create : '+self.objectid
+      return unless defined?(self.objectid)
+      # logger.info 'start after_create : '+self.objectid
+      if self.objectid.include? ':__pending_id__'
+        base_objectid = self.objectid.rpartition(":").first
+        self.update_attributes( :objectid => "#{base_objectid}:#{self.id}", :object_version => (self.object_version - 1) )
       end
+      # logger.info 'end after_create : '+self.objectid
     end
 
     module Inflector
