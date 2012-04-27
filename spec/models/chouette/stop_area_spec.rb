@@ -40,26 +40,26 @@ describe Chouette::StopArea do
 
   end
 
-  describe ".possible_parents" do
+  describe ".possible_parentss" do
 
     it "should find parent type commercial stop point for stop area type boarding position" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.possible_parent.should == [commercial_stop_point] 
+      subject.possible_parents.should == [commercial_stop_point] 
     end
 
     it "should find parent type commercial stop point for stop area type quay" do
       subject = Factory :stop_area, :area_type => "Quay"
-      subject.possible_parent.should == [commercial_stop_point] 
+      subject.possible_parents.should == [commercial_stop_point] 
     end    
 
     it "should find parent type stop place for stop area type commercial stop point" do
       subject = Factory :stop_area, :area_type => "CommercialStopPoint"
-      subject.possible_parent.should == [stop_place] 
+      subject.possible_parents.should == [stop_place] 
     end    
 
     it "should find parent type stop place for stop area type stop place" do
       subject = Factory :stop_area, :area_type => "StopPlace"
-      subject.possible_parent.should == [stop_place] 
+      subject.possible_parents.should == [stop_place] 
     end    
 
 

@@ -33,7 +33,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
       
   end
 
-  def possible_parent
+  def possible_parents
     case area_type
       when "BoardingPosition" then Chouette::StopArea.where(:areatype => "CommercialStopPoint")  - [self]
       when "Quay" then Chouette::StopArea.where(:areatype => "CommercialStopPoint") - [self]
