@@ -56,8 +56,8 @@ class Chouette::Route < Chouette::ActiveRecord
   def self.direction_binding
     { "A" => "straight_forward", 
       "R" => "backward",
-      "ClockWise" => "clockwise",
-      "CounterClockWise" => "anticlockwise",
+      "ClockWise" => "clock_wise",
+      "CounterClockWise" => "counter_clock_wise",
       "North" => "north",
       "NorthWest" => "north_west", 
       "West" => "west",

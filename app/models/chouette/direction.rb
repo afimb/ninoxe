@@ -36,8 +36,8 @@ class Chouette::Direction < ActiveSupport::StringInquirer
   @@definitions = [
     ["straight_forward", 0],
     ["backward", 1],
-    ["clockwise", 2],
-    ["anti_clockwise", 3],
+    ["clock_wise", 2],
+    ["counter_clock_wise", 3],
     ["north", 4],
     ["north_west", 5],
     ["west", 6],
