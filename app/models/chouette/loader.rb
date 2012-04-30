@@ -1,5 +1,15 @@
 require 'tmpdir'
 
+if RUBY_PLATFORM == "java"
+  # FIXME disable remove_entry_secure because incompatible with jruby ?! 
+  # See http://jira.codehaus.org/browse/JRUBY-4082
+  module FileUtils
+    def self.remove_entry_secure(*args)
+      self.remove_entry *args
+    end
+  end
+end
+
 class Chouette::Loader
 
   attr_reader :schema, :database, :user, :password, :host
@@ -43,8 +53,12 @@ class Chouette::Loader
         f.puts "database.hbm2ddl.auto=create"
       end
 
-      logger.debug "chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"
-      execute! "#{chouette_command} -classpath #{config_dir} -c import -o line -format XMLNeptuneLine -xmlFile #{File.expand_path(file)} -c save -propagate"
+      command = "#{chouette_command} -classpath #{config_dir} -c massImport -o line -format NEPTUNE -inputFile #{File.expand_path(file)} -optimizeMemory"
+
+      logger.debug "Execute '#{command}'"
+      logger.debug "Chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"
+
+      execute! command
     end
   end
 
