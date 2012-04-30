@@ -10,8 +10,6 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
   OBJECT_ID_KEY='ConnectionLink'
 
   validates_presence_of :name
-  validates_presence_of :departure
-  validates_presence_of :arrival
 
   validates_presence_of :objectid
   validates_uniqueness_of :objectid

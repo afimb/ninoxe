@@ -8,9 +8,6 @@ describe Chouette::ConnectionLink do
 
   it { should validate_presence_of :name }
 
-  it { should validate_presence_of :departure }
-  it { should validate_presence_of :arrival }
-
   describe "#connection_link_type" do
 
     def self.legacy_link_types
