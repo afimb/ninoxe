@@ -60,7 +60,7 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
 
   @@connection_link_types = nil
   def self.connection_link_types
-    @@connection_link_types ||= Chouette::TransportMode.all
+    @@connection_link_types ||= Chouette::ConnectionLinkType.all
   end
 
   
