@@ -50,7 +50,6 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
   end
 
   def connection_link_type
-    # return nil if transport_mode_name is nil
     link_type && Chouette::ConnectionLinkType.new( link_type.underscore)
   end
 
@@ -65,6 +64,10 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
 
   def possible_areas
     Chouette::StopArea.where("areatype != 'ITL'")
+  end
+
+  def stop_areas
+    Chouette::StopArea.where(:id => [self.departure_id,self.arrival_id])
   end
 
 end
