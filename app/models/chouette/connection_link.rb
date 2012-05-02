@@ -63,6 +63,9 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
     @@connection_link_types ||= Chouette::ConnectionLinkType.all
   end
 
-  
+  def possible_areas
+    Chouette::StopArea.where("areatype != 'ITL'")
+  end
+
 end
 
