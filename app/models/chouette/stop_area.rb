@@ -6,6 +6,7 @@ class Chouette::StopArea < Chouette::ActiveRecord
   set_primary_key :id
   include Geokit::Mappable
   attr_accessor :type
+  attr_accessor :children_ids
 
   OBJECT_ID_KEY='StopArea'
   
@@ -132,6 +133,13 @@ class Chouette::StopArea < Chouette::ActiveRecord
 
   def type=(type)
     self.area_type = (type ? type.camelcase : nil)
+  end
+
+  def children_ids=(children_ids)
+    children = children_ids.split(',')
+    Chouette::StopArea.find(children).each do |child|
+     child.update_attribute :parent_id, self.id
+    end
   end
 
   @@types = nil
