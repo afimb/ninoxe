@@ -45,6 +45,13 @@ class Chouette::Route < Chouette::ActiveRecord
     self.version ||= 1
   end
 
+  def geometry
+    points = stop_areas.map(&:to_lat_lng).compact.map do |loc|
+      [loc.lng, loc.lat]
+    end
+    GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
+  end
+
   def timestamp_attributes_for_update #:nodoc:
     [:creationtime]
   end
@@ -100,7 +107,7 @@ class Chouette::Route < Chouette::ActiveRecord
   end
   
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => :route).where(:route => {:id => self.id})
+    Chouette::StopArea.joins(:stop_points => :route).where(:route => {:id => self.id}).order("stoppoint.position")
   end
 end
 
