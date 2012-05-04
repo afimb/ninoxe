@@ -68,12 +68,6 @@ class Chouette::Line < Chouette::ActiveRecord
     end
   end
 
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
-    end
-  end
-
   def timestamp_attributes_for_update #:nodoc:
     [:creationtime]
   end
