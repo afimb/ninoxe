@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Chouette::ConnectionLink do
+  let!(:quay) { Factory :stop_area, :area_type => "Quay" }
+  let!(:boarding_position) { Factory :stop_area, :area_type => "BoardingPosition" }
+  let!(:commercial_stop_point) { Factory :stop_area, :area_type => "CommercialStopPoint" }
+  let!(:stop_place) { Factory :stop_area, :area_type => "StopPlace" }
+  let!(:itl) { Factory :stop_area, :area_type => "ITL" }
   subject { Factory(:connection_link) }
 
   it { should validate_uniqueness_of :objectid }
@@ -39,6 +44,13 @@ describe Chouette::ConnectionLink do
       subject.link_type.should == "Test"
     end
 
+  end
+
+  describe ".possible_areas" do
+
+    it "should not find areas type ITL" do
+      subject.possible_areas.should_not == [itl] 
+    end
   end
 
 end

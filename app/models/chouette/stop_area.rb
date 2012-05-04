@@ -5,7 +5,8 @@ class Chouette::StopArea < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   include Geokit::Mappable
-  attr_accessor :type
+  attr_accessor :stop_area_type
+  attr_accessor :children_ids
 
   OBJECT_ID_KEY='StopArea'
   
@@ -126,18 +127,25 @@ class Chouette::StopArea < Chouette::ActiveRecord
     GeoRuby::SimpleFeatures::Envelope.from_coordinates coordinates
   end
 
-  def type
+  def stop_area_type
     area_type && Chouette::AreaType.new(area_type.underscore)
   end
 
-  def type=(type)
-    self.area_type = (type ? type.camelcase : nil)
+  def stop_area_type=(stop_area_type)   
+    self.area_type = (stop_area_type ? stop_area_type.camelcase : nil)
   end
 
-  @@types = nil
-  def self.types
-    @@types ||= Chouette::AreaType.all.select do |type|
-      type.to_i >= 0
+  @@stop_area_types = nil
+  def self.stop_area_types
+    @@stop_area_types ||= Chouette::AreaType.all.select do |stop_area_type|
+      stop_area_type.to_i >= 0
+    end
+  end
+
+  def children_ids=(children_ids)
+    children = children_ids.split(',')
+    Chouette::StopArea.find(children).each do |child|
+     child.update_attribute :parent_id, self.id
     end
   end
 
