@@ -8,7 +8,7 @@ gemspec
 # jquery-rails is used by the dummy application
 gem "jquery-rails"
 gem "acts_as_tree", :git => "git://github.com/dryade/acts_as_tree.git"
-gem "acts_as_list"
+gem "acts_as_list", :git => "git://github.com/swanandp/acts_as_list.git"
 
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or

@@ -20,10 +20,15 @@ module Chouette
       # Rails.logger.error("method_missing : #{method}")
       # puts "method_missing : #{method}"
       method_without_underscore = method.to_s.gsub(/(\w)_/, "\\1")
-      if respond_to?(method_without_underscore)
-        send(method_without_underscore, *args, &block)
-      else
+      if method_without_underscore == method.to_s
+        # to avoid endless loop
         super
+      else
+        if respond_to?(method_without_underscore)
+          send(method_without_underscore, *args, &block)
+        else
+          super
+        end
       end
     end
 
@@ -31,7 +36,11 @@ module Chouette
       # Rails.logger.error("respond_to? : #{method}")
       # puts "respond_to : #{method}"
       method_without_underscore = method.to_s.gsub(/(\w)_/, "\\1")
-      super || super(method_without_underscore, include_private)
+      if method_without_underscore == method.to_s 
+        super
+      else
+        super || super(method_without_underscore, include_private)
+      end
     end
 
     class << self
