@@ -10,10 +10,11 @@ describe Chouette::TimeTable do
   it { should validate_uniqueness_of :objectid }
 
   describe ".dates" do
-    it "should add dates" do
+    it "should add date at position 0" do
       subject = Factory :time_table 
       subject.dates.create(:date => Date.new(2012,1,10))
-      subject.dates.count.should == 1 
+      puts " position = #{subject.dates.first.position}"
+      subject.dates.first.position.should == 0
     end
   end
 
