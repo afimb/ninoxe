@@ -66,7 +66,7 @@ module Chouette
           self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:__pending_id__#{rand(1000)}"
         elsif not self.objectid.include? ':'
           # if one token : technical token : completed by prefix and key
-          self.objectid = "NINOXE::#{self.class::OBJECT_ID_KEY}:#{self.objectid}"
+          self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:#{self.objectid}"
         end
         # logger.info 'end before_validation : '+self.objectid
       end
