@@ -4,9 +4,6 @@ require 'rails/all'
 
 Bundler.require
 require "ninoxe"
-# TODO: remove that following specific requires, it should be done just in lines before
-require "composite_primary_keys"
-require "acts_as_list"
 
 module Dummy
   class Application < Rails::Application
