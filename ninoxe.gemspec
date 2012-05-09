@@ -26,5 +26,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('GeoRuby')
   s.add_runtime_dependency('geokit')
   s.add_runtime_dependency("rails", "3.1.3")
+  s.add_runtime_dependency("acts_as_list", "0.1.6")
 
 end
