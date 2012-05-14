@@ -149,4 +149,12 @@ class Chouette::StopArea < Chouette::ActiveRecord
     end
   end
 
+  def last_parent
+    last_parent = self
+    while last_parent.parent
+      last_parent = last_parent.parent
+    end
+    last_parent
+  end
+
 end

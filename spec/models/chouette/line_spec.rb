@@ -18,6 +18,27 @@ describe Chouette::Line do
 
   # it { should validate_numericality_of :objectversion }
 
+  describe ".last_stop_areas_parents" do
+    
+    it "should return stop areas if no parents" do
+      line = Factory(:line_with_stop_areas)
+      line.last_stop_areas_parents.should == line.stop_areas
+    end
+
+    it "should return stop areas parents if parents" do
+      line = Factory(:line_with_stop_areas)
+      route = Factory(:route, :line => line)
+      parent = Factory(:stop_area)
+      stop_areas = [ Factory(:stop_area),  Factory(:stop_area), Factory(:stop_area, :parent_id => parent.id) ]
+      stop_areas.each do |stop_area|
+        Factory(:stop_point, :stop_area => stop_area, :route => route)
+      end   
+
+      line.last_stop_areas_parents.should =~ line.stop_areas[0..(line.stop_areas.size - 2)].push(parent)
+    end
+    
+  end
+
   describe "#transport_mode" do
 
     def self.legacy_transport_mode_names

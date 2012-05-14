@@ -80,4 +80,8 @@ class Chouette::Line < Chouette::ActiveRecord
     Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id})
   end
 
+  def last_stop_areas_parents
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id}).collect(&:last_parent).flatten.uniq
+  end
+
 end

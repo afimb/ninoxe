@@ -9,6 +9,16 @@ describe Chouette::StopArea do
 
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
+  describe ".last_parent" do
+    it "should return the last parent" do
+      stop_place = Factory :stop_area, :area_type => "StopPlace"
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => stop_place  
+      subject = Factory :stop_area, :parent => commercial_stop_point
+      subject.last_parent.should == stop_place
+    end
+  end
+
+
   describe ".parent" do
     it "should check if parent method exists" do
       subject = Factory :stop_area, :parent_id => commercial_stop_point.id
