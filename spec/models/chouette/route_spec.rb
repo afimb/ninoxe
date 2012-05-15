@@ -51,6 +51,16 @@ describe Chouette::Route do
     end
   end
 
+  describe "#stop_points" do
+    context "#find_by_stop_area" do
+      context "when arg is first quay id" do
+        let(:first_stop_point) { subject.stop_points.first}
+        it "should return first quay" do
+          subject.stop_points.find_by_stop_area( first_stop_point.stop_area_id).should eq( first_stop_point)
+        end
+      end
+    end
+  end
   describe "#stop_areas" do
     let(:line){ Factory(:line)}
     let(:route_1){ Factory(:route, :line => line)}

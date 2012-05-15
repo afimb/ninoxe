@@ -20,5 +20,18 @@ describe Chouette::TimeTable do
       end
     end
   end
+  describe "#periods" do
+    it "should begin with position 0" do
+      subject.periods.first.position.should == 0
+    end
+    context "when first period has been removed" do
+      before do
+        subject.periods.first.destroy
+      end
+      it "should begin with position 0" do
+        subject.periods.first.position.should == 0
+      end
+    end
+  end
 
 end

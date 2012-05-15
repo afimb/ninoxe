@@ -6,10 +6,39 @@ class Chouette::Route < Chouette::ActiveRecord
   attr_accessor :direction_code
 
   belongs_to :line
-  has_many :stop_points, :order => 'position', :dependent => :destroy
-  has_many :stop_areas, :through => :stop_points, :order => 'stoppoint.position' 
   has_many :vehicle_journeys, :dependent => :destroy
   has_one :opposite_route, :class_name => 'Chouette::Route'
+  has_many :stop_points, :order => 'position', :dependent => :destroy do
+    def find_by_stop_area(stop_area)
+      stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
+      where( :stopareaid => stop_area_ids).first or
+        raise ActiveRecord::RecordNotFound.new("Can't find a StopArea #{stop_area.inspect} in Route #{owner.id.inspect}'s StopPoints")
+    end
+
+    def between(departure, arrival)
+      between_positions = [departure, arrival].collect do |endpoint|
+        case endpoint
+        when Chouette::StopArea
+          find_by_stop_area(endpoint).position
+        when  Chouette::StopPoint
+          endpoint.position
+        when Integer
+          endpoint
+        else
+          raise ActiveRecord::RecordNotFound.new("Can't determine position in route #{proxy_owner.id} with #{departure.inspect}")
+        end        
+      end
+      where(" position between ? and ? ", between_positions.first, between_positions.last)
+    end
+  end
+  has_many :stop_areas, :through => :stop_points, :order => 'stop_point.position' do
+    def between(departure, arrival)
+      departure, arrival = [departure, arrival].collect do |endpoint|
+        String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint
+      end
+      proxy_owner.stop_points.between(departure, arrival).includes(:stop_area).collect(&:stop_area)
+    end
+  end
 
   OBJECT_ID_KEY='Route'
 
