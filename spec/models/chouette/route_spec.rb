@@ -8,6 +8,49 @@ describe Chouette::Route do
 
   it { should validate_presence_of :name }
 
+  context "reordering methods" do
+    let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}} 
+    let( :ident){subject.stop_points.map(&:id)} 
+    let( :first_last_swap){ [ident.last] + ident[1..-2] + [ident.first]} 
+
+    describe "#reorder!" do
+      context "invalid stop_point_ids" do
+        let( :new_stop_point_ids) { bad_stop_point_ids}
+        it { expect { subject.reorder! new_stop_point_ids}.to raise_error(ArgumentError)}
+      end
+
+      context "swaped last and first stop_point_ids" do
+        let!( :new_stop_point_ids) { first_last_swap}
+        let!( :old_stop_point_ids) { subject.stop_points.map(&:id) }
+        let!( :old_stop_area_ids) { subject.stop_areas.map(&:id) }
+
+        it "should keep stop_point_ids order unchanged" do
+          subject.reorder!( new_stop_point_ids)
+          subject.stop_points.map(&:id).should eq( old_stop_point_ids)
+        end
+        it "should have changed stop_area_ids order" do
+          subject.reorder!( new_stop_point_ids)
+          subject.stop_areas.map(&:id).should eq( [old_stop_area_ids.last] + old_stop_area_ids[1..-2] + [old_stop_area_ids.first])
+        end
+      end
+    end
+
+    describe "#stop_point_permutation?" do
+      context "invalid stop_point_ids" do
+        let( :new_stop_point_ids) { bad_stop_point_ids}
+        it { should_not be_stop_point_permutation( new_stop_point_ids)}
+      end
+      context "unchanged stop_point_ids" do
+        let( :new_stop_point_ids) { ident}
+        it { should be_stop_point_permutation( new_stop_point_ids)}
+      end
+      context "swaped last and first stop_point_ids" do
+        let( :new_stop_point_ids) { first_last_swap}
+        it { should be_stop_point_permutation( new_stop_point_ids)}
+      end
+    end
+  end
+
   describe "#stop_areas" do
     let(:line){ Factory(:line)}
     let(:route_1){ Factory(:route, :line => line)}

@@ -109,5 +109,33 @@ class Chouette::Route < Chouette::ActiveRecord
   def stop_areas
     Chouette::StopArea.joins(:stop_points => :route).where(:route => {:id => self.id}).order("stoppoint.position")
   end
+  
+  def stop_point_permutation?( stop_point_ids)
+    stop_points.map(&:id).sort.join(',') == stop_point_ids.sort.join(',')
+  end
+
+  def reorder!( stop_point_ids)
+    unless stop_point_permutation?( stop_point_ids)
+      raise ArgumentError.new( "New stop point order is not valid, current order #{stop_points.map(&:id).join(',')}, but stop_point_ids received are #{stop_point_ids.join(',')}#")
+    end
+    
+    stop_area_id_by_stop_point_id = {}
+    stop_points.each do |sp|
+      stop_area_id_by_stop_point_id.merge!( sp.id => sp.stop_area_id)
+    end
+
+    reordered_stop_area_ids = []
+    stop_point_ids.each do |stop_point_id|
+      reordered_stop_area_ids << stop_area_id_by_stop_point_id[ stop_point_id.to_i]
+    end
+
+    stop_points.each_with_index do |sp, index|
+      if sp.stop_area_id.to_s != reordered_stop_area_ids[ index].to_s
+        #result = sp.update_attributes( :stopareaid => reordered_stop_area_ids[ index])
+        sp.stop_area_id = reordered_stop_area_ids[ index]
+        result = sp.save!
+      end
+    end
+  end
 end
 
