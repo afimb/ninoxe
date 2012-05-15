@@ -24,6 +24,14 @@ class Chouette::StopArea < Chouette::ActiveRecord
 
   validates_numericality_of :version
 
+  def children_in_depth
+    return [] if self.children.empty?
+
+    self.children + self.children.map do |child|
+      child.children_in_depth
+    end.flatten.compact
+  end
+
   def possible_children
     case area_type
       when "BoardingPosition" then []
@@ -147,14 +155,6 @@ class Chouette::StopArea < Chouette::ActiveRecord
     Chouette::StopArea.find(children).each do |child|
      child.update_attribute :parent_id, self.id
     end
-  end
-
-  def last_parent
-    last_parent = self
-    while last_parent.parent
-      last_parent = last_parent.parent
-    end
-    last_parent
   end
 
 end

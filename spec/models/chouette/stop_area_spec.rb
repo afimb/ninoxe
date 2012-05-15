@@ -9,12 +9,13 @@ describe Chouette::StopArea do
 
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
-  describe ".last_parent" do
-    it "should return the last parent" do
-      stop_place = Factory :stop_area, :area_type => "StopPlace"
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => stop_place  
-      subject = Factory :stop_area, :parent => commercial_stop_point
-      subject.last_parent.should == stop_place
+  describe ".children_in_depth" do
+    it "should return all the deepest children from stop area" do
+      subject = Factory :stop_area, :area_type => "StopPlace"
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => subject 
+      commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => commercial_stop_point
+      quay = Factory :stop_area, :parent => commercial_stop_point
+      subject.children_in_depth.should =~ [commercial_stop_point, commercial_stop_point2, quay]
     end
   end
 
