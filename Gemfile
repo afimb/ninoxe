@@ -8,11 +8,6 @@ gemspec
 # jquery-rails is used by the dummy application
 gem "jquery-rails"
 gem "acts_as_tree", :git => "git://github.com/dryade/acts_as_tree.git"
-# TODO: remove following librairies already defined in .gemspec
-# when executing spec, it turns to be necessary
-gem 'composite_primary_keys', '4.1.2'
-gem 'acts_as_list', "0.1.6"
-# TODO END
 
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or

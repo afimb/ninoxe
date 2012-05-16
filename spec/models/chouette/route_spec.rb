@@ -16,7 +16,7 @@ describe Chouette::Route do
     describe "#reorder!" do
       context "invalid stop_point_ids" do
         let( :new_stop_point_ids) { bad_stop_point_ids}
-        it { expect { subject.reorder! new_stop_point_ids}.to raise_error(ArgumentError)}
+        it { subject.reorder!( new_stop_point_ids).should be_false}
       end
 
       context "swaped last and first stop_point_ids" do
@@ -25,11 +25,11 @@ describe Chouette::Route do
         let!( :old_stop_area_ids) { subject.stop_areas.map(&:id) }
 
         it "should keep stop_point_ids order unchanged" do
-          subject.reorder!( new_stop_point_ids)
+          subject.reorder!( new_stop_point_ids).should be_true
           subject.stop_points.map(&:id).should eq( old_stop_point_ids)
         end
         it "should have changed stop_area_ids order" do
-          subject.reorder!( new_stop_point_ids)
+          subject.reorder!( new_stop_point_ids).should be_true
           subject.stop_areas.map(&:id).should eq( [old_stop_area_ids.last] + old_stop_area_ids[1..-2] + [old_stop_area_ids.first])
         end
       end

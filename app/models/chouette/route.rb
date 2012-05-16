@@ -140,13 +140,11 @@ class Chouette::Route < Chouette::ActiveRecord
   end
   
   def stop_point_permutation?( stop_point_ids)
-    stop_points.map(&:id).sort.join(',') == stop_point_ids.sort.join(',')
+    stop_points.map(&:id).map(&:to_s).sort == stop_point_ids.map(&:to_s).sort
   end
 
   def reorder!( stop_point_ids)
-    unless stop_point_permutation?( stop_point_ids)
-      raise ArgumentError.new( "New stop point order is not valid, current order #{stop_points.map(&:id).join(',')}, but stop_point_ids received are #{stop_point_ids.join(',')}#")
-    end
+    return false unless stop_point_permutation?( stop_point_ids)
     
     stop_area_id_by_stop_point_id = {}
     stop_points.each do |sp|
@@ -165,6 +163,8 @@ class Chouette::Route < Chouette::ActiveRecord
         result = sp.save!
       end
     end
+
+    return true
   end
 end
 
