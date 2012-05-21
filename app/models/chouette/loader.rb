@@ -50,7 +50,7 @@ class Chouette::Loader
         f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
         f.puts "jdbc.username = #{user}"
         f.puts "jdbc.password = #{password}"
-        f.puts "database.hbm2ddl.auto=create"
+        f.puts "database.hbm2ddl.auto=update"
       end
 
       command = "#{chouette_command} -classpath #{config_dir} -c massImport -o line -format NEPTUNE -inputFile #{File.expand_path(file)} -optimizeMemory"
