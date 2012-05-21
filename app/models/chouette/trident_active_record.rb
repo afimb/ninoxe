@@ -1,17 +1,4 @@
-class Chouette::StopPoint < Chouette::ActiveRecord
-  # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
-
-  belongs_to :stop_area
-  belongs_to :route
-  acts_as_list :scope => 'routeid = \'#{route.id}\''
-
-  has_many :vehicle_journey_at_stops, :dependent => :destroy
-  has_many :vehicle_journeys, :through => :vehicle_journey_at_stops, :uniq => true
-  
-  scope :default_order, order("position")
-
-  OBJECT_ID_KEY='StopPoint'
+class Chouette::TridentActiveRecord < Chouette::ActiveRecord
 
   validates_presence_of :objectid
   validates_uniqueness_of :objectid
@@ -21,7 +8,7 @@ class Chouette::StopPoint < Chouette::ActiveRecord
     Regexp.new "\\A[0-9A-Za-z_]+:#{model_name}:[0-9A-Za-z_-]+\\Z"
   end
   def self.model_name
-    ActiveModel::Name.new Chouette::StopPoint, Chouette, "StopPoint"
+    ActiveModel::Name.new self, Chouette, self.name.demodulize
   end
   validates_format_of :objectid, :with => self.objectid_format
 
@@ -48,10 +35,6 @@ class Chouette::StopPoint < Chouette::ActiveRecord
   
   def timestamp_attributes_for_create #:nodoc:
     [:creationtime]
-  end
-
-  def self.area_candidates
-    Chouette::StopArea.where( :areatype => ['Quay', 'BoardingPosition'])
   end
 
 end

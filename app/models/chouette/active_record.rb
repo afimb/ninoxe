@@ -101,6 +101,8 @@ module Chouette
       @@rewrites = 
         [[ /_/, "" ], 
          [ "time_table", "timetable" ],
+         [ "journey_pattern", "journeypattern" ],
+         [ "journey_pattern_stop_point", "journeypattern_stoppoint" ],
          [ /timetable(period|date)/, "timetable_\\1" ],
          [ /^network/, "ptnetwork" ]
         ]
