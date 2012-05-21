@@ -104,6 +104,21 @@ class Chouette::StopArea < Chouette::ActiveRecord
     GeoRuby::SimpleFeatures::Point.from_lon_lat(to_lat_lng.lng, to_lat_lng.lat, 4326) if to_lat_lng
   end
 
+  def position 
+    geometry
+  end
+
+  def position=(position)
+    position = nil if String === position && position == ""
+    position = Geokit::LatLng.normalize(position), 4326 if String === position
+    self.latitude = position.lat
+    self.longitude = position.lng
+  end
+
+  def default_position 
+    Chouette::StopArea.bounds.center
+  end
+
   def objectid
     Chouette::ObjectId.new read_attribute(:objectid)
   end
