@@ -1,15 +1,13 @@
 require 'geokit'
 require 'geo_ruby'
 
-class Chouette::StopArea < Chouette::ActiveRecord
+class Chouette::StopArea < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   include Geokit::Mappable
   attr_accessor :stop_area_type
   attr_accessor :children_ids
 
-  OBJECT_ID_KEY='StopArea'
-  
   has_many :stop_points, :dependent => :destroy
 
   acts_as_tree :foreign_key => 'parentid'
@@ -17,12 +15,6 @@ class Chouette::StopArea < Chouette::ActiveRecord
   validates_uniqueness_of :registrationnumber
   validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:StopArea:[0-9A-Za-z_-]+\Z}
-
-  validates_numericality_of :version
 
   def children_in_depth
     return [] if self.children.empty?
@@ -57,39 +49,14 @@ class Chouette::StopArea < Chouette::ActiveRecord
     end
   end
 
-  def self.model_name
-    ActiveModel::Name.new Chouette::StopArea, Chouette, "StopArea"
-  end
-
   def lines
     self.stop_points.collect(&:route).flatten.collect(&:line).flatten.uniq
-  end
-
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
   end
 
   def valid?(*args)
     super.tap do |valid|
       errors[:registration_number] = errors[:registrationnumber]
     end
-  end
-
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
   end
 
   def self.commercial
@@ -102,10 +69,6 @@ class Chouette::StopArea < Chouette::ActiveRecord
 
   def geometry
     GeoRuby::SimpleFeatures::Point.from_lon_lat(to_lat_lng.lng, to_lat_lng.lat, 4326) if to_lat_lng
-  end
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
   end
 
   def self.near(origin, distance = 0.3)

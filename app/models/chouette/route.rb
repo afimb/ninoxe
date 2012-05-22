@@ -1,4 +1,4 @@
-class Chouette::Route < Chouette::ActiveRecord
+class Chouette::Route < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
@@ -40,53 +40,13 @@ class Chouette::Route < Chouette::ActiveRecord
     end
   end
 
-  OBJECT_ID_KEY='Route'
-
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-
-  validates_numericality_of :objectversion
-
-  def self.objectid_format
-    Regexp.new "\\A[0-9A-Za-z_]+:#{model_name}:[0-9A-Za-z_-]+\\Z"
-  end
-  def self.model_name
-    ActiveModel::Name.new Chouette::Route, Chouette, "Route"
-  end
-  validates_format_of :objectid, :with => self.objectid_format
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
-  end
-
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
-  end
 
   def geometry
     points = stop_areas.map(&:to_lat_lng).compact.map do |loc|
       [loc.lng, loc.lat]
     end
     GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
-  end
-
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
   end
 
   def self.direction_binding

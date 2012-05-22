@@ -3,9 +3,6 @@
 module Chouette
   class ActiveRecord < ::ActiveRecord::Base
 
-    before_validation :prepare_auto_columns
-    after_create :build_objectid
-
     self.abstract_class = true
 
     def human_attribute_name(*args)
@@ -54,47 +51,6 @@ module Chouette
       end
     end
 
-    # triggers to generate objectId and objectVersion 
-    # TODO setting prefix in referential object
-    
-    def prepare_auto_columns
-      # logger.info 'calling before_validation'
-      if defined? self.objectid && defined? self.class::OBJECT_ID_KEY
-        # logger.info 'start before_validation : '+self.objectid.to_s
-        if self.objectid.to_s.empty?
-          # if empty, generate a pending objectid which will be completed after creation
-          self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:__pending_id__#{rand(1000)}"
-        elsif not self.objectid.include? ':'
-          # if one token : technical token : completed by prefix and key
-          self.objectid = "NINOXE:#{self.class::OBJECT_ID_KEY}:#{self.objectid}"
-        end
-        # logger.info 'end before_validation : '+self.objectid
-      end
-      if defined? self.objectversion
-        # initialize or update version
-        if self.objectversion.nil?
-          self.objectversion = 1
-        else
-          self.object_version += 1
-        end
-      end
-      if defined? self.creationtime
-        self.creationtime = Time.now
-      end
-      if defined? self.creatorid
-        self.creatorid = 'chouette'
-      end
-    end
-    
-    def build_objectid
-      return unless defined?(self.objectid)
-      # logger.info 'start after_create : '+self.objectid
-      if self.objectid.include? ':__pending_id__'
-        base_objectid = self.objectid.rpartition(":").first
-        self.update_attributes( :objectid => "#{base_objectid}:#{self.id}", :object_version => (self.object_version - 1) )
-      end
-      # logger.info 'end after_create : '+self.objectid
-    end
 
     module Inflector
 

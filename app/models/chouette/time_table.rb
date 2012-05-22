@@ -1,8 +1,6 @@
-class Chouette::TimeTable < Chouette::ActiveRecord
+class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
-  
-  OBJECT_ID_KEY='Timetable'
   
   has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position, :dependent => :destroy
   has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position, :dependent => :destroy
@@ -11,17 +9,6 @@ class Chouette::TimeTable < Chouette::ActiveRecord
   accepts_nested_attributes_for :periods, :allow_destroy => :true
 
   validates_presence_of :comment
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Timetable:[0-9A-Za-z_-]+\Z}
-
-  validates_presence_of :objectversion
-  validates_numericality_of :objectversion
-
-  def self.model_name
-    ActiveModel::Name.new Chouette::TimeTable, Chouette, "TimeTable"
-  end
 
   def self.start_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodstart)).min
