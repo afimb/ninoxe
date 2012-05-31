@@ -28,7 +28,7 @@ describe Chouette::ActiveRecord do
     
     it "should support method with additionnal underscores" do
       stop_area = Chouette::StopArea.new
-      stop_area.area_type.should == stop_area.areatype
+      stop_area.area_type.should == stop_area.area_type
     end
 
   end
@@ -144,7 +144,7 @@ describe Chouette::ActiveRecord::Reflection do
     
     it "should be created from foreign_key_name with underscores" do
       subject.stub :foreign_key_name => "DummyForeignKey"
-      subject.foreign_key.should == "dummyforeignkeyid"
+      subject.foreign_key.should == "dummy_foreign_key_id"
     end
 
   end

@@ -23,7 +23,7 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   end
 
   def possible_areas
-    Chouette::StopArea.where("areatype != 'ITL'")
+    Chouette::StopArea.where("area_type != 'ITL'")
   end
 
   def stop_areas

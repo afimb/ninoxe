@@ -6,12 +6,13 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessor :direction_code
 
   belongs_to :line
+  has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy
   has_one :opposite_route, :class_name => 'Chouette::Route'
   has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
-      where( :stopareaid => stop_area_ids).first or
+      where( :stop_area_id => stop_area_ids).first or
         raise ActiveRecord::RecordNotFound.new("Can't find a StopArea #{stop_area.inspect} in Route #{owner.id.inspect}'s StopPoints")
     end
 
@@ -31,7 +32,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
       where(" position between ? and ? ", between_positions.first, between_positions.last)
     end
   end
-  has_many :stop_areas, :through => :stop_points, :order => 'stop_point.position' do
+  has_many :stop_areas, :through => :stop_points, :order => 'stoppoint.position' do
     def between(departure, arrival)
       departure, arrival = [departure, arrival].collect do |endpoint|
         String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint

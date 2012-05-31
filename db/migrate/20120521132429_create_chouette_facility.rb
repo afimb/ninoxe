@@ -1,29 +1,29 @@
 class CreateChouetteFacility < ActiveRecord::Migration
   def up
     create_table :facility, :force => true do |t|
-      t.integer  "stopareaid",      :limit => 8
-      t.integer  "lineid",          :limit => 8
-      t.integer  "connectionlinkid",:limit => 8
-      t.integer  "stoppointid",     :limit => 8
+      t.integer  "stop_area_id",      :limit => 8
+      t.integer  "line_id",          :limit => 8
+      t.integer  "connection_link_id",:limit => 8
+      t.integer  "stop_point_id",     :limit => 8
 
-      t.string   "objectid"
-      t.integer  "objectversion"
-      t.datetime "creationtime"
-      t.string   "creatorid"
+      t.string   "objectid", :null => false
+      t.integer  "object_version"
+      t.datetime "creation_time"
+      t.string   "creator_id"
 
       t.string   "name"
       t.string   "comment"
       t.string   "description"
-      t.boolean  "freeaccess"
+      t.boolean  "free_access"
       t.decimal  "longitude",      :precision => 19, :scale => 16
       t.decimal  "latitude",       :precision => 19, :scale => 16
-      t.string   "longlattype"
+      t.string   "long_lat_type"
       t.decimal  "x",              :precision => 19, :scale => 2
       t.decimal  "y",              :precision => 19, :scale => 2
-      t.string   "projectiontype"
-      t.string   "countrycode"
-      t.string   "streetname"
-      t.string   "containedin"
+      t.string   "projection_type"
+      t.string   "country_code"
+      t.string   "street_name"
+      t.string   "contained_in"
     end
   end
 

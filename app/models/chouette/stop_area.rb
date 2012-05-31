@@ -10,10 +10,10 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   has_many :stop_points, :dependent => :destroy
 
-  acts_as_tree :foreign_key => 'parentid'
+  acts_as_tree :foreign_key => 'parent_id'
 
-  validates_uniqueness_of :registrationnumber
-  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
+  validates_uniqueness_of :registration_number
+  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
 
   def children_in_depth
@@ -28,24 +28,18 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     case area_type
       when "BoardingPosition" then []
       when "Quay" then []
-      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => ['Quay', 'BoardingPosition']) - [self]
-      when "StopPlace" then Chouette::StopArea.where(:areatype => ['StopPlace', 'CommercialStopPoint']) - [self]
+      when "CommercialStopPoint" then Chouette::StopArea.where(:area_type => ['Quay', 'BoardingPosition']) - [self]
+      when "StopPlace" then Chouette::StopArea.where(:area_type => ['StopPlace', 'CommercialStopPoint']) - [self]
     end
       
   end
 
   def possible_parents
     case area_type
-      when "BoardingPosition" then Chouette::StopArea.where(:areatype => "CommercialStopPoint")  - [self]
-      when "Quay" then Chouette::StopArea.where(:areatype => "CommercialStopPoint") - [self]
-      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
-      when "StopPlace" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
-    end
-  end
-
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
+      when "BoardingPosition" then Chouette::StopArea.where(:area_type => "CommercialStopPoint")  - [self]
+      when "Quay" then Chouette::StopArea.where(:area_type => "CommercialStopPoint") - [self]
+      when "CommercialStopPoint" then Chouette::StopArea.where(:area_type => "StopPlace") - [self]
+      when "StopPlace" then Chouette::StopArea.where(:area_type => "StopPlace") - [self]
     end
   end
 
@@ -54,7 +48,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def self.commercial
-    where :areatype => "CommercialStopPoint"
+    where :area_type => "CommercialStopPoint"
   end
 
   def to_lat_lng

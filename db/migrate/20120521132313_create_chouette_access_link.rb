@@ -1,29 +1,28 @@
 class CreateChouetteAccessLink < ActiveRecord::Migration
   def up
     create_table :accesslink, :id => false, :force => true do |t|
-      t.integer  "accesspointid", :limit => 8
-      t.integer  "stopareaid",    :limit => 8
-      t.integer  "arrivalid",     :limit => 8
+      t.integer  "access_point_id", :limit => 8
+      t.integer  "stop_area_id",    :limit => 8
 
-      t.string   "objectid"
-      t.integer  "objectversion"
-      t.datetime "creationtime"
-      t.string   "creatorid"
+      t.string   "objectid", :null => false
+      t.integer  "object_version"
+      t.datetime "creation_time"
+      t.string   "creator_id"
 
       t.string   "name"
       t.string   "comment"
-      t.decimal  "linkdistance", :precision => 19, :scale => 2
-      t.boolean  "liftavailability"
-      t.boolean  "mobilityrestrictedsuitability"
-      t.boolean  "stairsavailability"
-      t.time     "defaultduration"
-      t.time     "frequenttravellerduration"
-      t.time     "occasionaltravellerduration"
-      t.time     "mobilityrestrictedtravellerduration"
+      t.decimal  "link_distance", :precision => 19, :scale => 2
+      t.boolean  "lift_availability"
+      t.boolean  "mobility_restricted_suitability"
+      t.boolean  "stairs_availability"
+      t.time     "default_duration"
+      t.time     "frequent_traveller_duration"
+      t.time     "occasional_traveller_duration"
+      t.time     "mobility_restricted_traveller_duration"
 
-      t.string   "linktype"
-      t.integer  "intuserneeds"
-      t.string   "linkorientation"
+      t.string   "link_type"
+      t.integer  "int_user_needs"
+      t.string   "link_orientation"
     end
   end
 

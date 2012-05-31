@@ -5,20 +5,24 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position, :dependent => :destroy
   has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position, :dependent => :destroy
 
+  def self.object_id_key
+    "Timetable"
+  end
+
   accepts_nested_attributes_for :dates, :allow_destroy => :true
   accepts_nested_attributes_for :periods, :allow_destroy => :true
 
   validates_presence_of :comment
 
   def self.start_validity_period
-    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodstart)).min
+    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_start)).min
   end
   def self.end_validity_period
-    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:periodend)).max
+    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
   end
 
   def day_by_mask(flag)
-    intdaytypes & flag == flag
+    int_day_types & flag == flag
   end
 
   def monday
@@ -45,9 +49,9 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   
   def set_day(day,flag)
     if (day == '1') 
-      self.intdaytypes |= flag
+      self.int_day_types |= flag
     else
-      self.intdaytypes &= ~flag
+      self.int_day_types &= ~flag
     end
   end
   

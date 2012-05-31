@@ -1,12 +1,14 @@
 class Chouette::Network < Chouette::TridentActiveRecord
+  set_table_name "ptnetwork"
+
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   
   has_many :lines
 
-  validates_presence_of :registrationnumber
-  validates_uniqueness_of :registrationnumber
-  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}
+  validates_presence_of :registration_number
+  validates_uniqueness_of :registration_number
+  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
 
   def self.object_id_key
     "GroupOfLine"

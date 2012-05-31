@@ -22,13 +22,13 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       end
       # logger.info 'end before_validation : '+self.objectid
       # initialize or update version
-      if self.objectversion.nil?
-        self.objectversion = 1
+      if self.object_version.nil?
+        self.object_version = 1
       else
         self.object_version += 1
       end
-      self.creationtime = Time.now
-      self.creatorid = 'chouette'
+      self.creation_time = Time.now
+      self.creator_id = 'chouette'
     end
     
     def build_objectid
@@ -42,7 +42,7 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
 
   validates_presence_of :objectid
   validates_uniqueness_of :objectid
-  validates_numericality_of :objectversion
+  validates_numericality_of :object_version
   validate :objectid_format_compliance
 
   def objectid_format_compliance
@@ -63,11 +63,11 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
   end
 
   def version
-    self.objectversion
+    self.object_version
   end
 
   def version=(version)
-    self.objectversion = version
+    self.object_version = version
   end
 
   before_validation :default_values, :on => :create
@@ -76,11 +76,11 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
   end
 
   def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
+    [:creation_time]
   end
   
   def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
+    [:creation_time]
   end
 
 end

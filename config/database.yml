@@ -11,7 +11,6 @@ test:
   database: ninoxe_test
   username: chouette
   password: chouette
-  schema_search_path: chouette
 
 production:
   adapter: postgresql

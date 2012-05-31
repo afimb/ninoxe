@@ -1,10 +1,10 @@
 class CreateChouetteGroupOfLine < ActiveRecord::Migration
   def up
     create_table :groupofline, :force => true do |t|
-      t.string   "objectid"
-      t.integer  "objectversion"
-      t.datetime "creationtime"
-      t.string   "creatorid"
+      t.string   "objectid", :null => false
+      t.integer  "object_version"
+      t.datetime "creation_time"
+      t.string   "creator_id"
 
       t.string   "name"
       t.string   "comment"

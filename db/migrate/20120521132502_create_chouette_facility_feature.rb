@@ -1,8 +1,8 @@
 class CreateChouetteFacilityFeature < ActiveRecord::Migration
   def up
     create_table :facilityfeature, :id => false, :force => true do |t|
-      t.integer  "facilityid", :limit => 8
-      t.integer  "choicecode"
+      t.integer  "facility_id", :limit => 8
+      t.integer  "choice_code"
     end
   end
 

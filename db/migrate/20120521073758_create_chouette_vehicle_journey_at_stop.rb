@@ -1,30 +1,25 @@
 class CreateChouetteVehicleJourneyAtStop < ActiveRecord::Migration
   def up
-    create_table :vehiclejourneyatstop, :id => false, :force => true do |t|
-      t.integer  "vehiclejourneyid", :limit => 8
-      t.integer  "stoppointid", :limit => 8
+    create_table :vehiclejourneyatstop, :force => true do |t|
+      t.integer  "vehicle_journey_id", :limit => 8
+      t.integer  "stop_point_id", :limit => 8
 
-      t.string  "connectingserviceid"
-      t.string  "boardingalightingpossibility"
+      t.string  "connecting_service_id"
+      t.string  "boarding_alighting_possibility"
       
-      t.datetime "arrivaltime"
-      t.datetime "departuretime"
-      t.datetime "waitingtime"
-      t.datetime "elapseduration"
-      t.datetime "headwayfrequency"
-
-      # TODO: delete this column that are here just for chouette-command compliance
-      t.integer  "position"
-      t.boolean  "isdeparture"
-      t.boolean  "isarrival"
+      t.datetime "arrival_time"
+      t.datetime "departure_time"
+      t.datetime "waiting_time"
+      t.datetime "elapse_duration"
+      t.datetime "headway_frequency"
     end
-   add_index "vehiclejourneyatstop", ["vehiclejourneyid"], :name => "index_vehiclejourneyatstop_on_vehiclejourneyid"
-   add_index "vehiclejourneyatstop", ["stoppointid"], :name => "index_vehiclejourneyatstop_on_stoppointid"
+   add_index "vehiclejourneyatstop", ["vehicle_journey_id"], :name => "index_vehicle_journey_at_stop_on_vehicle_journey_id"
+   add_index "vehiclejourneyatstop", ["stop_point_id"], :name => "index_vehicle_journey_at_stop_on_stop_pointid"
   end
 
   def down
-   remove_index "vehiclejourneyatstop", :name => "index_vehiclejourneyatstop_on_vehiclejourneyid"
-   remove_index "vehiclejourneyatstop", :name => "index_vehiclejourneyatstop_on_stoppointid"
+   remove_index "vehiclejourneyatstop", :name => "index_vehicle_journey_at_stop_on_vehicle_journey_id"
+   remove_index "vehiclejourneyatstop", :name => "index_vehicle_journey_at_stop_on_stop_point_id"
    drop_table :vehiclejourneyatstop
   end
 end

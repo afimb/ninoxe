@@ -55,7 +55,7 @@ module Chouette
     module Inflector
 
       @@rewrites = 
-        [[ /_/, "" ], 
+        [["_", ""],
          [ "time_table", "timetable" ],
          [ "journey_pattern", "journeypattern" ],
          [ "journey_pattern_stop_point", "journeypattern_stoppoint" ],
@@ -100,7 +100,7 @@ module Chouette
       end
 
       def foreign_key
-        chouettify foreign_key_name.foreign_key(false)
+        foreign_key_name.foreign_key(true)
       end
 
       def options_with_default
