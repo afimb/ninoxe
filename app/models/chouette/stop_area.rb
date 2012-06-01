@@ -73,7 +73,8 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def default_position 
-    Chouette::StopArea.bounds.center
+    # for first StopArea ... the bounds is nil :(
+    Chouette::StopArea.bounds and Chouette::StopArea.bounds.center
   end
 
   def self.near(origin, distance = 0.3)

@@ -1,0 +1,14 @@
+development:
+  adapter: postgresql
+  database: ninoxe_dev
+  username: chouette
+  password: chouette
+  template: template1
+  
+test:
+  adapter: postgresql
+  host: localhost
+  database: ninoxe_test
+  username: chouette
+  password: chouette
+  template: template1
