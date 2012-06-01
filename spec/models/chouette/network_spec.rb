@@ -4,8 +4,8 @@ describe Chouette::Network do
 
   subject { Factory(:network) }
 
-  it { should validate_presence_of :registrationnumber }
-  it { should validate_uniqueness_of :registrationnumber }
+  it { should validate_presence_of :registration_number }
+  it { should validate_uniqueness_of :registration_number }
 
   it { should validate_presence_of :name }
 

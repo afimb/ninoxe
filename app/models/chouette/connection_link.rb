@@ -1,4 +1,4 @@
-class Chouette::ConnectionLink < Chouette::ActiveRecord
+class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
@@ -7,47 +7,7 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
   belongs_to :departure, :class_name => 'Chouette::StopArea'
   belongs_to :arrival, :class_name => 'Chouette::StopArea'
 
-  OBJECT_ID_KEY='ConnectionLink'
-
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-
-  validates_numericality_of :objectversion
-
-  def self.objectid_format
-    Regexp.new "\\A[0-9A-Za-z_]+:#{model_name}:[0-9A-Za-z_-]+\\Z"
-  end
-  def self.model_name
-    ActiveModel::Name.new Chouette::ConnectionLink, Chouette, "ConnectionLink"
-  end
-  validates_format_of :objectid, :with => self.objectid_format
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
-  end
-
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
-  end
-
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
-  end
 
   def connection_link_type
     link_type && Chouette::ConnectionLinkType.new( link_type.underscore)
@@ -63,7 +23,7 @@ class Chouette::ConnectionLink < Chouette::ActiveRecord
   end
 
   def possible_areas
-    Chouette::StopArea.where("areatype != 'ITL'")
+    Chouette::StopArea.where("area_type != 'ITL'")
   end
 
   def stop_areas

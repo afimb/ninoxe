@@ -1,11 +1,9 @@
-class Chouette::Line < Chouette::ActiveRecord
+class Chouette::Line < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
   attr_accessor :transport_mode
 
-  OBJECT_ID_KEY='Line'
-  
   belongs_to :company
   belongs_to :network
   has_many :routes, :dependent => :destroy
@@ -13,44 +11,11 @@ class Chouette::Line < Chouette::ActiveRecord
   validates_presence_of :network
   validates_presence_of :company
 
-  validates_presence_of :registrationnumber
-  validates_uniqueness_of :registrationnumber
-  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}
-
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
-    end
-  end
+  validates_presence_of :registration_number
+  validates_uniqueness_of :registration_number
+  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
 
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:Line:[0-9A-Za-z_-]+\Z}
-
-  validates_numericality_of :objectversion
-
-  def self.model_name
-    ActiveModel::Name.new Chouette::Line, Chouette, "Line"
-  end
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
-  end
-
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
-  end
 
   def transport_mode
     # return nil if transport_mode_name is nil
@@ -68,20 +33,12 @@ class Chouette::Line < Chouette::ActiveRecord
     end
   end
 
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
-  end
-  
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id})
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:lines => {:id => self.id})
   end
 
   def stop_areas_last_parents
-    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id}).collect(&:root).flatten.uniq
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:lines => {:id => self.id}).collect(&:root).flatten.uniq
   end
 
 end

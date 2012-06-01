@@ -1,28 +1,20 @@
 require 'geokit'
 require 'geo_ruby'
 
-class Chouette::StopArea < Chouette::ActiveRecord
+class Chouette::StopArea < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   include Geokit::Mappable
   attr_accessor :stop_area_type
   attr_accessor :children_ids
 
-  OBJECT_ID_KEY='StopArea'
-  
   has_many :stop_points, :dependent => :destroy
 
-  acts_as_tree :foreign_key => 'parentid'
+  acts_as_tree :foreign_key => 'parent_id'
 
-  validates_uniqueness_of :registrationnumber
-  validates_format_of :registrationnumber, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
+  validates_uniqueness_of :registration_number
+  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-  validates_format_of :objectid, :with => %r{\A[0-9A-Za-z_]+:StopArea:[0-9A-Za-z_-]+\Z}
-
-  validates_numericality_of :version
 
   def children_in_depth
     return [] if self.children.empty?
@@ -36,64 +28,27 @@ class Chouette::StopArea < Chouette::ActiveRecord
     case area_type
       when "BoardingPosition" then []
       when "Quay" then []
-      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => ['Quay', 'BoardingPosition']) - [self]
-      when "StopPlace" then Chouette::StopArea.where(:areatype => ['StopPlace', 'CommercialStopPoint']) - [self]
+      when "CommercialStopPoint" then Chouette::StopArea.where(:area_type => ['Quay', 'BoardingPosition']) - [self]
+      when "StopPlace" then Chouette::StopArea.where(:area_type => ['StopPlace', 'CommercialStopPoint']) - [self]
     end
       
   end
 
   def possible_parents
     case area_type
-      when "BoardingPosition" then Chouette::StopArea.where(:areatype => "CommercialStopPoint")  - [self]
-      when "Quay" then Chouette::StopArea.where(:areatype => "CommercialStopPoint") - [self]
-      when "CommercialStopPoint" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
-      when "StopPlace" then Chouette::StopArea.where(:areatype => "StopPlace") - [self]
+      when "BoardingPosition" then Chouette::StopArea.where(:area_type => "CommercialStopPoint")  - [self]
+      when "Quay" then Chouette::StopArea.where(:area_type => "CommercialStopPoint") - [self]
+      when "CommercialStopPoint" then Chouette::StopArea.where(:area_type => "StopPlace") - [self]
+      when "StopPlace" then Chouette::StopArea.where(:area_type => "StopPlace") - [self]
     end
-  end
-
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
-    end
-  end
-
-  def self.model_name
-    ActiveModel::Name.new Chouette::StopArea, Chouette, "StopArea"
   end
 
   def lines
     self.stop_points.collect(&:route).flatten.collect(&:line).flatten.uniq
   end
 
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
-  end
-
-  def valid?(*args)
-    super.tap do |valid|
-      errors[:registration_number] = errors[:registrationnumber]
-    end
-  end
-
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
-  end
-
   def self.commercial
-    where :areatype => "CommercialStopPoint"
+    where :area_type => "CommercialStopPoint"
   end
 
   def to_lat_lng
@@ -118,10 +73,6 @@ class Chouette::StopArea < Chouette::ActiveRecord
   def default_position 
     # for first StopArea ... the bounds is nil :(
     Chouette::StopArea.bounds and Chouette::StopArea.bounds.center
-  end
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
   end
 
   def self.near(origin, distance = 0.3)

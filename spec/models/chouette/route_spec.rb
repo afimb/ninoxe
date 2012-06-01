@@ -74,7 +74,7 @@ describe Chouette::Route do
     context "when route is looping: last and first stop area are the same" do
       it "should retreive same stop_area one last and first position" do
         route_loop = Factory(:route, :line => line)
-        first_stop = Chouette::StopPoint.where( :routeid => route_loop.id, :position => 0).first
+        first_stop = Chouette::StopPoint.where( :route_id => route_loop.id, :position => 0).first
         last_stop = Factory(:stop_point, :route => route_loop, :position => 5, :stop_area => first_stop.stop_area)
 
         route_loop.stop_areas.size.should == 6

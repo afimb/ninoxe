@@ -1,4 +1,4 @@
-class Chouette::Route < Chouette::ActiveRecord
+class Chouette::Route < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
@@ -6,12 +6,13 @@ class Chouette::Route < Chouette::ActiveRecord
   attr_accessor :direction_code
 
   belongs_to :line
+  has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy
   has_one :opposite_route, :class_name => 'Chouette::Route'
   has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
-      where( :stopareaid => stop_area_ids).first or
+      where( :stop_area_id => stop_area_ids).first or
         raise ActiveRecord::RecordNotFound.new("Can't find a StopArea #{stop_area.inspect} in Route #{owner.id.inspect}'s StopPoints")
     end
 
@@ -31,62 +32,22 @@ class Chouette::Route < Chouette::ActiveRecord
       where(" position between ? and ? ", between_positions.first, between_positions.last)
     end
   end
-  has_many :stop_areas, :through => :stop_points, :order => 'stop_point.position' do
+  has_many :stop_areas, :through => :stop_points, :order => 'stop_points.position' do
     def between(departure, arrival)
       departure, arrival = [departure, arrival].collect do |endpoint|
         String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint
       end
-      proxy_owner.stop_points.between(departure, arrival).includes(:stop_area).collect(&:stop_area)
+      proxy_owner.stop_points.between(departure, arrival).includes(:stop_areas).collect(&:stop_area)
     end
   end
 
-  OBJECT_ID_KEY='Route'
-
   validates_presence_of :name
-
-  validates_presence_of :objectid
-  validates_uniqueness_of :objectid
-
-  validates_numericality_of :objectversion
-
-  def self.objectid_format
-    Regexp.new "\\A[0-9A-Za-z_]+:#{model_name}:[0-9A-Za-z_-]+\\Z"
-  end
-  def self.model_name
-    ActiveModel::Name.new Chouette::Route, Chouette, "Route"
-  end
-  validates_format_of :objectid, :with => self.objectid_format
-
-  def objectid
-    Chouette::ObjectId.new read_attribute(:objectid)
-  end
-
-  def version
-    self.objectversion
-  end
-
-  def version=(version)
-    self.objectversion = version
-  end
-
-  before_validation :default_values, :on => :create
-  def default_values
-    self.version ||= 1
-  end
 
   def geometry
     points = stop_areas.map(&:to_lat_lng).compact.map do |loc|
       [loc.lng, loc.lat]
     end
     GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
-  end
-
-  def timestamp_attributes_for_update #:nodoc:
-    [:creationtime]
-  end
-  
-  def timestamp_attributes_for_create #:nodoc:
-    [:creationtime]
   end
 
   def self.direction_binding
@@ -136,7 +97,7 @@ class Chouette::Route < Chouette::ActiveRecord
   end
   
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => :route).where(:route => {:id => self.id}).order("stoppoint.position")
+    Chouette::StopArea.joins(:stop_points => :route).where(:routes => {:id => self.id}).order("stop_points.position")
   end
   
   def stop_point_permutation?( stop_point_ids)
@@ -158,7 +119,7 @@ class Chouette::Route < Chouette::ActiveRecord
 
     stop_points.each_with_index do |sp, index|
       if sp.stop_area_id.to_s != reordered_stop_area_ids[ index].to_s
-        #result = sp.update_attributes( :stopareaid => reordered_stop_area_ids[ index])
+        #result = sp.update_attributes( :stop_area_id => reordered_stop_area_ids[ index])
         sp.stop_area_id = reordered_stop_area_ids[ index]
         result = sp.save!
       end
