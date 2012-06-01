@@ -116,7 +116,8 @@ class Chouette::StopArea < Chouette::ActiveRecord
   end
 
   def default_position 
-    Chouette::StopArea.bounds.center
+    # for first StopArea ... the bounds is nil :(
+    Chouette::StopArea.bounds and Chouette::StopArea.bounds.center
   end
 
   def objectid

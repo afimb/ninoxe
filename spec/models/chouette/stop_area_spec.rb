@@ -73,7 +73,6 @@ describe Chouette::StopArea do
       subject.possible_parents.should == [stop_place] 
     end    
 
-
   end
 
 
@@ -121,6 +120,20 @@ describe Chouette::StopArea do
       Chouette::StopArea.connection.stub :select_rows => [["113.5292500000000000", "22.1127580000000000", "113.5819330000000000", "22.2157050000000000"]]
       GeoRuby::SimpleFeatures::Envelope.should_receive(:from_coordinates).with([[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]])
       Chouette::StopArea.bounds
+    end
+
+  end
+
+  describe "#default_position" do
+    
+    it "should return nil when StopArea.bounds is nil" do
+      Chouette::StopArea.stub :bounds => nil
+      subject.default_position.should be_nil
+    end
+
+    it "should return StopArea.bounds center" do
+      Chouette::StopArea.stub :bounds => mock(:center => "center")
+      subject.default_position.should == Chouette::StopArea.bounds.center
     end
 
   end
