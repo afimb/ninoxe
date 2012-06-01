@@ -5,10 +5,12 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessor :wayback_code
   attr_accessor :direction_code
 
+  attr_accessible :line_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :opposite_route_id, :published_name, :number, :direction, :wayback
+
   belongs_to :line
   has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy
-  has_one :opposite_route, :class_name => 'Chouette::Route'
+  has_one :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
   has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)

@@ -6,6 +6,8 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
   belongs_to :route
   acts_as_list :scope => 'route_id = \'#{route.id}\''
 
+  attr_accessible :route_id, :stop_area_id, :objectid, :object_version, :creation_time, :creator_id, :position
+
   has_many :vehicle_journey_at_stops, :dependent => :destroy
   has_many :vehicle_journeys, :through => :vehicle_journey_at_stops, :uniq => true
   

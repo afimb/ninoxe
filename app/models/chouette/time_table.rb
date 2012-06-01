@@ -2,6 +2,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   
+  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment, :int_day_types
+
   has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position, :dependent => :destroy
   has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position, :dependent => :destroy
 
