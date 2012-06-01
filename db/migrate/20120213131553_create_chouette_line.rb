@@ -1,7 +1,7 @@
 class CreateChouetteLine < ActiveRecord::Migration
   def up
-    create_table "line", :force => true do |t|
-      t.integer  "pt_network_id",                :limit => 8
+    create_table "lines", :force => true do |t|
+      t.integer  "network_id",                :limit => 8
       t.integer  "company_id",                  :limit => 8
       t.string   "objectid", :null => false
       t.integer  "object_version"
@@ -17,8 +17,8 @@ class CreateChouetteLine < ActiveRecord::Migration
       t.integer  "int_user_needs"
     end
 
-    add_index "line", ["objectid"], :name => "line_objectid_key", :unique => true
-    add_index "line", ["registration_number"], :name => "line_registration_number_key", :unique => true
+    add_index "lines", ["objectid"], :name => "lines_objectid_key", :unique => true
+    add_index "lines", ["registration_number"], :name => "lines_registration_number_key", :unique => true
   end
 
   def down    

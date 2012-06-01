@@ -1,6 +1,6 @@
 class CreateChouetteRoute < ActiveRecord::Migration
   def up
-    create_table "route", :force => true do |t|
+    create_table "routes", :force => true do |t|
       t.integer  "line_id", :limit => 8
       t.string   "objectid", :null => false
       t.integer  "object_version"
@@ -14,6 +14,7 @@ class CreateChouetteRoute < ActiveRecord::Migration
       t.string   "direction"
       t.string   "wayback"
     end
+    add_index "routes", ["objectid"], :name => "routes_objectid_key", :unique => true
   end
 
   def down

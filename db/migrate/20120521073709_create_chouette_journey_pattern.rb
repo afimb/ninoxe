@@ -1,6 +1,6 @@
 class CreateChouetteJourneyPattern < ActiveRecord::Migration
   def up
-    create_table :journeypattern, :force => true do |t|
+    create_table :journey_patterns, :force => true do |t|
       t.integer  "route_id", :limit => 8
 
       t.string   "objectid", :null => false
@@ -16,11 +16,11 @@ class CreateChouetteJourneyPattern < ActiveRecord::Migration
       t.integer  "departure_stop_point_id", :limit => 8
       t.integer  "arrival_stop_point_id", :limit => 8
     end
-   add_index "journeypattern", ["objectid"], :name => "journey_pattern_objectid_key", :unique => true
+   add_index "journey_patterns", ["objectid"], :name => "journey_patterns_objectid_key", :unique => true
   end
 
   def down
-   remove_index "journeypattern", :name => "journey_pattern_objectid_key"
-   drop_table :journeypattern
+   remove_index "journey_patterns", :name => "journey_patterns_objectid_key"
+   drop_table :journey_patterns
   end
 end

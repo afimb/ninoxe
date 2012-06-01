@@ -1,6 +1,6 @@
 class CreateChouetteStopArea < ActiveRecord::Migration
   def up
-    create_table "stoparea", :force => true do |t|
+    create_table "stop_areas", :force => true do |t|
       t.integer  "parent_id",           :limit => 8
       t.string   "objectid", :null => false
       t.integer  "object_version"
@@ -22,12 +22,12 @@ class CreateChouetteStopArea < ActiveRecord::Migration
       t.string   "street_name"
     end
 
-    add_index "stoparea", ["objectid"], :name => "stop_area_objectid_key", :unique => true
-    add_index "stoparea", ["parent_id"], :name => "index_stop_area_on_parent_id"
+    add_index "stop_areas", ["objectid"], :name => "stop_areas_objectid_key", :unique => true
+    add_index "stop_areas", ["parent_id"], :name => "index_stop_areas_on_parent_id"
 
   end
 
   def down
-    drop_table "stoparea"
+    drop_table "stop_areas"
   end
 end

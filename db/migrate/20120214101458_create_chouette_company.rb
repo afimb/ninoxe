@@ -1,6 +1,6 @@
 class CreateChouetteCompany < ActiveRecord::Migration
   def up
-    create_table "company", :force => true do |t|
+    create_table "companies", :force => true do |t|
       t.string   "objectid", :null => false
       t.integer  "object_version"
       t.datetime "creation_time"
@@ -16,8 +16,8 @@ class CreateChouetteCompany < ActiveRecord::Migration
       t.string   "registration_number"
     end
 
-    add_index "company", ["objectid"], :name => "company_objectid_key", :unique => true
-    add_index "company", ["registration_number"], :name => "company_registration_number_key", :unique => true
+    add_index "companies", ["objectid"], :name => "companies_objectid_key", :unique => true
+    add_index "companies", ["registration_number"], :name => "companies_registration_number_key", :unique => true
   end
 
   def down

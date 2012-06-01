@@ -1,7 +1,7 @@
 class CreateChouetteAccessPoint < ActiveRecord::Migration
   def up
-    create_table :accesspoint, :force => true do |t|
-      t.string   "objectid", :null => false
+    create_table :access_points, :force => true do |t|
+      t.string   "objectid"
       t.integer  "object_version"
       t.datetime "creation_time"
       t.string   "creator_id"
@@ -18,16 +18,17 @@ class CreateChouetteAccessPoint < ActiveRecord::Migration
       t.string   "street_name"
       t.string   "contained_in"
 
-      t.datetime "openningtime"
-      t.datetime "closingtime"
+      t.datetime "openning_time"
+      t.datetime "closing_time"
       t.string   "type"
       t.boolean  "lift_availability"
       t.datetime "mobility_restricted_suitability"
       t.datetime "stairs_availability"
     end
+   add_index "access_points", ["objectid"], :name => "access_points_objectid_key", :unique => true
   end
 
   def down
-    drop_table :accesspoint
+    drop_table :access_points
   end
 end

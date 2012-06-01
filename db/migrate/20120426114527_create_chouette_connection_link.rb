@@ -1,6 +1,6 @@
 class CreateChouetteConnectionLink < ActiveRecord::Migration
   def up
-  create_table "connectionlink", :force => true do |t|
+  create_table "connection_links", :force => true do |t|
     t.integer  "departure_id",    :limit => 8
     t.integer  "arrival_id",      :limit => 8
     t.string   "objectid",       :null => false
@@ -20,7 +20,7 @@ class CreateChouetteConnectionLink < ActiveRecord::Migration
     t.boolean  "lift_availability"
     t.integer  "int_user_needs"
   end
-   add_index "connectionlink", ["objectid"], :name => "connection_link_objectid_key", :unique => true
+   add_index "connection_links", ["objectid"], :name => "connection_links_objectid_key", :unique => true
   end
 
   def down

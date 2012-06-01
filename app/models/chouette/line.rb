@@ -34,11 +34,11 @@ class Chouette::Line < Chouette::TridentActiveRecord
   end
 
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id})
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:lines => {:id => self.id})
   end
 
   def stop_areas_last_parents
-    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:line => {:id => self.id}).collect(&:root).flatten.uniq
+    Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:lines => {:id => self.id}).collect(&:root).flatten.uniq
   end
 
 end

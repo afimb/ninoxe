@@ -1,6 +1,6 @@
 class CreateChouetteFacility < ActiveRecord::Migration
   def up
-    create_table :facility, :force => true do |t|
+    create_table :facilities, :force => true do |t|
       t.integer  "stop_area_id",      :limit => 8
       t.integer  "line_id",          :limit => 8
       t.integer  "connection_link_id",:limit => 8
@@ -25,9 +25,10 @@ class CreateChouetteFacility < ActiveRecord::Migration
       t.string   "street_name"
       t.string   "contained_in"
     end
+   add_index "facilities", ["objectid"], :name => "facilities_objectid_key", :unique => true
   end
 
   def down
-    drop_table :facility
+    drop_table :facilities
   end
 end

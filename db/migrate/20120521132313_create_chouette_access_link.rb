@@ -1,6 +1,6 @@
 class CreateChouetteAccessLink < ActiveRecord::Migration
   def up
-    create_table :accesslink, :id => false, :force => true do |t|
+    create_table :access_links, :id => false, :force => true do |t|
       t.integer  "access_point_id", :limit => 8
       t.integer  "stop_area_id",    :limit => 8
 
@@ -24,9 +24,10 @@ class CreateChouetteAccessLink < ActiveRecord::Migration
       t.integer  "int_user_needs"
       t.string   "link_orientation"
     end
+   add_index "access_links", ["objectid"], :name => "access_links_objectid_key", :unique => true
   end
 
   def down
-    drop_table :accesslink
+    drop_table :access_links
   end
 end

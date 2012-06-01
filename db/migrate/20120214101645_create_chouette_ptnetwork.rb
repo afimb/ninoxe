@@ -1,6 +1,6 @@
 class CreateChouettePtnetwork < ActiveRecord::Migration
   def up
-    create_table "ptnetwork", :force => true do |t|
+    create_table "networks", :force => true do |t|
       t.string   "objectid", :null => false
       t.integer  "object_version"
       t.datetime "creation_time"
@@ -15,8 +15,8 @@ class CreateChouettePtnetwork < ActiveRecord::Migration
       t.string   "comment"
     end
 
-    add_index "ptnetwork", ["objectid"], :name => "ptnetwork_objectid_key", :unique => true
-    add_index "ptnetwork", ["registration_number"], :name => "ptnetwork_registration_number_key", :unique => true
+    add_index "networks", ["objectid"], :name => "networks_objectid_key", :unique => true
+    add_index "networks", ["registration_number"], :name => "networks_registration_number_key", :unique => true
   end
 
   def down

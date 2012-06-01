@@ -32,12 +32,12 @@ class Chouette::Route < Chouette::TridentActiveRecord
       where(" position between ? and ? ", between_positions.first, between_positions.last)
     end
   end
-  has_many :stop_areas, :through => :stop_points, :order => 'stoppoint.position' do
+  has_many :stop_areas, :through => :stop_points, :order => 'stop_points.position' do
     def between(departure, arrival)
       departure, arrival = [departure, arrival].collect do |endpoint|
         String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint
       end
-      proxy_owner.stop_points.between(departure, arrival).includes(:stop_area).collect(&:stop_area)
+      proxy_owner.stop_points.between(departure, arrival).includes(:stop_areas).collect(&:stop_area)
     end
   end
 
@@ -97,7 +97,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
   
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => :route).where(:route => {:id => self.id}).order("stoppoint.position")
+    Chouette::StopArea.joins(:stop_points => :route).where(:routes => {:id => self.id}).order("stop_points.position")
   end
   
   def stop_point_permutation?( stop_point_ids)
@@ -119,7 +119,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
 
     stop_points.each_with_index do |sp, index|
       if sp.stop_area_id.to_s != reordered_stop_area_ids[ index].to_s
-        #result = sp.update_attributes( :stopareaid => reordered_stop_area_ids[ index])
+        #result = sp.update_attributes( :stop_area_id => reordered_stop_area_ids[ index])
         sp.stop_area_id = reordered_stop_area_ids[ index]
         result = sp.save!
       end

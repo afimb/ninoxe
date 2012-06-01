@@ -1,6 +1,6 @@
 class CreateChouetteVehicleJourney < ActiveRecord::Migration
   def up
-    create_table :vehiclejourney, :force => true do |t|
+    create_table :vehicle_journeys, :force => true do |t|
       t.integer  "route_id", :limit => 8
       t.integer  "journey_pattern_id", :limit => 8
       t.integer  "time_slot_id", :limit => 8
@@ -22,13 +22,13 @@ class CreateChouetteVehicleJourney < ActiveRecord::Migration
       # TODO: delete this column that are here just for chouette-command compliance
       t.integer  "number"
     end
-   add_index "vehiclejourney", ["objectid"], :name => "vehicle_journey_objectid_key", :unique => true
-   add_index "vehiclejourney", ["route_id"], :name => "index_vehicle_journey_on_route_id"
+   add_index "vehicle_journeys", ["objectid"], :name => "vehicle_journeys_objectid_key", :unique => true
+   add_index "vehicle_journeys", ["route_id"], :name => "index_vehicle_journeys_on_route_id"
   end
 
   def down
-   remove_index "vehiclejourney", :name => "vehicle_journey_objectid_key"
-   remove_index "vehiclejourney", :name => "index_vehicle_journey_on_route_id"
-   drop_table :vehiclejourney
+   remove_index "vehicle_journeys", :name => "vehicle_journeys_objectid_key"
+   remove_index "vehicle_journeys", :name => "index_vehicle_journeys_on_route_id"
+   drop_table :vehicle_journeys
   end
 end
