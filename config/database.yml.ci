@@ -3,6 +3,7 @@ development:
   database: ninoxe_dev
   username: chouette
   password: chouette
+  template: template1
   
 test:
   adapter: postgresql
@@ -10,3 +11,4 @@ test:
   database: ninoxe_test
   username: chouette
   password: chouette
+  template: template1
