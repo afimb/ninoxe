@@ -3,6 +3,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   set_primary_key :id
 
   attr_accessor :transport_mode
+  attr_accessible :network_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :name, :number, :published_name, :transport_mode_name, :registration_number, :comment, :mobility_restricted_suitability, :int_user_needs
 
   belongs_to :company
   belongs_to :network

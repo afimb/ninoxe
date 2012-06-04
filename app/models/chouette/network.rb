@@ -8,6 +8,8 @@ class Chouette::Network < Chouette::TridentActiveRecord
   validates_uniqueness_of :registration_number
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
 
+  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version_date, :description, :name, :registration_number, :source_name, :source_type, :source_identifier, :comment
+
   def self.object_id_key
     "GroupOfLine"
   end

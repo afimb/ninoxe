@@ -7,6 +7,8 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   include Geokit::Mappable
   attr_accessor :stop_area_type
   attr_accessor :children_ids
+  
+  attr_accessible :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
 
   has_many :stop_points, :dependent => :destroy
 
