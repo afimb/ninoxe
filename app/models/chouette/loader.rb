@@ -37,7 +37,11 @@ class Chouette::Loader
   @@chouette_command = "chouette"
   cattr_accessor :chouette_command
 
-  def import(file)
+  def import(file, options = {})
+    options = {
+      :format => :neptune
+    }.merge(options)
+
     logger.info "Import #{file} in schema #{schema}"
     Dir.mktmpdir do |config_dir|
       chouette_properties = File.join(config_dir, "chouette.properties")
@@ -53,7 +57,7 @@ class Chouette::Loader
         f.puts "database.hbm2ddl.auto=update"
       end
 
-      command = "#{chouette_command} -classpath #{config_dir} -c massImport -o line -format NEPTUNE -inputFile #{File.expand_path(file)} -optimizeMemory"
+      command = "#{chouette_command} -classpath #{config_dir} -c massImport -o line -format #{options[:format].to_s.upcase} -inputFile #{File.expand_path(file)} -optimizeMemory"
 
       logger.debug "Execute '#{command}'"
       logger.debug "Chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"

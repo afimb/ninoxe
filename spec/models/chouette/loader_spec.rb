@@ -12,6 +12,24 @@ describe Chouette::Loader do
 
   end
 
+  describe "#import" do
+
+    before(:each) do
+      subject.stub :execute!
+    end
+
+    it "should use specified file in -inputFile option" do
+      subject.should_receive(:execute!).with(/-inputFile #{File.expand_path('file')}/)
+      subject.import "file"
+    end
+    
+    it "should use specified format in -format option" do
+      subject.should_receive(:execute!).with(/-format DUMMY/)
+      subject.import "file", :format => "dummy"
+    end
+    
+  end
+
   describe "#create" do
     
     it "should quote schema name" do
