@@ -9,6 +9,9 @@ describe Chouette::StopArea do
 
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :area_type }
+
   describe ".children_in_depth" do
     it "should return all the deepest children from stop area" do
       subject = Factory :stop_area, :area_type => "StopPlace"
