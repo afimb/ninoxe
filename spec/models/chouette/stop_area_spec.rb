@@ -49,9 +49,14 @@ describe Chouette::StopArea do
       subject.possible_children.should =~ [stop_place, commercial_stop_point] 
     end
 
+    it "should find no children of type ITL for stop area type ITL" do
+      subject = Factory :stop_area, :area_type => "ITL"
+      subject.possible_children.should =~ [stop_place, commercial_stop_point, quay, boarding_position] 
+    end
+
   end
 
-  describe ".possible_parentss" do
+  describe ".possible_parents" do
 
     it "should find parent type commercial stop point for stop area type boarding position" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"

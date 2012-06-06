@@ -11,6 +11,8 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessible :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
 
   has_many :stop_points, :dependent => :destroy
+  has_and_belongs_to_many :routing_lines, :class_name => 'Chouette::Line', :foreign_key => "stop_area_id", :association_foreign_key => "line_id", :join_table => "routing_constrants_lines"
+  has_and_belongs_to_many :routing_stops, :class_name => 'Chouette::StopArea', :foreign_key => "parent_id", :association_foreign_key => "child_id", :join_table => "stop_areas_stop_areas"
 
   acts_as_tree :foreign_key => 'parent_id'
 
@@ -32,6 +34,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
       when "Quay" then []
       when "CommercialStopPoint" then Chouette::StopArea.where(:area_type => ['Quay', 'BoardingPosition']) - [self]
       when "StopPlace" then Chouette::StopArea.where(:area_type => ['StopPlace', 'CommercialStopPoint']) - [self]
+      when "ITL" then Chouette::StopArea.where(:area_type => ['Quay', 'BoardingPosition', 'StopPlace', 'CommercialStopPoint'])
     end
       
   end
