@@ -23,6 +23,29 @@ describe Chouette::StopArea do
   end
 
 
+  describe ".stop_area_type" do
+    it "should have area_type of BoardingPosition when stop_area_type is set to boarding_position" do
+      subject = Factory :stop_area, :stop_area_type => "boarding_position"
+      subject.area_type.should == "BoardingPosition"
+    end
+    it "should have area_type of Quay when stop_area_type is set to quay" do
+      subject = Factory :stop_area, :stop_area_type => "quay"
+      subject.area_type.should == "Quay"
+    end
+    it "should have area_type of CommercialStopPoint when stop_area_type is set to commercial_stop_point" do
+      subject = Factory :stop_area, :stop_area_type => "commercial_stop_point"
+      subject.area_type.should == "CommercialStopPoint"
+    end
+    it "should have area_type of StopPlace when stop_area_type is set to stop_place" do
+      subject = Factory :stop_area, :stop_area_type => "stop_place"
+      subject.area_type.should == "StopPlace"
+    end
+    it "should have area_type of ITL when stop_area_type is set to itl" do
+      subject = Factory :stop_area, :stop_area_type => "itl"
+      subject.area_type.should == "ITL"
+    end
+  end
+
   describe ".parent" do
     it "should check if parent method exists" do
       subject = Factory :stop_area, :parent_id => commercial_stop_point.id

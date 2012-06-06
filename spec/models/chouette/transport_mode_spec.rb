@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Chouette::TransportMode do
+describe Chouette::AreaType do
   
   def mode(text_code = "test", numerical_code = nil)
     numerical_code ||= 1 if text_code == "test"
-    Chouette::TransportMode.new(text_code, numerical_code)
+    Chouette::AreaType.new(text_code, numerical_code)
   end
 
   describe "#to_i" do
@@ -34,28 +34,17 @@ describe Chouette::TransportMode do
     end
 
     it "should accept another mode" do
-      Chouette::TransportMode.new(mode("test")).should == mode("test")
+      Chouette::AreaType.new(mode("test")).should == mode("test")
     end
     
   end
 
-  describe "#public_transport?" do
-    
-    it "should return false for interchange" do
-      mode("interchange").should_not be_public_transport
-    end
-
-    it "should return true for other modes" do
-      mode("unknown").should be_public_transport
-    end
-
-  end
 
   describe ".all" do
     
-    Chouette::TransportMode.definitions.each do |text_code, numerical_code|
-      it "should include a TransportMode #{text_code}" do
-        Chouette::TransportMode.all.should include(Chouette::TransportMode.new(text_code))
+    Chouette::AreaType.definitions.each do |text_code, numerical_code|
+      it "should include a AreaType #{text_code}" do
+        Chouette::AreaType.all.should include(Chouette::AreaType.new(text_code))
       end
     end
 
