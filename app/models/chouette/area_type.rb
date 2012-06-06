@@ -31,7 +31,7 @@ class Chouette::AreaType < ActiveSupport::StringInquirer
 
   def name
     if (to_s == 'itl') 
-      upcase
+      to_s.upcase
     else
       camelize
     end
