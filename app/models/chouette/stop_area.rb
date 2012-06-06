@@ -112,7 +112,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def stop_area_type=(stop_area_type)   
-    self.area_type = (stop_area_type ? stop_area_type.camelcase : nil)
+    self.area_type = (stop_area_type ? stop_area_type.name : nil)
   end
 
   @@stop_area_types = nil
