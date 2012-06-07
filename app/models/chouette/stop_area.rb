@@ -5,18 +5,18 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   include Geokit::Mappable
+  has_many :stop_points, :dependent => :destroy
+  has_and_belongs_to_many :routing_lines, :class_name => 'Chouette::Line', :foreign_key => "stop_area_id", :association_foreign_key => "line_id", :join_table => "routing_constraints_lines", :order => "lines.number"
+  has_and_belongs_to_many :routing_stops, :class_name => 'Chouette::StopArea', :foreign_key => "parent_id", :association_foreign_key => "child_id", :join_table => "stop_areas_stop_areas", :order => "stop_areas.name"
+
+  acts_as_tree :foreign_key => 'parent_id',:order => "name"
+
   attr_accessor :stop_area_type
   attr_accessor :children_ids
   
-  attr_accessible :stop_area_type, :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
+  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
 
-  has_many :stop_points, :dependent => :destroy
-  has_and_belongs_to_many :routing_lines, :class_name => 'Chouette::Line', :foreign_key => "stop_area_id", :association_foreign_key => "line_id", :join_table => "routing_constraints_lines"
-  has_and_belongs_to_many :routing_stops, :class_name => 'Chouette::StopArea', :foreign_key => "parent_id", :association_foreign_key => "child_id", :join_table => "stop_areas_stop_areas"
-
-  acts_as_tree :foreign_key => 'parent_id'
-
-  validates_uniqueness_of :registration_number
+  validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
@@ -130,6 +130,22 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     children = children_ids.split(',')
     Chouette::StopArea.find(children).each do |child|
      child.update_attribute :parent_id, self.id
+    end
+  end
+  
+  def routing_stop_ids=(routing_stop_ids)
+    stops = routing_stop_ids.split(',').uniq
+    self.routing_stops.clear
+    Chouette::StopArea.find(stops).each do |stop|
+      self.routing_stops << stop
+    end
+  end
+
+  def routing_line_ids=(routing_line_ids)
+    lines = routing_line_ids.split(',').uniq
+    self.routing_lines.clear
+    Chouette::Line.find(lines).each do |line|
+      self.routing_lines << line
     end
   end
 
