@@ -50,7 +50,11 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def lines
-    self.stop_points.collect(&:route).flatten.collect(&:line).flatten.uniq
+    if (area_type == 'CommercialStopPoint')
+      self.children.collect(&:stop_points).flatten.collect(&:route).flatten.collect(&:line).flatten.uniq
+    else
+      self.stop_points.collect(&:route).flatten.collect(&:line).flatten.uniq
+    end
   end
 
   def self.commercial
@@ -128,8 +132,15 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   def children_ids=(children_ids)
     children = children_ids.split(',')
+    # remove unset children
+    self.children.each do |child|
+      if (! children.include? child.id)
+        child.update_attribute :parent_id, nil
+      end
+    end
+    # add new children
     Chouette::StopArea.find(children).each do |child|
-     child.update_attribute :parent_id, self.id
+       child.update_attribute :parent_id, self.id
     end
   end
   
