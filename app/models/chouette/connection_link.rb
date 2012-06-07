@@ -2,9 +2,9 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
-  attr_accessible :departure_id, :arrival_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance, :link_type, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration, :mobility_restricted_traveller_duration, :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
-
   attr_accessor :connection_link_type
+
+  attr_accessible :connection_link_type,:departure_id, :arrival_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance, :link_type, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration, :mobility_restricted_traveller_duration, :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
 
   belongs_to :departure, :class_name => 'Chouette::StopArea'
   belongs_to :arrival, :class_name => 'Chouette::StopArea'
