@@ -14,17 +14,19 @@ describe Chouette::Loader do
 
   describe "#import" do
 
+    let(:chouette_command) { mock :run! => true }
+
     before(:each) do
-      subject.stub :execute!
+      subject.stub :chouette_command => chouette_command
     end
 
     it "should use specified file in -inputFile option" do
-      subject.should_receive(:execute!).with(/-inputFile #{File.expand_path('file')}/)
+      chouette_command.should_receive(:run!).with(hash_including(:input_file => File.expand_path('file')))
       subject.import "file"
     end
     
     it "should use specified format in -format option" do
-      subject.should_receive(:execute!).with(/-format DUMMY/)
+      chouette_command.should_receive(:run!).with(hash_including(:format => 'DUMMY'))
       subject.import "file", :format => "dummy"
     end
     

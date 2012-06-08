@@ -1,15 +1,3 @@
-require 'tmpdir'
-
-if RUBY_PLATFORM == "java"
-  # FIXME disable remove_entry_secure because incompatible with jruby ?! 
-  # See http://jira.codehaus.org/browse/JRUBY-4082
-  module FileUtils
-    def self.remove_entry_secure(*args)
-      self.remove_entry *args
-    end
-  end
-end
-
 class Chouette::Loader
 
   attr_reader :schema, :database, :user, :password, :host
@@ -34,36 +22,33 @@ class Chouette::Loader
     self
   end
 
-  @@chouette_command = "chouette"
-  cattr_accessor :chouette_command
+  def self.chouette_command=(command)
+    Chouette::Command.command = command
+  end
+
+  class << self
+    deprecate :chouette_command= => "Use Chouette::Command.command ="
+  end
+
+  def chouette_command
+    @chouette_command ||= Chouette::Command.new(:schema => schema)
+  end
 
   def import(file, options = {})
     options = {
       :format => :neptune
     }.merge(options)
 
+    command_options = {
+      :c => "import", 
+      :o => "line", 
+      :format => options.delete(:format).to_s.upcase, 
+      :input_file => File.expand_path(file), 
+      :optimize_memory => true
+    }.merge(options)
+
     logger.info "Import #{file} in schema #{schema}"
-    Dir.mktmpdir do |config_dir|
-      chouette_properties = File.join(config_dir, "chouette.properties")
-      open(chouette_properties, "w") do |f|
-        f.puts "database.name = #{database}"
-        f.puts "database.schema = #{schema}"
-        f.puts "database.showsql = true"
-        f.puts "hibernate.username = #{user}"
-        f.puts "hibernate.password = #{password}"
-        f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
-        f.puts "jdbc.username = #{user}"
-        f.puts "jdbc.password = #{password}"
-        f.puts "database.hbm2ddl.auto=update"
-      end
-
-      command = "#{chouette_command} -classpath #{config_dir} -c massImport -o line -format #{options[:format].to_s.upcase} -inputFile #{File.expand_path(file)} -optimizeMemory"
-
-      logger.debug "Execute '#{command}'"
-      logger.debug "Chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"
-
-      execute! command
-    end
+    chouette_command.run! command_options
   end
 
   def backup(file)
@@ -120,36 +105,6 @@ class Chouette::Loader
     execute! "#{binarisation_command} --host=#{host} --dbname=#{database} --user=#{user} --password=#{password} --schema=#{schema} --daybefore=#{day_before} --dayafter=#{day_after} --targetdirectory=#{target_directory}"
   end
 
-  class ExecutionError < StandardError; end
-
-  def available_loggers
-    [].tap do |logger|
-      logger << Chouette::ActiveRecord.logger  
-      logger << Rails.logger if defined?(Rails)
-      logger << Logger.new($stdout)
-    end.compact
-  end
-
-  def logger
-    @logger ||= available_loggers.first
-  end
-
-  def max_output_length
-    2000
-  end
-
-  def execute!(command)
-    logger.debug "execute '#{command}'"
-
-    output = `#{command} 2>&1`
-    output = "[...] #{output[-max_output_length,max_output_length]}" if output.length > max_output_length
-    logger.info output unless output.empty?
-
-    if $? != 0
-      raise ExecutionError.new("Command failed: #{command} (error code #{$?})")
-    end
-
-    true
-  end
+  include Chouette::CommandLineSupport
 
 end
