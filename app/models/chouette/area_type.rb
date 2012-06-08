@@ -30,7 +30,11 @@ class Chouette::AreaType < ActiveSupport::StringInquirer
   end
 
   def name
-    camelize
+    if (to_s == 'itl') 
+      to_s.upcase
+    else
+      camelize
+    end
   end
 
   @@definitions = [
