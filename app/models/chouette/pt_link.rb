@@ -7,6 +7,7 @@ class Chouette::PtLink < Chouette::TridentActiveRecord
   attr_accessible :start_of_link_id, :end_of_link_id, :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance
   include Geokit::Mappable
   
+  belongs_to :route
   has_one :start_of_link , :class_name => 'Chouette::StopPoint', :foreign_key => :start_of_link_id
   has_one :end_of_link , :class_name => 'Chouette::StopPoint', :foreign_key => :end_of_link_id
 

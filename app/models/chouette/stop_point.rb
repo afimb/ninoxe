@@ -10,6 +10,8 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
 
   has_many :vehicle_journey_at_stops, :dependent => :destroy
   has_many :vehicle_journeys, :through => :vehicle_journey_at_stops, :uniq => true
+  has_one :start_of_link,  :class_name => 'Chouette::PtLink', :foreign_key => :start_of_link_id , :dependent => :destroy
+  has_one :end_of_link,  :class_name => 'Chouette::PtLink', :foreign_key => :end_of_link_id , :dependent => :destroy
   
   before_destroy :remove_dependent_journey_pattern_stop_points
   
