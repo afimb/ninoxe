@@ -131,7 +131,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def children_ids=(children_ids)
-    children = children_ids.split(',')
+    children = children_ids.split(',').uniq
     # remove unset children
     self.children.each do |child|
       if (! children.include? child.id)
