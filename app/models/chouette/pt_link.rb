@@ -1,11 +1,14 @@
 require 'geokit'
 
-class Chouette::PtLink < Chouette::ActiveRecord
+class Chouette::PtLink < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
   attr_accessible :start_of_link_id, :end_of_link_id, :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance
   include Geokit::Mappable
+  
+  has_one :start_of_link , :class_name => 'Chouette::StopPoint', :foreign_key => :start_of_link_id
+  has_one :end_of_link , :class_name => 'Chouette::StopPoint', :foreign_key => :end_of_link_id
 
   def geometry
     the_geom

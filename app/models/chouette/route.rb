@@ -8,6 +8,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :opposite_route_id, :published_name, :number, :direction, :wayback
 
   belongs_to :line
+  has_many :pt_links, :dependent => :destroy
   has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy
   has_one :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
