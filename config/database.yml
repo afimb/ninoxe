@@ -1,20 +1,9 @@
 development:
   adapter: postgresql
   database: ninoxe_dev
-  username: chouette
-  password: chouette
-  schema_search_path: chouette
+  username: <%= ENV['USER'] %>
   
 test:
   adapter: postgresql
-  host: localhost
   database: ninoxe_test
-  username: chouette
-  password: chouette
-
-production:
-  adapter: postgresql
-  database: ninoxe_prod
-  username: chouette
-  password: chouette
-  schema_search_path: chouette
+  username: <%= ENV['USER'] %>

@@ -9,6 +9,9 @@ describe Chouette::StopArea do
 
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :area_type }
+
   describe ".children_in_depth" do
     it "should return all the deepest children from stop area" do
       subject = Factory :stop_area, :area_type => "StopPlace"
@@ -19,6 +22,29 @@ describe Chouette::StopArea do
     end
   end
 
+
+  describe ".stop_area_type" do
+    it "should have area_type of BoardingPosition when stop_area_type is set to boarding_position" do
+      subject = Factory :stop_area, :stop_area_type => "boarding_position"
+      subject.area_type.should == "BoardingPosition"
+    end
+    it "should have area_type of Quay when stop_area_type is set to quay" do
+      subject = Factory :stop_area, :stop_area_type => "quay"
+      subject.area_type.should == "Quay"
+    end
+    it "should have area_type of CommercialStopPoint when stop_area_type is set to commercial_stop_point" do
+      subject = Factory :stop_area, :stop_area_type => "commercial_stop_point"
+      subject.area_type.should == "CommercialStopPoint"
+    end
+    it "should have area_type of StopPlace when stop_area_type is set to stop_place" do
+      subject = Factory :stop_area, :stop_area_type => "stop_place"
+      subject.area_type.should == "StopPlace"
+    end
+    it "should have area_type of ITL when stop_area_type is set to itl" do
+      subject = Factory :stop_area, :stop_area_type => "itl"
+      subject.area_type.should == "ITL"
+    end
+  end
 
   describe ".parent" do
     it "should check if parent method exists" do
@@ -49,9 +75,14 @@ describe Chouette::StopArea do
       subject.possible_children.should =~ [stop_place, commercial_stop_point] 
     end
 
+    it "should find no children of type ITL for stop area type ITL" do
+      subject = Factory :stop_area, :area_type => "ITL"
+      subject.possible_children.should =~ [stop_place, commercial_stop_point, quay, boarding_position] 
+    end
+
   end
 
-  describe ".possible_parentss" do
+  describe ".possible_parents" do
 
     it "should find parent type commercial stop point for stop area type boarding position" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"

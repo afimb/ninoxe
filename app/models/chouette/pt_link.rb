@@ -6,6 +6,7 @@ class Chouette::PtLink < Chouette::ActiveRecord
 
   attr_accessible :start_of_link_id, :end_of_link_id, :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance
   include Geokit::Mappable
+  
 
   def geometry
     the_geom
