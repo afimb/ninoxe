@@ -20,6 +20,28 @@ describe Chouette::TimeTable do
       end
     end
   end
+  describe "#bounding_dates" do
+    it "should contains min date" do
+      min_date = subject.bounding_dates.min
+      subject.dates.each do |tm_date|
+        (min_date <= tm_date.date).should be_true
+      end
+      subject.periods.each do |tm_period|
+        (min_date <= tm_period.period_start).should be_true
+      end
+
+    end
+    it "should contains max date" do
+      max_date = subject.bounding_dates.max
+      subject.dates.each do |tm_date|
+        (tm_date.date <= max_date).should be_true
+      end
+      subject.periods.each do |tm_period|
+        (tm_period.period_start <= max_date).should be_true
+      end
+
+    end
+  end
   describe "#periods" do
     it "should begin with position 0" do
       subject.periods.first.position.should == 0

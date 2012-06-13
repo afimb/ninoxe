@@ -22,6 +22,9 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def self.end_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
   end
+  def bounding_dates
+    (self.dates.map(&:date) + self.periods.map(&:period_start) + self.periods.map(&:period_end)).compact
+  end
 
   def day_by_mask(flag)
     int_day_types & flag == flag
