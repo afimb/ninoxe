@@ -3,7 +3,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
-  attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value, :transport_mode, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number, :vehicle_journey_at_stops_attributes
+  attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value, :transport_mode, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number, :vehicle_journey_at_stops_attributes, :time_table_ids
 
   belongs_to :route
   belongs_to :journey_pattern
@@ -26,7 +26,6 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   end
   def bounding_dates
     dates = []
-    return dates if time_tables.empty?
 
     time_tables.each do |tm|
       tm_bounding_dates = tm.bounding_dates
@@ -36,7 +35,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
       end
     end
 
-    [dates.min, dates.max]
+    dates.empty? ? [] : [dates.min, dates.max]
   end
 
   def update_journey_pattern( selected_journey_pattern)
