@@ -81,6 +81,16 @@ describe Chouette::VehicleJourney do
     end
 
   end
+  context "#time_table_tokens=" do
+    let!(:tm1){Factory(:time_table, :comment => "TM1")}
+    let!(:tm2){Factory(:time_table, :comment => "TM2")}
+
+    it "should return associated time table ids" do
+      subject.update_attributes :time_table_tokens => [tm1.id, tm2.id].join(',')
+      subject.time_tables.should include( tm1)
+      subject.time_tables.should include( tm2)
+    end
+  end
   describe "#bounding_dates" do
     before(:each) do
       tm1 = Factory.build(:time_table, :dates => 
