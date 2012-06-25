@@ -81,6 +81,40 @@ describe Chouette::VehicleJourney do
     end
 
   end
+  context "when following departure times exceeds gap" do
+    describe "#increasing_times" do
+      before(:each) do
+        subject.vehicle_journey_at_stops[0].departure_time = subject.vehicle_journey_at_stops[1].departure_time - 2.hour
+      end
+      it "should make instance invalid" do
+        subject.increasing_times
+        subject.vehicle_journey_at_stops[1].errors[:departure_time].should_not be_blank
+        subject.should_not be_valid
+      end
+    end
+    describe "#update_attributes" do
+      let!(:params){ {"vehicle_journey_at_stops_attributes" => {
+            "0"=>{"id" => subject.vehicle_journey_at_stops[0].id ,"departure_time" => 1.minutes.ago},
+            "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "departure_time" => (1.minutes.ago + 2.hour)}
+         }}}
+      it "should return false" do
+        subject.update_attributes(params).should be_false
+      end
+      it "should make instance invalid" do
+        subject.update_attributes(params)
+        subject.should_not be_valid
+      end
+      it "should let first vjas without any errors" do
+        subject.update_attributes(params)
+        subject.vehicle_journey_at_stops[0].errors.should be_empty
+      end
+      it "should add an error on second vjas" do
+        subject.update_attributes(params)
+        subject.vehicle_journey_at_stops[1].errors[:departure_time].should_not be_blank
+      end
+    end
+  end
+
   context "#time_table_tokens=" do
     let!(:tm1){Factory(:time_table, :comment => "TM1")}
     let!(:tm2){Factory(:time_table, :comment => "TM2")}

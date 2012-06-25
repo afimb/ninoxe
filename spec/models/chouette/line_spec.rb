@@ -39,6 +39,13 @@ describe Chouette::Line do
     
   end
 
+  describe "#stop_areas" do
+    let!(:route){Factory(:route, :line => subject)}
+    it "should retreive route's stop_areas" do
+      subject.stop_areas.count.should == route.stop_points.count
+    end
+  end
+
   describe "#transport_mode" do
 
     def self.legacy_transport_mode_names

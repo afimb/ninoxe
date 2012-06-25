@@ -6,7 +6,7 @@ Factory.define :vehicle_journey, :parent => :vehicle_journey_common do |v|
   v.after_create do |vj|
     vj.route_id = vj.journey_pattern.route_id
     vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      Factory( :vehicle_journey_at_stop, 
+      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
                :departure_time => (-1 * index).minutes.ago, 
@@ -19,7 +19,7 @@ Factory.define :vehicle_journey_odd, :parent => :vehicle_journey_common do |v|
   v.after_create do |vj|
     vj.route_id = vj.journey_pattern.route_id
     vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      Factory( :vehicle_journey_at_stop, 
+      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
                :departure_time => (-1 * index).minutes.ago, 
@@ -32,7 +32,7 @@ Factory.define :vehicle_journey_even, :parent => :vehicle_journey_common do |v|
   v.after_create do |vj|
     vj.route_id = vj.journey_pattern.route_id
     vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      Factory( :vehicle_journey_at_stop, 
+      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
                :departure_time => (-1 * index).minutes.ago, 

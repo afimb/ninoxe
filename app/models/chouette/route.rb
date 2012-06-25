@@ -53,6 +53,10 @@ class Chouette::Route < Chouette::TridentActiveRecord
     GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
   end
 
+  def time_tables
+    self.vehicle_journeys.joins(:time_tables).map(&:"time_tables").flatten.uniq
+  end
+
   def sorted_vehicle_journeys
     vehicle_journeys.includes( :vehicle_journey_at_stops, :journey_pattern).where( "vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id").order( "vehicle_journey_at_stops.departure_time")
   end

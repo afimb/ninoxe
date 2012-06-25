@@ -15,6 +15,16 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   has_and_belongs_to_many :time_tables, :class_name => 'Chouette::TimeTable', :foreign_key => "vehicle_journey_id", :association_foreign_key => "time_table_id"
   has_many :stop_points, :through => :vehicle_journey_at_stops, :order => 'stop_points.position'
 
+  validate :increasing_times
+
+  def increasing_times
+    previous = nil
+    vehicle_journey_at_stops.select{|vjas| vjas.departure_time && vjas.arrival_time}.each do |vjas|
+      errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous) 
+      previous = vjas
+    end
+  end
+
   def missing_stops_in_relation_to_a_journey_pattern(selected_journey_pattern)
     selected_journey_pattern.stop_points - self.stop_points
   end

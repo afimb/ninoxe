@@ -16,7 +16,7 @@ class Chouette::Network < Chouette::TridentActiveRecord
 
   validates_presence_of :name
   def stop_areas
-    Chouette::StopArea.joins(:stop_points => [:routes => [:lines => :networks] ]).where(:networks => {:id => self.id})
+    Chouette::StopArea.joins(:stop_points => [:route => [:line => :network] ]).where(:networks => {:id => self.id})
   end
   
 end
