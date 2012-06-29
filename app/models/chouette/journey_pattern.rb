@@ -5,10 +5,19 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
   belongs_to :route
   has_many :vehicle_journeys, :dependent => :destroy
   has_many :vehicle_journey_at_stops, :through => :vehicle_journeys
-  has_and_belongs_to_many :stop_points, :class_name => 'Chouette::StopPoint', :order => 'stop_points.position', :before_add => :vjas_add, :before_remove => :vjas_remove, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_and_belongs_to_many :stop_points, :class_name => 'Chouette::StopPoint', :order => 'stop_points.position', :before_add => :vjas_add, :before_remove => :vjas_remove, :after_add => :shortcuts_update_for_add, :after_remove => :shortcuts_update_for_remove
 
-  attr_accessible :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :registration_number, :published_name, :departure_stop_point_id, :arrival_stop_point_id, :stop_point_ids
+  attr_accessible :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :registration_number, :published_name, :departure_stop_point_id, :arrival_stop_point_id, :stop_point_ids, :stop_points
   
+  # TODO: this a workarround
+  # otherwise, we loose the first stop_point 
+  # when creating a new journey_pattern
+  def special_update
+    bck_sp = self.stop_points.map {|s| s}
+    self.update_attributes :stop_points => []
+    self.update_attributes :stop_points => bck_sp
+  end
+
   def departure_stop_point
     return unless departure_stop_point_id
     Chouette::StopPoint.find( departure_stop_point_id)
@@ -24,7 +33,13 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
     end
     GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
   end
-  def shortcuts_update( stop_point)
+  def shortcuts_update_for_add( stop_point)
+    stop_points << stop_point unless stop_points.include?( stop_point)
+    self.update_attributes!( :departure_stop_point_id => stop_points.first && stop_points.first.id,
+                             :arrival_stop_point_id => stop_points.last && stop_points.last.id)
+  end
+  def shortcuts_update_for_remove( stop_point)
+    stop_points.delete( stop_point) if stop_points.include?( stop_point)
     self.update_attributes!( :departure_stop_point_id => stop_points.first && stop_points.first.id,
                              :arrival_stop_point_id => stop_points.last && stop_points.last.id)
   end
