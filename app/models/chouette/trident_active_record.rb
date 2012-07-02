@@ -62,17 +62,17 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     Chouette::ObjectId.new read_attribute(:objectid)
   end
 
-  def version
-    self.object_version
-  end
+#  def version
+#    self.object_version
+#  end
 
-  def version=(version)
-    self.object_version = version
-  end
+#  def version=(version)
+#    self.object_version = version
+#  end
 
   before_validation :default_values, :on => :create
   def default_values
-    self.version ||= 1
+    self.object_version ||= 1
   end
 
   def timestamp_attributes_for_update #:nodoc:
