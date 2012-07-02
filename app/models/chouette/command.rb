@@ -42,7 +42,7 @@ class Chouette::Command
       open(chouette_properties, "w") do |f|
         f.puts "database.name = #{database}"
         f.puts "database.schema = #{schema}"
-        f.puts "database.showsql = true"
+        #f.puts "database.showsql = true"
         f.puts "hibernate.username = #{user}"
         f.puts "hibernate.password = #{password}"
         f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
