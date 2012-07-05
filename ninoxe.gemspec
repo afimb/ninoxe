@@ -21,11 +21,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('rake', '~> 0.9')
 
-  s.add_runtime_dependency('activerecord', '~> 3.1.3' )
-  s.add_runtime_dependency('composite_primary_keys', '4.1.2')
+  s.add_runtime_dependency('activerecord', '> 3.1.3' )
+  s.add_runtime_dependency('composite_primary_keys', '> 4.1.2')
   s.add_runtime_dependency('GeoRuby')
   s.add_runtime_dependency('geokit')
-  s.add_runtime_dependency("rails", "~> 3.1.3")
+  s.add_runtime_dependency("rails", "> 3.1.3")
   s.add_runtime_dependency("acts_as_list", "0.1.6")
-
 end
