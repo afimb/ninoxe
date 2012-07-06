@@ -57,6 +57,11 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     end
   end
 
+  def routes
+    self.stop_points.collect(&:route).flatten.uniq
+  end
+
+
   def self.commercial
     where :area_type => "CommercialStopPoint"
   end
