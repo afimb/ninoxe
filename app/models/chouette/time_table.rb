@@ -28,7 +28,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     expired = Array.new
     find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
-      if max_date.nil? || max_date < expected_date
+      if max_date.nil? || max_date <= expected_date
         expired << tm
       end
     end
