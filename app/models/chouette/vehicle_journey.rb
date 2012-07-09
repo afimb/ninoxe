@@ -6,6 +6,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value, :transport_mode, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number, :vehicle_journey_at_stops_attributes, :time_table_tokens
   attr_reader :time_table_tokens
 
+  belongs_to :company
   belongs_to :route
   belongs_to :journey_pattern
 
