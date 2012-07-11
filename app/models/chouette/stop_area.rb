@@ -61,7 +61,6 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     self.stop_points.collect(&:route).flatten.uniq
   end
 
-
   def self.commercial
     where :area_type => "CommercialStopPoint"
   end
@@ -71,7 +70,12 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
 
   def geometry
-    GeoRuby::SimpleFeatures::Point.from_lon_lat(to_lat_lng.lng, to_lat_lng.lat, 4326) if to_lat_lng
+    GeoRuby::SimpleFeatures::Point.from_lon_lat(longitude, latitude, 4326) if latitude and longitude
+  end
+
+  def geometry=(geometry)
+    geometry = geometry.to_wgs84
+    self.latitude, self.longitude = geometry.lat, geometry.lng
   end
 
   def position 
@@ -163,6 +167,34 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     Chouette::Line.find(lines).each do |line|
       self.routing_lines << line
     end
+  end
+
+  def self.without_geometry
+    where("latitude is null or longitude is null")
+  end
+
+  def self.with_geometry
+    where("latitude is not null and longitude is not null")
+  end
+
+  def self.default_geometry!
+    count = 0
+    scoped.find_each do |stop_area|
+      Chouette::StopArea.unscoped do
+        count += 1 if stop_area.default_geometry!
+      end
+    end
+    count
+  end
+
+  def default_geometry!
+    new_geometry = default_geometry
+    update_attribute :geometry, new_geometry if new_geometry
+  end
+
+  def default_geometry
+    children_geometries = children.with_geometry.map(&:geometry).uniq
+    GeoRuby::SimpleFeatures::Point.centroid children_geometries if children_geometries.present?
   end
 
 end
