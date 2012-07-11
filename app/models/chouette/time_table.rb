@@ -23,6 +23,18 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def self.end_validity_period
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
   end
+
+  def self.expired_on(expected_date)
+    expired = Array.new
+    find_each do |tm|
+      max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
+      if max_date.nil? || max_date <= expected_date
+        expired << tm
+      end
+    end
+    expired
+  end
+
   def bounding_dates
     (self.dates.map(&:date) + self.periods.map(&:period_start) + self.periods.map(&:period_end)).compact
   end
