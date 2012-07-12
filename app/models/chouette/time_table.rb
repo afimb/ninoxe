@@ -24,7 +24,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
   end
 
-  def self.expired_on(expected_date,limit = 0)
+  def self.expired_on(expected_date,limit=0)
     expired = Array.new
     find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
@@ -38,7 +38,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     expired
   end
 
-  def self.expired_on(after_date,expected_date,limit = 0)
+  def self.expired_between(after_date,expected_date,limit = 0)
     expired = Array.new
     find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
