@@ -1,6 +1,6 @@
 class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = :id
   
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment, :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
@@ -24,12 +24,29 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
   end
 
-  def self.expired_on(expected_date)
+  def self.expired_on(expected_date,limit = 0)
     expired = Array.new
     find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
       if max_date.nil? || max_date <= expected_date
         expired << tm
+      end
+      if (limit > 0 && expired.size == limit) 
+        break;
+      end
+    end
+    expired
+  end
+
+  def self.expired_on(after_date,expected_date,limit = 0)
+    expired = Array.new
+    find_each do |tm|
+      max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
+      if !max_date.nil? && max_date <= expected_date && max_date > after_date
+        expired << tm
+      end
+      if (limit > 0 && expired.size == limit) 
+        break;
       end
     end
     expired
