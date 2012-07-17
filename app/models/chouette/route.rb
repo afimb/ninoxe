@@ -107,10 +107,6 @@ class Chouette::Route < Chouette::TridentActiveRecord
     @@waybacks ||= Chouette::Wayback.all
   end
   
-  def stop_areas
-    Chouette::StopArea.joins(:stop_points => :route).where(:routes => {:id => self.id}).order("stop_points.position")
-  end
-  
   def stop_point_permutation?( stop_point_ids)
     stop_points.map(&:id).map(&:to_s).sort == stop_point_ids.map(&:to_s).sort
   end
