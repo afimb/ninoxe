@@ -37,7 +37,7 @@ describe Chouette::TimeTable do
         (tm_date.date <= max_date).should be_true
       end
       subject.periods.each do |tm_period|
-        (tm_period.period_start <= max_date).should be_true
+        (tm_period.period_end <= max_date).should be_true
       end
 
     end
@@ -54,6 +54,24 @@ describe Chouette::TimeTable do
         subject.periods.first.position.should == 0
       end
     end
+    it "should have period_start before period_end" do
+      period = Chouette::TimeTablePeriod.new
+      period.period_start = Date.today
+      period.period_end = Date.today + 10
+      period.valid?.should be_true
+    end  
+    it "should not have period_start after period_end" do
+      period = Chouette::TimeTablePeriod.new
+      period.period_start = Date.today
+      period.period_end = Date.today - 10
+      period.valid?.should be_false
+    end  
+    it "should not have period_start equal to period_end" do
+      period = Chouette::TimeTablePeriod.new
+      period.period_start = Date.today
+      period.period_end = Date.today
+      period.valid?.should be_false
+    end  
   end
 
 end
