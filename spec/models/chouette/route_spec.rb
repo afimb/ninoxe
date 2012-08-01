@@ -30,6 +30,7 @@ describe Chouette::Route do
         end
         it "should have changed stop_area_ids order" do
           subject.reorder!( new_stop_point_ids).should be_true
+          subject.reload
           subject.stop_areas.map(&:id).should eq( [old_stop_area_ids.last] + old_stop_area_ids[1..-2] + [old_stop_area_ids.first])
         end
       end
