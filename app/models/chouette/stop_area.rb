@@ -97,7 +97,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   def geometry=(geometry)
     geometry = geometry.to_wgs84
-    self.latitude, self.longitude = geometry.lat, geometry.lng
+    self.latitude, self.longitude, self.long_lat_type = geometry.lat, geometry.lng, "WGS84"
   end
 
   def position 
