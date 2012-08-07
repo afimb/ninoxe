@@ -14,12 +14,34 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessor :stop_area_type
   attr_accessor :children_ids
   
-  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
+  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
+  attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
+  attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type
+  attr_accessible :country_code, :street_name
+  
 
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
+  validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
+  validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
+  validates_numericality_of :x, :allow_nil => true
+  validates_numericality_of :y, :allow_nil => true
+
+  validate :x_y_must_be_both_nil_or_none
+  def x_y_must_be_both_nil_or_none
+    if (x.nil? && !y.nil?) || (!x.nil? && y.nil?)
+      errors.add(:y,I18n.t("activerecord.errors.models.stop_area.x_y_must_be_both_nil_or_none"))
+    end
+  end
+  
+  validate :long_lat_must_be_both_nil_or_none
+  def long_lat_must_be_both_nil_or_none
+    if (longitude.nil? && !latitude.nil?) || (!longitude.nil? && latitude.nil?)
+      errors.add(:longitude,I18n.t("activerecord.errors.models.stop_area.long_lat_must_be_both_nil_or_none"))
+    end
+  end
 
   def children_in_depth
     return [] if self.children.empty?

@@ -8,4 +8,6 @@ en:
           attributes:
             date:
               taken: dupplicate date for this timetable
-            
+        stop_area:
+          x_y_must_be_both_nil_or_none: x and y must both populated or none of them  
+          long_lat_must_be_both_nil_or_none: longitude and latitude must both populated or none of them
