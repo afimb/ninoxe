@@ -5,6 +5,15 @@ module Chouette
 
     self.abstract_class = true
 
+    # workaround of ruby 1.8 private method y block field y for stoparea
+    after_initialize :remove_y_def
+    def remove_y_def
+      begin
+        undef :y
+      rescue
+      end
+    end
+
     def human_attribute_name(*args)
       self.class.human_attribute_name(*args)
     end
