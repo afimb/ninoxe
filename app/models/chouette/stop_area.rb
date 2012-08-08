@@ -19,29 +19,39 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type
   attr_accessible :country_code, :street_name
   
+  # workaround of ruby 1.8 private method y block attribute y reading access
+  def y
+    read_attribute :y
+  end
 
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
+
+  validates_presence_of :latitude, :if => :longitude
+  validates_presence_of :longitude, :if => :latitude
   validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
   validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
+
+  validates_presence_of :x, :if => :y
+  validates_presence_of :y, :if => :x
   validates_numericality_of :x, :allow_nil => true
   validates_numericality_of :y, :allow_nil => true
 
-  validate :x_y_must_be_both_nil_or_none
-  def x_y_must_be_both_nil_or_none
-    if (x.nil? && !y.nil?) || (!x.nil? && y.nil?)
-      errors.add(:y,I18n.t("activerecord.errors.models.stop_area.x_y_must_be_both_nil_or_none"))
-    end
-  end
+  #validate :x_y_must_be_both_nil_or_none
+  #def x_y_must_be_both_nil_or_none
+  #  if (x.nil? && !y.nil?) || (!x.nil? && y.nil?)
+  #    errors.add(:y,I18n.t("activerecord.errors.models.stop_area.x_y_must_be_both_nil_or_none"))
+  #  end
+  #end
   
-  validate :long_lat_must_be_both_nil_or_none
-  def long_lat_must_be_both_nil_or_none
-    if (longitude.nil? && !latitude.nil?) || (!longitude.nil? && latitude.nil?)
-      errors.add(:longitude,I18n.t("activerecord.errors.models.stop_area.long_lat_must_be_both_nil_or_none"))
-    end
-  end
+  #validate :long_lat_must_be_both_nil_or_none
+  #def long_lat_must_be_both_nil_or_none
+  #  if (longitude.nil? && !latitude.nil?) || (!longitude.nil? && latitude.nil?)
+  #    errors.add(:longitude,I18n.t("activerecord.errors.models.stop_area.long_lat_must_be_both_nil_or_none"))
+  #  end
+  #end
 
   def children_in_depth
     return [] if self.children.empty?
