@@ -10,13 +10,13 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     def self.object_id_key
       model_name
     end
+    
+    def prefix
+      "NINOXE"
+    end
     def prepare_auto_columns
       # logger.info 'calling before_validation'
-      prefix="NINOXE"
-      if self.respond_to?('referential')
-        prefix = self.referential.prefix
-      end
-        # logger.info 'start before_validation : '+self.objectid.to_s
+      # logger.info 'start before_validation : '+self.objectid.to_s
       if self.objectid.blank?
         # if empty, generate a pending objectid which will be completed after creation
         self.objectid = "#{prefix}:#{self.class.object_id_key}:__pending_id__#{rand(1000)}"
