@@ -13,6 +13,9 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
   
   before_destroy :remove_dependent_journey_pattern_stop_points
   
+  validates_presence_of :stop_area
+  validates_presence_of :route
+  
   scope :default_order, order("position")
 
   def self.area_candidates

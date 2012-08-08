@@ -5,6 +5,9 @@ describe Chouette::StopPoint do
   subject { Chouette::Route.find( vehicle_journey.route_id).stop_points.first }
 
   it { should validate_uniqueness_of :objectid }
+  it { should validate_presence_of :stop_area }
+  it { should validate_presence_of :route }
+  
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
   describe "#destroy" do
