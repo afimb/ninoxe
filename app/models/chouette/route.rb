@@ -45,6 +45,9 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
 
   validates_presence_of :name
+  validates_presence_of :line
+  validates_presence_of :direction_code
+  validates_presence_of :wayback_code
 
   def geometry
     points = stop_areas.map(&:to_lat_lng).compact.map do |loc|

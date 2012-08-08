@@ -7,6 +7,9 @@ describe Chouette::Route do
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
   it { should validate_presence_of :name }
+  it { should validate_presence_of :line }
+  it { should validate_presence_of :wayback_code }
+  it { should validate_presence_of :direction_code }
 
   context "reordering methods" do
     let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}} 
