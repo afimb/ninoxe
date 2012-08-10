@@ -4,7 +4,7 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
 
   belongs_to :stop_area
   belongs_to :route
-  acts_as_list :scope => 'route_id = \'#{route.id}\''
+  acts_as_list :scope => 'route_id = \'#{route.id}\'',:top_of_list => 0
 
   attr_accessible :route_id, :stop_area_id, :objectid, :object_version, :creation_time, :creator_id, :position
 
