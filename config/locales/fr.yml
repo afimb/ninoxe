@@ -8,7 +8,4 @@ fr:
           attributes:
             date:
               taken: date déjà saisie pour ce calendrier
-        stop_area:
-          x_y_must_be_both_nil_or_none: x et y doivent être renseignés ensemble 
-          long_lat_must_be_both_nil_or_none: les longitudes et latitudes doivent être renseignés ensemble
             
