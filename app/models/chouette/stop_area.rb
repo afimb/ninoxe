@@ -39,20 +39,6 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_numericality_of :x, :allow_nil => true
   validates_numericality_of :y, :allow_nil => true
 
-  #validate :x_y_must_be_both_nil_or_none
-  #def x_y_must_be_both_nil_or_none
-  #  if (x.nil? && !y.nil?) || (!x.nil? && y.nil?)
-  #    errors.add(:y,I18n.t("activerecord.errors.models.stop_area.x_y_must_be_both_nil_or_none"))
-  #  end
-  #end
-  
-  #validate :long_lat_must_be_both_nil_or_none
-  #def long_lat_must_be_both_nil_or_none
-  #  if (longitude.nil? && !latitude.nil?) || (!longitude.nil? && latitude.nil?)
-  #    errors.add(:longitude,I18n.t("activerecord.errors.models.stop_area.long_lat_must_be_both_nil_or_none"))
-  #  end
-  #end
-
   def children_in_depth
     return [] if self.children.empty?
 
