@@ -54,7 +54,7 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       errors.add(:objectid, "is not a valid ObjectId object")
     end
     unless self.objectid.object_type==self.class.object_id_key
-      errors.add(:objectid, "doesn't have expected object_type: #{self.class.objectid_type}")
+      errors.add(:objectid, "doesn't have expected object_type: #{self.class.object_id_key}")
     end
   end
 
