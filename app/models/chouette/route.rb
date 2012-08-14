@@ -10,7 +10,11 @@ class Chouette::Route < Chouette::TridentActiveRecord
   belongs_to :line
 
   has_many :journey_patterns, :dependent => :destroy
-  has_many :vehicle_journeys, :dependent => :destroy
+  has_many :vehicle_journeys, :dependent => :destroy do
+    def timeless
+      all( :conditions => ['vehicle_journeys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
+    end
+  end
   has_one :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
   has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
