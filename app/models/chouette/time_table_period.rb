@@ -4,7 +4,19 @@ class Chouette::TimeTablePeriod < Chouette::ActiveRecord
   acts_as_list :scope => 'time_table_id = #{time_table_id}',:top_of_list => 0
 
   attr_accessible :period_start, :period_end, :position
+  
+  validates_presence_of :period_start
+  validates_presence_of :period_end
+  
+  validate :start_must_be_before_end
+
   def self.model_name
     ActiveModel::Name.new Chouette::TimeTablePeriod, Chouette, "TimeTablePeriod"
+  end
+  
+  def start_must_be_before_end
+    if period_end <= period_start
+      errors.add(:period_end,I18n.t("activerecord.errors.models.time_table_period.start_must_be_before_end"))
+    end
   end
 end

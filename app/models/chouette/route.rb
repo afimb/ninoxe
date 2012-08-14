@@ -20,7 +20,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
       where( :stop_area_id => stop_area_ids).first or
-        raise ActiveRecord::RecordNotFound.new("Can't find a StopArea #{stop_area.inspect} in Route #{owner.id.inspect}'s StopPoints")
+        raise ActiveRecord::RecordNotFound.new("Can't find a StopArea #{stop_area.inspect} in Route #{proxy_owner.id.inspect}'s StopPoints")
     end
 
     def between(departure, arrival)
@@ -44,11 +44,14 @@ class Chouette::Route < Chouette::TridentActiveRecord
       departure, arrival = [departure, arrival].collect do |endpoint|
         String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint
       end
-      proxy_owner.stop_points.between(departure, arrival).includes(:stop_areas).collect(&:stop_area)
+      proxy_owner.stop_points.between(departure, arrival).includes(:stop_area).collect(&:stop_area)
     end
   end
 
   validates_presence_of :name
+  validates_presence_of :line
+  validates_presence_of :direction_code
+  validates_presence_of :wayback_code
 
   def geometry
     points = stop_areas.map(&:to_lat_lng).compact.map do |loc|
@@ -109,10 +112,6 @@ class Chouette::Route < Chouette::TridentActiveRecord
   @@waybacks = nil
   def self.waybacks
     @@waybacks ||= Chouette::Wayback.all
-  end
-  
-  def stop_areas
-    Chouette::StopArea.joins(:stop_points => :route).where(:routes => {:id => self.id}).order("stop_points.position")
   end
   
   def stop_point_permutation?( stop_point_ids)

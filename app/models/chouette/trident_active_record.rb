@@ -10,15 +10,19 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     def self.object_id_key
       model_name
     end
+    
+    def prefix
+      "NINOXE"
+    end
     def prepare_auto_columns
       # logger.info 'calling before_validation'
-        # logger.info 'start before_validation : '+self.objectid.to_s
+      # logger.info 'start before_validation : '+self.objectid.to_s
       if self.objectid.blank?
         # if empty, generate a pending objectid which will be completed after creation
-        self.objectid = "NINOXE:#{self.class.object_id_key}:__pending_id__#{rand(1000)}"
+        self.objectid = "#{prefix}:#{self.class.object_id_key}:__pending_id__#{rand(1000)}"
       elsif not self.objectid.include? ':'
         # if one token : technical token : completed by prefix and key
-        self.objectid = "NINOXE:#{self.class.object_id_key}:#{self.objectid}"
+        self.objectid = "#{prefix}:#{self.class.object_id_key}:#{self.objectid}"
       end
       # logger.info 'end before_validation : '+self.objectid
       # initialize or update version
@@ -50,7 +54,7 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       errors.add(:objectid, "is not a valid ObjectId object")
     end
     unless self.objectid.object_type==self.class.object_id_key
-      errors.add(:objectid, "doesn't have expected object_type: #{self.class.objectid_type}")
+      errors.add(:objectid, "doesn't have expected object_type: #{self.class.object_id_key}")
     end
   end
 

@@ -7,6 +7,9 @@ describe Chouette::Route do
   its(:objectid) { should be_kind_of(Chouette::ObjectId) }
 
   it { should validate_presence_of :name }
+  it { should validate_presence_of :line }
+  it { should validate_presence_of :wayback_code }
+  it { should validate_presence_of :direction_code }
 
   context "reordering methods" do
     let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}} 
@@ -30,6 +33,7 @@ describe Chouette::Route do
         end
         it "should have changed stop_area_ids order" do
           subject.reorder!( new_stop_point_ids).should be_true
+          subject.reload
           subject.stop_areas.map(&:id).should eq( [old_stop_area_ids.last] + old_stop_area_ids[1..-2] + [old_stop_area_ids.first])
         end
       end

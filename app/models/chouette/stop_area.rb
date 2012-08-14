@@ -14,12 +14,30 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessor :stop_area_type
   attr_accessor :children_ids
   
-  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number, :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type, :country_code, :street_name
+  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
+  attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
+  attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type
+  attr_accessible :country_code, :street_name
+  
+  # workaround of ruby 1.8 private method y block attribute y reading access
+  def y
+    read_attribute :y
+  end
 
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
+
+  validates_presence_of :latitude, :if => :longitude
+  validates_presence_of :longitude, :if => :latitude
+  validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
+  validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
+
+  validates_presence_of :x, :if => :y
+  validates_presence_of :y, :if => :x
+  validates_numericality_of :x, :allow_nil => true
+  validates_numericality_of :y, :allow_nil => true
 
   def children_in_depth
     return [] if self.children.empty?
@@ -75,7 +93,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   def geometry=(geometry)
     geometry = geometry.to_wgs84
-    self.latitude, self.longitude = geometry.lat, geometry.lng
+    self.latitude, self.longitude, self.long_lat_type = geometry.lat, geometry.lng, "WGS84"
   end
 
   def position 
