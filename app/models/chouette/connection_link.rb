@@ -32,5 +32,9 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
     Chouette::StopArea.where(:id => [self.departure_id,self.arrival_id])
   end
 
+  def geometry
+    GeoRuby::SimpleFeatures::LineString.from_points( [ departure.geometry, arrival.geometry], 4326) if departure.geometry and arrival.geometry
+  end
+
 end
 
