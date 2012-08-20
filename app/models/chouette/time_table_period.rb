@@ -15,6 +15,10 @@ class Chouette::TimeTablePeriod < Chouette::ActiveRecord
   end
   
   def start_must_be_before_end
+    # security against nil values
+    if period_end.nil? || period_start.nil?
+      return
+    end
     if period_end <= period_start
       errors.add(:period_end,I18n.t("activerecord.errors.models.time_table_period.start_must_be_before_end"))
     end
