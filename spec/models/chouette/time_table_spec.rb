@@ -7,6 +7,13 @@ describe Chouette::TimeTable do
   it { should validate_presence_of :comment }
   it { should validate_uniqueness_of :objectid }
 
+  describe "#valid_days" do
+    it "should begin with position 0" do
+      subject.int_day_types = 128
+      subject.valid_days.should == [6]
+    end
+  end
+
   describe "#dates" do
     it "should begin with position 0" do
       subject.dates.first.position.should == 0

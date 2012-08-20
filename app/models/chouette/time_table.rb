@@ -60,6 +60,19 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     int_day_types & flag == flag
   end
 
+  def valid_days
+    # Build an array with day of calendar week (1-7, Monday is 1).
+    [].tap do |valid_days|
+      valid_days << 1  if monday
+      valid_days << 2  if tuesday
+      valid_days << 3  if wednesday
+      valid_days << 4  if thursday
+      valid_days << 5  if friday
+      valid_days << 6  if saturday
+      valid_days << 7  if sunday
+    end
+  end
+
   def monday
     day_by_mask(4)
   end
