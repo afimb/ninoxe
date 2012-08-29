@@ -5,7 +5,7 @@ class Chouette::ObjectId < String
   end
   alias_method :objectid?, :valid?
 
-  @@format = /(\w+):(\w+):([\w\d]+)/ 
+  @@format = /^([0-9A-Za-z_]+):([A-Za-z]+):([0-9A-Za-z_-]+)$/ 
   cattr_reader :format
 
   def parts
