@@ -18,10 +18,10 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   validates_presence_of :comment
 
   def self.start_validity_period
-    ( Chouette::TimeTableDate.select('min(date) as date').map(&:date).compact + Chouette::TimeTablePeriod.select('min(period_start) as period_start').map(&:period_start).compact).min
+    [Chouette::TimeTableDate.minimum(:date),Chouette::TimeTablePeriod.minimum(:period_start)].compact.min 
   end
   def self.end_validity_period
-    ( Chouette::TimeTableDate.select('max(date) as date').map(&:date).compact + Chouette::TimeTablePeriod.select('max(period_end) as period_end').map(&:period_end).compact).max
+    [Chouette::TimeTableDate.maximum(:date),Chouette::TimeTablePeriod.maximum(:period_end)].compact.max 
   end
 
   def self.expired_on(expected_date,limit=0)
