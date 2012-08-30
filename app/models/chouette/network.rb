@@ -15,6 +15,12 @@ class Chouette::Network < Chouette::TridentActiveRecord
   end
 
   validates_presence_of :name
+  
+  
+  def commercial_stop_areas
+    Chouette::StopArea.joins(:children => [:stop_points => [:route => [:line => :network] ] ]).where(:networks => {:id => self.id}).uniq
+  end
+
   def stop_areas
     Chouette::StopArea.joins(:stop_points => [:route => [:line => :network] ]).where(:networks => {:id => self.id})
   end
