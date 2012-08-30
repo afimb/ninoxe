@@ -39,6 +39,11 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_numericality_of :x, :allow_nil => true
   validates_numericality_of :y, :allow_nil => true
 
+  def self.nullable_attributes
+    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :projection_type, :long_lat_type]
+  end
+
+
   def children_in_depth
     return [] if self.children.empty?
 

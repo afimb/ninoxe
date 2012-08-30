@@ -5,6 +5,18 @@ module Chouette
 
     self.abstract_class = true
 
+    before_save :nil_if_blank
+
+    # to be overrided to set nullable attrs when empty
+    def self.nullable_attributes
+      []
+    end
+
+    def nil_if_blank
+      self.class.nullable_attributes.each { |attr| self[attr] = nil if self[attr].blank? }
+    end
+
+
     def human_attribute_name(*args)
       self.class.human_attribute_name(*args)
     end

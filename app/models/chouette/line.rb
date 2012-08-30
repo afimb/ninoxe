@@ -19,6 +19,10 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
 
   validates_presence_of :name
+  
+  def self.nullable_attributes
+    [:published_name, :number, :comment]
+  end
 
   def transport_mode
     # return nil if transport_mode_name is nil
