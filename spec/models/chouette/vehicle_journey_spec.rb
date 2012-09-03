@@ -85,6 +85,8 @@ describe Chouette::VehicleJourney do
     describe "#increasing_times" do
       before(:each) do
         subject.vehicle_journey_at_stops[0].departure_time = subject.vehicle_journey_at_stops[1].departure_time - 2.hour
+        subject.vehicle_journey_at_stops[0].arrival_time = subject.vehicle_journey_at_stops[0].departure_time
+        subject.vehicle_journey_at_stops[1].arrival_time = subject.vehicle_journey_at_stops[1].departure_time
       end
       it "should make instance invalid" do
         subject.increasing_times
@@ -94,8 +96,8 @@ describe Chouette::VehicleJourney do
     end
     describe "#update_attributes" do
       let!(:params){ {"vehicle_journey_at_stops_attributes" => {
-            "0"=>{"id" => subject.vehicle_journey_at_stops[0].id ,"departure_time" => 1.minutes.ago},
-            "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "departure_time" => (1.minutes.ago + 2.hour)}
+            "0"=>{"id" => subject.vehicle_journey_at_stops[0].id ,"arrival_time" => 1.minutes.ago,"departure_time" => 1.minutes.ago},
+            "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "arrival_time" => (1.minutes.ago + 2.hour),"departure_time" => (1.minutes.ago + 2.hour)}
          }}}
       it "should return false" do
         subject.update_attributes(params).should be_false

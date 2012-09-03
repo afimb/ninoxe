@@ -9,8 +9,8 @@ Factory.define :vehicle_journey, :parent => :vehicle_journey_common do |v|
       vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
-               :departure_time => (-1 * index).minutes.ago, 
-               :arrival_time => (-1 * index).minutes.ago)
+               :arrival_time => (-1 * index).minutes.ago, 
+               :departure_time => (-1 * index).minutes.ago)
     end
   end
 end
@@ -22,8 +22,8 @@ Factory.define :vehicle_journey_odd, :parent => :vehicle_journey_common do |v|
       vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
-               :departure_time => (-1 * index).minutes.ago, 
-               :arrival_time => (-1 * index).minutes.ago)
+               :arrival_time => (-1 * index).minutes.ago, 
+               :departure_time => (-1 * index).minutes.ago)
     end
   end
 end
@@ -35,8 +35,8 @@ Factory.define :vehicle_journey_even, :parent => :vehicle_journey_common do |v|
       vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
                :vehicle_journey => vj, 
                :stop_point => sp, 
-               :departure_time => (-1 * index).minutes.ago, 
-               :arrival_time => (-1 * index).minutes.ago)
+               :arrival_time => (-1 * index).minutes.ago, 
+               :departure_time => (-1 * index).minutes.ago)
     end
   end
 end
