@@ -12,6 +12,9 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   belongs_to :route
   belongs_to :journey_pattern
 
+  validates_presence_of :route
+  validates_presence_of :journey_pattern
+
   has_many :vehicle_journey_at_stops, :dependent => :destroy, :include => :stop_point, :order => "stop_points.position"
   accepts_nested_attributes_for :vehicle_journey_at_stops, :allow_destroy => true
 
