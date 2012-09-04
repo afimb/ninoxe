@@ -14,10 +14,9 @@ class Chouette::VehicleJourneyAtStop < Chouette::ActiveRecord
 
   def arrival_must_be_before_departure
     # security against nil values
-    if arrival_time.nil? || departure_time.nil?
-      return
-    end
-    if departure_time < arrival_time
+    return unless arrival_time && departure_time
+
+    if exceeds_gap?( arrival_time, departure_time) 
       errors.add(:arrival_time,I18n.t("activerecord.errors.models.vehicle_journey_at_stop.arrival_must_be_before_departure"))
     end
   end
