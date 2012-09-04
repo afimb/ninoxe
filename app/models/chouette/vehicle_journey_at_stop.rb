@@ -10,6 +10,18 @@ class Chouette::VehicleJourneyAtStop < Chouette::ActiveRecord
   attr_accessible :position, :is_departure, :is_arrival
   attr_accessible :vehicle_journey_id, :stop_point_id, :connecting_service_id, :boarding_alighting_possibility, :arrival_time, :departure_time, :waiting_time, :elapse_duration, :headway_frequency, :_destroy, :stop_point
 
+  validate :arrival_must_be_before_departure
+
+  def arrival_must_be_before_departure
+    # security against nil values
+    if arrival_time.nil? || departure_time.nil?
+      return
+    end
+    if departure_time < arrival_time
+      errors.add(:arrival_time,I18n.t("activerecord.errors.models.vehicle_journey_at_stop.arrival_must_be_before_departure"))
+    end
+  end
+
   def increasing_times_validate( previous)
     result = true
     return result unless previous

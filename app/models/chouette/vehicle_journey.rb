@@ -8,6 +8,10 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables
   attr_reader :time_table_tokens
 
+  def self.nullable_attributes
+    [:transport_mode, :published_journey_name, :vehicle_type_identifier, :published_journey_identifier, :comment, :status_value]
+  end
+
   belongs_to :company
   belongs_to :route
   belongs_to :journey_pattern
@@ -22,6 +26,14 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   has_many :stop_points, :through => :vehicle_journey_at_stops, :order => 'stop_points.position'
 
   validate :increasing_times
+  validates_presence_of :number
+  
+  before_validation :set_default_values
+  def set_default_values
+    if number.nil?
+      self.number = 0
+    end
+  end
 
   def increasing_times
     previous = nil

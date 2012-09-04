@@ -1,6 +1,6 @@
 require 'tmpdir'
 
-if RUBY_PLATFORM == "java"
+#if RUBY_PLATFORM == "java"
   # FIXME disable remove_entry_secure because incompatible with jruby ?! 
   # See http://jira.codehaus.org/browse/JRUBY-4082
   module FileUtils
@@ -8,7 +8,7 @@ if RUBY_PLATFORM == "java"
       self.remove_entry *args
     end
   end
-end
+#end
 
 class Chouette::Command
 

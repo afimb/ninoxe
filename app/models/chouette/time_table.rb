@@ -18,15 +18,15 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   validates_presence_of :comment
 
   def self.start_validity_period
-    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_start)).min
+    [Chouette::TimeTableDate.minimum(:date),Chouette::TimeTablePeriod.minimum(:period_start)].compact.min 
   end
   def self.end_validity_period
-    ( Chouette::TimeTableDate.all.map(&:date) + Chouette::TimeTablePeriod.all.map(&:period_end)).max
+    [Chouette::TimeTableDate.maximum(:date),Chouette::TimeTablePeriod.maximum(:period_end)].compact.max 
   end
 
   def self.expired_on(expected_date,limit=0)
     expired = Array.new
-    find_each do |tm|
+    includes(:dates,:periods).find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
       if max_date.nil? || max_date <= expected_date
         expired << tm
@@ -40,7 +40,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
 
   def self.expired_between(after_date,expected_date,limit = 0)
     expired = Array.new
-    find_each do |tm|
+    includes(:dates,:periods).find_each do |tm|
       max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
       if !max_date.nil? && max_date <= expected_date && max_date > after_date
         expired << tm
@@ -58,6 +58,19 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
 
   def day_by_mask(flag)
     int_day_types & flag == flag
+  end
+
+  def valid_days
+    # Build an array with day of calendar week (1-7, Monday is 1).
+    [].tap do |valid_days|
+      valid_days << 1  if monday
+      valid_days << 2  if tuesday
+      valid_days << 3  if wednesday
+      valid_days << 4  if thursday
+      valid_days << 5  if friday
+      valid_days << 6  if saturday
+      valid_days << 7  if sunday
+    end
   end
 
   def monday

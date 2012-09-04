@@ -5,7 +5,12 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessor :wayback_code
   attr_accessor :direction_code
 
-  attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :opposite_route_id, :published_name, :number, :direction, :wayback
+  attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name
+  attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback
+
+  def self.nullable_attributes
+    [:published_name, :comment, :number]
+  end
 
   belongs_to :line
 

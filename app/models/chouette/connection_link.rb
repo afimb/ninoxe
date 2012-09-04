@@ -12,6 +12,7 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   belongs_to :arrival, :class_name => 'Chouette::StopArea'
 
   validates_presence_of :name
+  validates_presence_of :link_type
 
   def connection_link_type
     link_type && Chouette::ConnectionLinkType.new( link_type.underscore)

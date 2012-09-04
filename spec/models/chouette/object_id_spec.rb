@@ -18,6 +18,60 @@ describe Chouette::ObjectId do
     its(:system_id) { should be_nil }
 
   end
+  
+  context "when with spaces in last part" do
+
+    subject { objectid("abc:Line:Aze toto") }
+
+    it { should_not be_valid }
+
+
+  end
+  
+  context "when with spaces in first part" do
+
+    subject { objectid("ae abc:Line:Aze") }
+
+    it { should_not be_valid }
+
+
+  end
+  
+  context "when with spaces in middle part" do
+
+    subject { objectid("aeabc:Li ne:Aze") }
+
+    it { should_not be_valid }
+    
+
+  end
+  
+  context "when invalid in first part" do
+
+    subject { objectid("Abc_+19:Line:Abc") }
+
+    it { should_not be_valid }
+  end
+  
+  context "when invalid in middle part" do
+
+    subject { objectid("Abc_19:Li56ne:Abc") }
+
+    it { should_not be_valid }
+  end
+
+  context "when invalid in last part" do
+
+    subject { objectid("Abc_19:Line:Ab+c") }
+
+    it { should_not be_valid }
+  end
+  context "when valid" do
+
+    subject { objectid("Abc_19:Line:Abc_12-") }
+
+    it { should be_valid }
+  end
 
   describe "#parts" do
 
@@ -30,8 +84,7 @@ describe Chouette::ObjectId do
   describe "#system_id" do
     
     it "should be the first ObjectId parts" do
-      subject.stub :parts => %w{first 2 3}
-      subject.system_id.should == "first"
+      objectid("first:second:third").system_id.should == "first"
     end
 
   end
@@ -39,8 +92,7 @@ describe Chouette::ObjectId do
   describe "#object_type" do
     
     it "should be the second ObjectId parts" do
-      subject.stub :parts => %w{1 second 3}
-      subject.object_type.should == "second"
+      objectid("first:second:third").object_type.should == "second"
     end
 
   end
@@ -48,8 +100,7 @@ describe Chouette::ObjectId do
   describe "#local_id" do
     
     it "should be the third ObjectId parts" do
-      subject.stub :parts => %w{1 2 third}
-      subject.local_id.should == "third"
+      objectid("first:second:third").local_id.should == "third"
     end
 
   end
@@ -61,12 +112,12 @@ describe Chouette::ObjectId do
 
   describe ".create" do
 
-    let(:given_system_id) { "system_id" }
-    let(:given_object_type) { "object_type" }
-    let(:given_local_id) { "local_id" }
+    let(:given_system_id) { "systemId" }
+    let(:given_object_type) { "objectType" }
+    let(:given_local_id) { "localId" }
 
     subject { Chouette::ObjectId.create(given_system_id, given_object_type, given_local_id) }
-
+    
     RSpec::Matchers.define :return_an_objectid_with_given do |attribute|
       match do |actual|
         actual.send(attribute).should == send("given_#{attribute}")
