@@ -1,6 +1,6 @@
 class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     before_validation :prepare_auto_columns
-    after_create :build_objectid
+    after_save :build_objectid
 
     self.abstract_class = true
     #
@@ -19,7 +19,11 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       # logger.info 'start before_validation : '+self.objectid.to_s
       if self.objectid.blank?
         # if empty, generate a pending objectid which will be completed after creation
-        self.objectid = "#{prefix}:#{self.class.object_id_key}:__pending_id__#{rand(1000)}"
+        if self.id.nil?
+           self.objectid = "#{prefix}:#{self.class.object_id_key}:__pending_id__#{rand(1000)}"
+        else
+           self.objectid = "#{prefix}:#{self.class.object_id_key}:#{self.id}"
+        end
       elsif not self.objectid.include? ':'
         # if one token : technical token : completed by prefix and key
         self.objectid = "#{prefix}:#{self.class.object_id_key}:#{self.objectid}"
@@ -36,12 +40,12 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     end
     
     def build_objectid
-      # logger.info 'start after_create : '+self.objectid
+      #logger.info 'start after_create : '+self.objectid
       if self.objectid.include? ':__pending_id__'
         base_objectid = self.objectid.rpartition(":").first
         self.update_attributes( :objectid => "#{base_objectid}:#{self.id}", :object_version => (self.object_version - 1) )
       end
-      # logger.info 'end after_create : '+self.objectid
+      #logger.info 'end after_create : '+self.objectid
     end
 
   validates_presence_of :objectid
