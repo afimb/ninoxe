@@ -34,8 +34,10 @@ describe Chouette::JourneyPattern do
           vjas_stop_ids.should_not include( last_stop_id)
         end
         it "should keep departure and arrival shortcut up to date" do
-          subject.arrival_stop_point_id.should == subject.stop_points.last.id
-          subject.departure_stop_point_id.should == subject.stop_points.first.id
+          ordered = subject.stop_points.sort { |a,b| a.position <=> b.position}
+
+          subject.arrival_stop_point_id.should == ordered.last.id
+          subject.departure_stop_point_id.should == ordered.first.id
         end
       end
       context "when a route's stop has been added in journey_pattern" do
@@ -49,8 +51,10 @@ describe Chouette::JourneyPattern do
           vjas_stop_ids.should include( new_stop.id)
         end
         it "should keep departure and arrival shortcut up to date" do
-          subject.arrival_stop_point_id.should == subject.stop_points.last.id
-          subject.departure_stop_point_id.should == subject.stop_points.first.id
+          ordered = subject.stop_points.sort { |a,b| a.position <=> b.position}
+
+          subject.arrival_stop_point_id.should == ordered.last.id
+          subject.departure_stop_point_id.should == ordered.first.id
         end
       end
     end

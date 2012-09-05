@@ -27,21 +27,23 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
     Chouette::StopPoint.find( arrival_stop_point_id)
   end
 
-  def geometry
-    points = stop_points.includes(:stop_areas).map(&:to_lat_lng).compact.map do |loc|
-      [loc.lng, loc.lat]
-    end
-    GeoRuby::SimpleFeatures::LineString.from_coordinates( points, 4326)
-  end
   def shortcuts_update_for_add( stop_point)
     stop_points << stop_point unless stop_points.include?( stop_point)
-    self.update_attributes!( :departure_stop_point_id => stop_points.first && stop_points.first.id,
-                             :arrival_stop_point_id => stop_points.last && stop_points.last.id)
+
+    ordered_stop_points = stop_points
+    ordered_stop_points = ordered_stop_points.sort { |a,b| a.position <=> b.position} unless ordered_stop_points.empty?
+
+    self.update_attributes!( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
+                             :arrival_stop_point_id => (ordered_stop_points.last && ordered_stop_points.last.id))
   end
   def shortcuts_update_for_remove( stop_point)
     stop_points.delete( stop_point) if stop_points.include?( stop_point)
-    self.update_attributes!( :departure_stop_point_id => stop_points.first && stop_points.first.id,
-                             :arrival_stop_point_id => stop_points.last && stop_points.last.id)
+    
+    ordered_stop_points = stop_points
+    ordered_stop_points = ordered_stop_points.sort { |a,b| a.position <=> b.position} unless ordered_stop_points.empty?
+
+    self.update_attributes!( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
+                             :arrival_stop_point_id => (ordered_stop_points.last && ordered_stop_points.last.id))
   end
   def vjas_add( stop_point)
     return if new_record? 
