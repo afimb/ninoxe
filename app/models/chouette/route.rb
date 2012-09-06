@@ -17,10 +17,10 @@ class Chouette::Route < Chouette::TridentActiveRecord
   has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy do
     def timeless
-      all( :conditions => ['vehicle_journeys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
+      all( :conditions => ['vehicle_joursneys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
     end
   end
-  has_one :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
+  belongs_to :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
   has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
@@ -57,6 +57,17 @@ class Chouette::Route < Chouette::TridentActiveRecord
   validates_presence_of :line
   validates_presence_of :direction_code
   validates_presence_of :wayback_code
+  
+  before_destroy :dereference_opposite_route
+  
+  def dereference_opposite_route
+    self.line.routes.each do |r|
+      if self == r.opposite_route
+        r.opposite_route = nil
+        r.save
+      end
+    end
+  end
 
   def geometry
     points = stop_areas.map(&:to_lat_lng).compact.map do |loc|
