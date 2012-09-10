@@ -27,6 +27,50 @@ describe Chouette::TimeTable do
       end
     end
   end
+  describe "#validity_out_between?" do
+    let(:empty_tm) {Factory.build(:time_table)}
+    it "should be false if empty calendar" do
+      empty_tm.validity_out_between?( Date.today, Date.today + 7.day).should be_false
+    end
+    it "should be true if caldendar is out during start_date and end_date period" do
+      start_date = subject.bounding_dates.max - 2.day
+      end_date = subject.bounding_dates.max + 2.day
+      subject.validity_out_between?( start_date, end_date).should be_true
+    end
+    it "should be false if calendar is out on start date" do
+      start_date = subject.bounding_dates.max 
+      end_date = subject.bounding_dates.max + 2.day
+      subject.validity_out_between?( start_date, end_date).should be_false
+    end
+    it "should be false if calendar is out on end date" do
+      start_date = subject.bounding_dates.max - 2.day
+      end_date = subject.bounding_dates.max 
+      subject.validity_out_between?( start_date, end_date).should be_true
+    end
+    it "should be false if calendar is out after start_date" do
+      start_date = subject.bounding_dates.max + 2.day
+      end_date = subject.bounding_dates.max + 4.day
+      subject.validity_out_between?( start_date, end_date).should be_false
+    end
+  end
+  describe "#validity_out_from_on?" do
+    let(:empty_tm) {Factory.build(:time_table)}
+    it "should be false if empty calendar" do
+      empty_tm.validity_out_from_on?( Date.today).should be_false
+    end
+    it "should be true if caldendar ends on expected date" do
+      expected_date = subject.bounding_dates.max
+      subject.validity_out_from_on?( expected_date).should be_true
+    end
+    it "should be true if calendar ends before expected date" do
+      expected_date = subject.bounding_dates.max + 30.day
+      subject.validity_out_from_on?( expected_date).should be_true
+    end
+    it "should be false if calendars ends after expected date" do
+      expected_date = subject.bounding_dates.max - 30.day
+      subject.validity_out_from_on?( expected_date).should be_false
+    end
+  end
   describe "#bounding_dates" do
     it "should contains min date" do
       min_date = subject.bounding_dates.min

@@ -24,30 +24,28 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     [Chouette::TimeTableDate.maximum(:date),Chouette::TimeTablePeriod.maximum(:period_end)].compact.max 
   end
 
-  def self.expired_on(expected_date,limit=0)
-    expired = Array.new
+  def validity_out_from_on?(expected_date)
+    return false if bounding_dates.empty?
+    bounding_dates.max <= expected_date
+  end
+  def validity_out_between?(start_date, end_date)
+    return false if bounding_dates.empty?
+    start_date < bounding_dates.max  &&
+      bounding_dates.max <= end_date
+  end
+  def self.validity_out_from_on?(expected_date,limit=0)
+    expired = []
     includes(:dates,:periods).find_each do |tm|
-      max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
-      if max_date.nil? || max_date <= expected_date
-        expired << tm
-      end
-      if (limit > 0 && expired.size == limit) 
-        break;
-      end
+      expired << tm if tm.validity_out_from_on?( expected_date)
+      break if (limit > 0 && expired.size == limit) 
     end
     expired
   end
-
-  def self.expired_between(after_date,expected_date,limit = 0)
-    expired = Array.new
+  def self.validity_out_between?(start_date, end_date,limit=0)
+    expired = []
     includes(:dates,:periods).find_each do |tm|
-      max_date = (tm.dates.map(&:date) + tm.periods.map(&:period_end)).max
-      if !max_date.nil? && max_date <= expected_date && max_date > after_date
-        expired << tm
-      end
-      if (limit > 0 && expired.size == limit) 
-        break;
-      end
+      expired << tm if tm.validity_out_between?( start_date, end_date)
+      break if (limit > 0 && expired.size == limit) 
     end
     expired
   end
