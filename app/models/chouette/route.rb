@@ -17,7 +17,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy do
     def timeless
-      all( :conditions => ['vehicle_joursneys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
+      all( :conditions => ['vehicle_journeys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
     end
   end
   belongs_to :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
@@ -62,10 +62,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   
   def dereference_opposite_route
     self.line.routes.each do |r|
-      if self == r.opposite_route
-        r.opposite_route = nil
-        r.save
-      end
+      r.update_attributes( :opposite_route => nil) if r.opposite_route == self
     end
   end
 
