@@ -15,7 +15,7 @@ describe Chouette::TimeTable do
   end
 
   describe "#dates" do
-    it "should begin with position 0" do
+    it "should have with position 0" do
       subject.dates.first.position.should == 0
     end
     context "when first date has been removed" do

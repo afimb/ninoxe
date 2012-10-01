@@ -2,11 +2,12 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
   
-  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment, :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
+  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
+  attr_accessible  :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
 
-  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :position, :dependent => :destroy
-  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :position, :dependent => :destroy
+  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy
+  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy
 
   def self.object_id_key
     "Timetable"
@@ -14,6 +15,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
 
   accepts_nested_attributes_for :dates, :allow_destroy => :true
   accepts_nested_attributes_for :periods, :allow_destroy => :true
+  attr_accessible :dates_attributes,:periods_attributes
 
   validates_presence_of :comment
 
