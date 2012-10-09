@@ -90,5 +90,17 @@ describe Chouette::Line do
     end
 
   end
+  
+  context "#group_of_line_tokens=" do
+    let!(:group_of_line1){Factory(:group_of_line)}
+    let!(:group_of_line2){Factory(:group_of_line)}
+
+    it "should return associated group_of_line ids" do
+      subject.update_attributes :group_of_line_tokens => [group_of_line1.id, group_of_line2.id].join(',')
+      subject.group_of_lines.should include( group_of_line1)
+      subject.group_of_lines.should include( group_of_line2)
+    end
+  end
+
 
 end
