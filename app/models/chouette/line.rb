@@ -11,6 +11,10 @@ class Chouette::Line < Chouette::TridentActiveRecord
   belongs_to :network
   has_many :routes, :dependent => :destroy
 
+  has_and_belongs_to_many :group_of_lines, :class_name => 'Chouette::GroupOfLine', :order => 'group_of_lines.name'
+  attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
+  attr_reader :group_of_line_tokens
+
   validates_presence_of :network
   validates_presence_of :company
 
@@ -51,5 +55,10 @@ class Chouette::Line < Chouette::TridentActiveRecord
   def stop_areas_last_parents
     Chouette::StopArea.joins(:stop_points => [:route => :line]).where(:lines => {:id => self.id}).collect(&:root).flatten.uniq
   end
+
+  def group_of_line_tokens=(ids)
+    self.group_of_line_ids = ids.split(",")
+  end
+
 
 end
