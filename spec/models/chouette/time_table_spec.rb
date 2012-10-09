@@ -28,6 +28,31 @@ describe Chouette::TimeTable do
     end
   end
 
+  describe "#include_in_dates?" do
+    it "should return true if a date equal day" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
+      time_table_date = Factory(:time_table_date, :date => Date.today, :time_table_id => time_table.id)
+      time_table.include_in_dates?(Date.today).should == true
+    end
+  end
+  
+  describe "#include_in_periods?" do
+    it "should return true if a period include day" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
+      time_table_period = Factory(:time_table_period, :period_start => Date.yesterday,:period_end => Date.tomorrow, :time_table_id => time_table.id)
+      time_table.include_in_periods?(Date.today).should == true
+    end
+  end
+
+  describe "#include_in_overlap_dates?" do
+    it "should return true if a day is included in overlap dates" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
+      time_table_date = Factory(:time_table_date, :date => Date.today, :time_table_id => time_table.id)
+      time_table_period = Factory(:time_table_period, :period_start => Date.yesterday,:period_end => Date.tomorrow, :time_table_id => time_table.id)
+       time_table.include_in_overlap_dates?(Date.today).should == true      
+    end
+  end
+
   describe "#dates" do
     it "should have with position 0" do
       subject.dates.first.position.should == 0
