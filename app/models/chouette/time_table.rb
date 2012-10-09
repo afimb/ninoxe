@@ -52,6 +52,10 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     expired
   end
 
+  def include_day?(day)
+    self.dates.any?{ |d| d.date === day } || self.periods.any?{ |period| period.period_start <= day && day <= period.period_end }
+  end
+
   def bounding_dates
     (self.dates.map(&:date) + self.periods.map(&:period_start) + self.periods.map(&:period_end)).compact
   end
