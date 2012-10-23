@@ -38,18 +38,18 @@ describe Chouette::TimeTable do
   
   describe "#include_in_periods?" do
     it "should return true if a period include day" do
-      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table_period = Factory(:time_table_period, :period_start => Date.yesterday,:period_end => Date.tomorrow, :time_table_id => time_table.id)
-      time_table.include_in_periods?(Date.today).should == true
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
+      time_table_period = Factory(:time_table_period, :period_start => Date.new(2012, 1, 1),:period_end => Date.new(2012, 01, 30), :time_table_id => time_table.id)
+      time_table.include_in_periods?(Date.new(2012, 1, 2)).should == true
     end
   end
 
   describe "#include_in_overlap_dates?" do
     it "should return true if a day is included in overlap dates" do
-      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table_date = Factory(:time_table_date, :date => Date.today, :time_table_id => time_table.id)
-      time_table_period = Factory(:time_table_period, :period_start => Date.yesterday,:period_end => Date.tomorrow, :time_table_id => time_table.id)
-       time_table.include_in_overlap_dates?(Date.today).should == true      
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
+      time_table_period = Factory(:time_table_period, :period_start => Date.new(2012, 1, 1),:period_end => Date.new(2012, 01, 30), :time_table_id => time_table.id)
+      time_table_date = Factory(:time_table_date, :date => Date.new(2012, 1, 2), :time_table_id => time_table.id)
+      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should == true      
     end
   end
 

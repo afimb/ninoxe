@@ -61,11 +61,11 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
 
   def include_in_periods?(day)
-    self.periods.any?{ |period| period.period_start <= day && day <= period.period_end }
+    self.periods.any?{ |period| period.period_start <= day && day <= period.period_end && valid_days.include?(day.cwday) }
   end
 
   def include_in_overlap_dates?(day)
-    counter = self.dates.select{ |d| d.date === day}.size + self.periods.select{ |period| period.period_start <= day && day <= period.period_end}.size
+    counter = self.dates.select{ |d| d.date === day}.size + self.periods.select{ |period| period.period_start <= day && day <= period.period_end && valid_days.include?(day.cwday) }.size
     counter <= 1 ? false : true 
   end
 
