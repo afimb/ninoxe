@@ -122,8 +122,15 @@ describe Chouette::StopArea do
       subject = Factory :stop_area, :area_type => "StopPlace"
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => subject 
       commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => commercial_stop_point
-      quay = Factory :stop_area, :parent => commercial_stop_point
+      quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       subject.children_in_depth.should =~ [commercial_stop_point, commercial_stop_point2, quay]
+    end
+    it "should return only the deepest children from stop area" do
+      subject = Factory :stop_area, :area_type => "StopPlace"
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => subject 
+      commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => commercial_stop_point
+      quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject.children_at_base.should =~ [quay]
     end
   end
 
@@ -271,6 +278,91 @@ describe Chouette::StopArea do
       subject.default_position.should == Chouette::StopArea.bounds.center
     end
 
+  end
+
+  describe "#children_at_base" do
+    it "should have 2 children_at_base" do
+      subject = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
+      quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject.children_at_base.size.should == 2
+    end
+   end 
+
+
+  describe "#access_link_matrix" do
+    it "should have no access_links in matrix with no access_point" do
+      subject = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
+      quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject.access_link_matrix.size.should == 0
+    end
+    it "should have 8 access_links in matrix with 2 children_at_base and 2 access_points" do
+      subject = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
+      quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      access_point1 = Factory :access_point, :stop_area => subject
+      access_point2 = Factory :access_point, :stop_area => subject
+      subject.access_link_matrix.size.should == 8
+    end
+   end 
+  describe "#parents" do
+    it "should return parent hireachy list" do
+      stop_place = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      subject = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject.parents.size.should == 2
+    end
+    it "should return empty parent hireachy list" do
+      subject = Factory :stop_area, :area_type => "Quay"
+      subject.parents.size.should == 0
+    end
+  end
+  
+  describe "#clean_invalid_access_links" do
+    it "should remove invalid access links" do
+      # subject is a CSP with a SP as parent, a quay as child
+      # 2 access_points of SP have access_link, one on subject, one on subject child
+      # when detaching subject from SP, both access_links must be deleted
+      stop_place = Factory :stop_area, :area_type => "StopPlace" 
+      subject = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      access_point1 = Factory :access_point, :stop_area => stop_place
+      access_point2 = Factory :access_point, :stop_area => stop_place
+      quay = Factory :stop_area, :parent => subject, :area_type => "Quay"
+      access_link1 = Factory :access_link, :stop_area => subject, :access_point => access_point1
+      access_link2 = Factory :access_link, :stop_area => quay, :access_point => access_point2
+      subject.save 
+      subject.access_links.size.should == 1
+      quay.access_links.size.should == 1
+      subject.parent=nil
+      subject.save 
+      subject.reload
+      subject.access_links.size.should == 0
+      quay.access_links.size.should == 0
+    end
+    it "should not remove still valid access links" do
+      # subject is a Q of CSP with a SP as parent
+      # 2 access_points, one of SP, one of CSP have access_link on subject
+      # when changing subject CSP to another CSP of same SP
+      # one access_links must be kept
+      stop_place = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point1 = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      access_point1 = Factory :access_point, :stop_area => stop_place
+      access_point2 = Factory :access_point, :stop_area => commercial_stop_point1
+      subject = Factory :stop_area, :parent => commercial_stop_point1, :area_type => "Quay"
+      access_link1 = Factory :access_link, :stop_area => subject, :access_point => access_point1
+      access_link2 = Factory :access_link, :stop_area => subject, :access_point => access_point2
+      subject.save 
+      subject.access_links.size.should == 2
+      subject.parent=commercial_stop_point2
+      subject.save 
+      subject.reload
+      subject.access_links.size.should == 1
+    end
   end
 
 end

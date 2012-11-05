@@ -6,6 +6,8 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   set_primary_key :id
   include Geokit::Mappable
   has_many :stop_points, :dependent => :destroy
+  has_many :access_points, :dependent => :destroy
+  has_many :access_links, :dependent => :destroy
   has_and_belongs_to_many :routing_lines, :class_name => 'Chouette::Line', :foreign_key => "stop_area_id", :association_foreign_key => "line_id", :join_table => "routing_constraints_lines", :order => "lines.number"
   has_and_belongs_to_many :routing_stops, :class_name => 'Chouette::StopArea', :foreign_key => "parent_id", :association_foreign_key => "child_id", :join_table => "stop_areas_stop_areas", :order => "stop_areas.name"
 
@@ -43,6 +45,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :projection_type, :long_lat_type]
   end
 
+  after_update :clean_invalid_access_links
 
   def children_in_depth
     return [] if self.children.empty?
@@ -219,5 +222,44 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     children_geometries = children.with_geometry.map(&:geometry).uniq
     GeoRuby::SimpleFeatures::Point.centroid children_geometries if children_geometries.present?
   end
-
+  
+  def access_link_matrix
+     matrix = Array.new
+     access_points.each do |access_point|
+       matrix += access_point.access_link_matrix
+     end
+     matrix
+  end
+  
+  def children_at_base
+    list = Array.new
+    children_in_depth.each do |child|
+      if child.area_type == 'Quay' || child.area_type == 'BoardingPosition'
+        list << child
+      end 
+    end
+    list
+  end
+  
+  def parents
+    list = Array.new
+    if !parent.nil?
+      list << parent
+      list += parent.parents
+    end
+    list
+  end
+  
+  def clean_invalid_access_links
+    stop_parents = parents
+    access_links.each do |link|
+      unless stop_parents.include? link.access_point.stop_area
+        link.delete
+      end
+    end
+    children.each do |child|
+      child.clean_invalid_access_links
+    end
+  end
+  
 end
