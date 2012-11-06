@@ -4,11 +4,12 @@ class Chouette::AccessLink < Chouette::TridentActiveRecord
 
   attr_accessor :access_link_type, :link_orientation_type, :link_key
 
-  attr_accessible :access_link_type,:access_point_id, :stop_area_id
+  attr_accessible :id, :access_link_type,:access_point_id, :stop_area_id
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :name, :comment
   attr_accessible :link_distance, :link_type, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration
   attr_accessible :mobility_restricted_traveller_duration, :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
   attr_accessible :link_orientation
+  attr_accessible :link_orientation_type, :stop_area
 
   belongs_to :access_point, :class_name => 'Chouette::AccessPoint'
   belongs_to :stop_area, :class_name => 'Chouette::StopArea'
