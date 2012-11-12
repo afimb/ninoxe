@@ -291,22 +291,36 @@ describe Chouette::StopArea do
    end 
 
 
-  describe "#access_link_matrix" do
+  describe "#generic_access_link_matrix" do
+    it "should have no access_links in matrix with no access_point" do
+      subject = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
+      subject.generic_access_link_matrix.size.should == 0
+    end
+    it "should have 4 generic_access_links in matrix with 2 access_points" do
+      subject = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
+      access_point1 = Factory :access_point, :stop_area => subject
+      access_point2 = Factory :access_point, :stop_area => subject
+      subject.generic_access_link_matrix.size.should == 4
+    end
+   end 
+  describe "#detail_access_link_matrix" do
     it "should have no access_links in matrix with no access_point" do
       subject = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
       quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.access_link_matrix.size.should == 0
+      subject.detail_access_link_matrix.size.should == 0
     end
-    it "should have 8 access_links in matrix with 2 children_at_base and 2 access_points" do
+    it "should have 8 detail_access_links in matrix with 2 children_at_base and 2 access_points" do
       subject = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
       quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       access_point1 = Factory :access_point, :stop_area => subject
       access_point2 = Factory :access_point, :stop_area => subject
-      subject.access_link_matrix.size.should == 8
+      subject.detail_access_link_matrix.size.should == 8
     end
    end 
   describe "#parents" do

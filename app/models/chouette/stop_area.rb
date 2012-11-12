@@ -223,10 +223,18 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     GeoRuby::SimpleFeatures::Point.centroid children_geometries if children_geometries.present?
   end
   
-  def access_link_matrix
+  def generic_access_link_matrix
      matrix = Array.new
      access_points.each do |access_point|
-       matrix += access_point.access_link_matrix
+       matrix += access_point.generic_access_link_matrix
+     end
+     matrix
+  end
+
+  def detail_access_link_matrix
+     matrix = Array.new
+     access_points.each do |access_point|
+       matrix += access_point.detail_access_link_matrix
      end
      matrix
   end

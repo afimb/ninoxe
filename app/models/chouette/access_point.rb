@@ -82,7 +82,36 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
     end
   end
 
-  def access_link_matrix
+  def generic_access_link_matrix
+     matrix = Array.new
+     hash = Hash.new
+     access_links.each do |link|
+        hash[link.link_key] = link
+     end
+     key=Chouette::AccessLink.build_link_key(self,stop_area,"access_point_to_stop_area")
+     if hash.has_key?(key)
+       matrix << hash[key]
+     else
+       link = Chouette::AccessLink.new
+       link.access_point = self
+       link.stop_area = stop_area
+       link.link_orientation_type = "access_point_to_stop_area"
+       matrix << link
+     end
+     key=Chouette::AccessLink.build_link_key(self,stop_area,"stop_area_to_access_point")
+     if hash.has_key?(key)
+       matrix << hash[key]
+     else
+       link = Chouette::AccessLink.new
+       link.access_point = self
+       link.stop_area = stop_area
+       link.link_orientation_type = "stop_area_to_access_point"
+       matrix << link
+     end
+     matrix
+  end
+
+  def detail_access_link_matrix
      matrix = Array.new
      hash = Hash.new
      access_links.each do |link|

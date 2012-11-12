@@ -157,30 +157,59 @@ describe Chouette::AccessPoint do
 
   end
 
-  describe "#access_link_matrix" do
-    it "should have 4 access_links in matrix" do
+  describe "#generic_access_link_matrix" do
+    it "should have 2 generic_access_links in matrix" do
+      stop_place = Factory :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      subject = Factory :access_point, :stop_area => stop_place
+      subject.generic_access_link_matrix.size.should == 2
+    end
+    
+    it "should have new generic_access_links in matrix" do
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+      subject = Factory :access_point, :stop_area => commercial_stop_point
+      subject.generic_access_link_matrix.each do |link|
+        link.id.should be_nil
+      end
+    end
+    it "should have only last generic_access_links as new in matrix" do
+      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+      subject = Factory :access_point, :stop_area => commercial_stop_point
+      link = Factory :access_link, :access_point => subject, :stop_area => commercial_stop_point
+      subject.generic_access_link_matrix.each do |link|
+        if link.link_key.start_with?"A_" 
+          link.id.should_not be_nil
+        else
+          link.id.should be_nil
+        end  
+      end
+    end
+  end
+
+  describe "#detail_access_link_matrix" do
+    it "should have 4 detail_access_links in matrix" do
       stop_place = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
       quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       subject = Factory :access_point, :stop_area => stop_place
-      subject.access_link_matrix.size.should == 4
+      subject.detail_access_link_matrix.size.should == 4
     end
     
-    it "should have new access_links in matrix" do
+    it "should have new detail_access_links in matrix" do
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
       quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       subject = Factory :access_point, :stop_area => commercial_stop_point
-      subject.access_link_matrix.each do |link|
+      subject.detail_access_link_matrix.each do |link|
         link.id.should be_nil
       end
     end
-    it "should have only last access_links as new in matrix" do
+    it "should have only last detail_access_links as new in matrix" do
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
       quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       subject = Factory :access_point, :stop_area => commercial_stop_point
       link = Factory :access_link, :access_point => subject, :stop_area => quay
-      subject.access_link_matrix.each do |link|
+      subject.detail_access_link_matrix.each do |link|
         if link.link_key.start_with?"A_" 
           link.id.should_not be_nil
         else
