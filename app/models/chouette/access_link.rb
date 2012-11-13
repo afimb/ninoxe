@@ -45,7 +45,7 @@ class Chouette::AccessLink < Chouette::TridentActiveRecord
   end
 
   def geometry
-    GeoRuby::SimpleFeatures::LineString.from_points( [ access_point.geometry, stop_area.geometry], 4326) if departure.geometry and arrival.geometry
+    GeoRuby::SimpleFeatures::LineString.from_points( [ access_point.geometry, stop_area.geometry], 4326) if access_point.geometry and stop_area.geometry
   end
 
   def link_key
