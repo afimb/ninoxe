@@ -8,8 +8,8 @@ require "ninoxe/version"
 Gem::Specification.new do |s|
   s.name        = "ninoxe"
   s.version     = Ninoxe::VERSION
-  s.authors     = ["Marc Florisson", "Alban Peignier", "Luc Donnet"]
-  s.email       = ["marc.florisson@dryade.net", "alban.peignier@dryade.net", "luc.donnet@dryade.net"]
+  s.authors     = ["Marc Florisson", "Michel Etienne", "Luc Donnet"]
+  s.email       = ["mflorisson@cityway.fr", "metienne@cityway.fr", "ldonnet@cityway.fr"]
   s.homepage    = ""
   s.summary     = "Library dedicated to Chouette access."
   s.description = "This library provides a model to navigate through Chouette database."
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake', '~> 0.9')
 
   s.add_runtime_dependency('activerecord', '>= 3.1.3' )
-  s.add_runtime_dependency('composite_primary_keys', '>= 4.1.2')
+  #s.add_runtime_dependency('composite_primary_keys', '>= 4.1.2')
   s.add_runtime_dependency('GeoRuby')
   s.add_runtime_dependency('geokit')
   s.add_runtime_dependency("rails", ">= 3.1.3")
