@@ -10,6 +10,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   belongs_to :company
   belongs_to :network
   has_many :routes, :dependent => :destroy
+  has_many :journey_patterns, :through => :routes
 
   has_and_belongs_to_many :group_of_lines, :class_name => 'Chouette::GroupOfLine', :order => 'group_of_lines.name'
   attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
