@@ -11,3 +11,4 @@ script: "RAILS_ENV=test bundle exec rake ci:build"
 notifications:
   recipients:
     - luc.donnet@dryade.net
+    - michel.etienne@dryade.net
