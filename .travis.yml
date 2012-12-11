@@ -2,7 +2,7 @@ language: ruby
 rvm:
   - 1.8.7
   - ree
-before_script: "RAILS_ENV=test bundle exec rake ci:prepare"
+before_script: psql -c 'create database ninoxe_test;' -U travis
 script: "RAILS_ENV=test bundle exec rake ci:build"
 notifications:
   recipients:
