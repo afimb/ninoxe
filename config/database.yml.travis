@@ -1,0 +1,9 @@
+development:
+  adapter: postgresql
+  database: ninoxe_dev
+  username: postgres
+  
+test:
+  adapter: postgresql
+  database: ninoxe_test
+  username: postgres
