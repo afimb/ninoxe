@@ -3,8 +3,9 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   set_primary_key :id
 
+  attr_accessor :transport_mode_name
   attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value
-  attr_accessible :route, :transport_mode, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
+  attr_accessible :route, :transport_mode,:transport_mode_name, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
   attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables
   attr_reader :time_table_tokens
 
@@ -34,6 +35,23 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
       self.number = 0
     end
   end
+  
+  def transport_mode_name
+    # return nil if transport_mode is nil
+    transport_mode && Chouette::TransportMode.new( transport_mode.underscore)
+  end
+
+  def transport_mode_name=(transport_mode_name)
+    self.transport_mode = (transport_mode_name ? transport_mode_name.camelcase : nil)
+  end
+
+  @@transport_mode_names = nil
+  def self.transport_mode_names
+    @@transport_mode_names ||= Chouette::TransportMode.all.select do |transport_mode_name|
+      transport_mode_name.to_i > 0
+    end
+  end
+
 
   def increasing_times
     previous = nil
