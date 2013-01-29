@@ -7,7 +7,6 @@ class Chouette::VehicleJourneyAtStop < Chouette::ActiveRecord
   after_initialize :set_virtual_attributes
 
   attr_accessor :_destroy
-  attr_accessible :is_departure, :is_arrival
   attr_accessible :vehicle_journey_id, :stop_point_id, :connecting_service_id, :boarding_alighting_possibility, :arrival_time, :departure_time, :waiting_time, :elapse_duration, :headway_frequency, :_destroy, :stop_point
 
   validate :arrival_must_be_before_departure
