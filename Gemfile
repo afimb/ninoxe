@@ -5,21 +5,10 @@ source "http://rubygems.org"
 # development dependencies will be added by default to the :development group.
 gemspec
 
-# jquery-rails is used by the dummy application
-gem "jquery-rails"
-gem "acts_as_tree", :git => "git://github.com/dryade/acts_as_tree.git"
-gem 'foreigner', :git => "git://github.com/matthuhiggins/foreigner.git"
-
-# Declare any dependencies that are still in development here instead of in
-# your gemspec. These might include edge Rails or gems from your path or
-# Git. Remember to move these dependencies to your gemspec before releasing
-# your gem to rubygems.org.
-
-# To use debugger
-# gem 'ruby-debug'
+gem "acts_as_tree-1.8", '1.1.0', :require => "acts_as_tree"  
 
 platforms :jruby do
-  gem 'activerecord-jdbcpostgresql-adapter', :git => 'git://github.com/dryade/activerecord-jdbc-adapter.git'    
+  gem 'activerecord-jdbcpostgresql-adapter', "1.2.7"
   gem 'activerecord-jdbcsqlite3-adapter'
   gem 'jruby-openssl'
 end
@@ -36,19 +25,8 @@ group :assets do
 end
 
 group :development do
-  gem 'guard'
-  gem 'guard-rspec'
-  gem 'guard-bundler'
-
   group :linux do
-    gem 'rb-inotify'
-    gem 'libnotify'
+    gem 'rb-inotify', :require => RUBY_PLATFORM.include?('linux') && 'rb-inotify'
+    gem 'rb-fsevent', :require => RUBY_PLATFORM.include?('darwin') && 'rb-fsevent'        
   end
-end
-
-group :test do
-  gem 'rspec-rails', '2.8.1'
-  gem 'shoulda-matchers'
-  gem 'factory_girl_rails', '1.7.0'
-  gem 'database_cleaner'
 end
