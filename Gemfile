@@ -8,8 +8,8 @@ gemspec
 gem "acts_as_tree-1.8", '1.1.0', :require => "acts_as_tree"  
 
 platforms :jruby do
-  gem 'activerecord-jdbcpostgresql-adapter', "1.2.7"
-  gem 'activerecord-jdbcsqlite3-adapter'
+  gem 'activerecord-jdbcpostgresql-adapter', "1.2.9"
+  gem 'activerecord-jdbcsqlite3-adapter', "1.2.9"
   gem 'jruby-openssl'
 end
 
