@@ -48,7 +48,7 @@ class Chouette::Command
         f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
         f.puts "jdbc.username = #{user}"
         f.puts "jdbc.password = #{password}"
-        f.puts "database.hbm2ddl.auto=update"
+        #f.puts "database.hbm2ddl.auto=update"
       end
 
       logger.debug "Chouette properties: #{File.readlines(chouette_properties).collect(&:strip).join(', ')}"
