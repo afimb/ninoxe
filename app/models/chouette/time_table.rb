@@ -3,11 +3,12 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   set_primary_key :id
   
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
-  attr_accessible  :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
+  attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
+  attr_accessible :start_date, :end_date
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
 
-  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy
-  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy
+  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
 
   def self.object_id_key
     "Timetable"
@@ -20,36 +21,43 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   validates_presence_of :comment
 
   def self.start_validity_period
-    [Chouette::TimeTableDate.minimum(:date),Chouette::TimeTablePeriod.minimum(:period_start)].compact.min 
+    [Chouette::TimeTable.minimum(:start_date)].compact.min 
   end
   def self.end_validity_period
-    [Chouette::TimeTableDate.maximum(:date),Chouette::TimeTablePeriod.maximum(:period_end)].compact.max 
+    [Chouette::TimeTable.maximum(:end_date)].compact.max 
+  end
+
+  def shortcuts_update(date=nil)
+    dates_array = bounding_dates
+    if dates_array.empty?
+      update_attributes :start_date => nil, :end_date => nil
+    else
+      update_attributes :start_date => dates_array.min, :end_date => dates_array.max
+    end
   end
 
   def validity_out_from_on?(expected_date)
-    return false if bounding_dates.empty?
-    bounding_dates.max <= expected_date
+    return false unless self.end_date
+    self.end_date <= expected_date
   end
-  def validity_out_between?(start_date, end_date)
-    return false if bounding_dates.empty?
-    start_date < bounding_dates.max  &&
-      bounding_dates.max <= end_date
+  def validity_out_between?(starting_date, ending_date)
+    return false unless self.start_date
+    starting_date < self.end_date  &&
+      self.end_date <= ending_date
   end
   def self.validity_out_from_on?(expected_date,limit=0)
-    expired = []
-    includes(:dates,:periods).find_each do |tm|
-      expired << tm if tm.validity_out_from_on?( expected_date)
-      break if (limit > 0 && expired.size == limit) 
+    if limit==0
+      Chouette::TimeTable.where("end_date <= ?", expected_date)
+    else
+      Chouette::TimeTable.where("end_date <= ?", expected_date).limit( limit)
     end
-    expired
   end
   def self.validity_out_between?(start_date, end_date,limit=0)
-    expired = []
-    includes(:dates,:periods).find_each do |tm|
-      expired << tm if tm.validity_out_between?( start_date, end_date)
-      break if (limit > 0 && expired.size == limit) 
+    if limit==0
+      Chouette::TimeTable.where( "? < end_date", start_date).where( "end_date <= ?", end_date)
+    else
+      Chouette::TimeTable.where( "? < end_date", start_date).where( "end_date <= ?", end_date).limit( limit)
     end
-    expired
   end
 
   def include_day?(day)
@@ -69,8 +77,51 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     counter <= 1 ? false : true 
   end
 
+  def periods_max_date
+    return nil if self.periods.empty?
+
+    min_start = self.periods.map(&:period_start).compact.min
+    max_end = self.periods.map(&:period_end).compact.max
+    result = nil
+
+    if max_end
+      max_end.downto(max_end-7) do |date|
+        result = date if result.nil? && 
+                          self.valid_days.include?(date.cwday) &&
+                          ( date >= min_start)
+      end
+    end
+    result
+  end
+  def periods_min_date
+    return nil if self.periods.empty?
+
+    min_start = self.periods.map(&:period_start).compact.min
+    max_end = self.periods.map(&:period_end).compact.max
+    result = nil
+
+    if min_start
+      min_start.upto(min_start+7) do |date|
+        result = date if result.nil? && 
+                          self.valid_days.include?(date.cwday) &&
+                          ( date <= max_end)
+      end
+    end
+    result
+  end
   def bounding_dates
-    (self.dates.map(&:date) + self.periods.map(&:period_start) + self.periods.map(&:period_end)).compact
+    bounding_min = self.dates.map(&:date).compact.min
+    bounding_max = self.dates.map(&:date).compact.max
+
+    unless self.periods.empty?
+      bounding_min = periods_min_date if periods_min_date &&
+          (bounding_min.nil? || (periods_min_date < bounding_min))
+                
+      bounding_max = periods_max_date if periods_max_date && 
+          (bounding_max.nil? || (bounding_max < periods_max_date))
+    end
+
+    [bounding_min, bounding_max].compact
   end
 
   def day_by_mask(flag)
@@ -118,6 +169,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     else
       self.int_day_types &= ~flag
     end
+    shortcuts_update
   end
   
   def monday=(day)
