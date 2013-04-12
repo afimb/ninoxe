@@ -7,6 +7,169 @@ describe Chouette::TimeTable do
   it { should validate_presence_of :comment }
   it { should validate_uniqueness_of :objectid }
 
+  describe "#periods_max_date" do
+    context "when all period extends from 04/10/2013 to 04/15/2013," do
+      before(:each) do
+        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/10/2013"), :period_end => Date.parse("04/12/2013"))
+        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/13/2013"), :period_end => Date.parse("04/15/2013"))
+        subject.periods = [ p1, p2]
+        subject.save
+      end
+
+      it "should retreive 04/15/2013" do
+        subject.periods_max_date.should == Date.parse("04/15/2013")
+      end
+      context "when day_types select only sunday and saturday," do
+        before(:each) do
+          # jeudi, vendredi
+          subject.update_attributes( :int_day_types => (2**(1+6) + 2**(1+7)))
+        end
+        it "should retreive 04/14/2013" do
+          subject.periods_max_date.should == Date.parse("04/14/2013")
+        end
+      end
+      context "when day_types select only friday," do
+        before(:each) do
+          # jeudi, vendredi
+          subject.update_attributes( :int_day_types => (2**(1+6)))
+        end
+        it "should retreive 04/12/2013" do
+          subject.periods_max_date.should == Date.parse("04/13/2013")
+        end
+      end
+      context "when day_types select only thursday," do
+        before(:each) do
+          # mardi
+          subject.update_attributes( :int_day_types => (2**(1+2)))
+        end
+        it "should retreive 04/12/2013" do
+          # 04/15/2013 is monday !
+          subject.periods_max_date.should be_nil
+        end
+      end
+    end
+  end
+  describe "#periods_min_date" do
+    context "when all period extends from 04/10/2013 to 04/15/2013," do
+      before(:each) do
+        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/10/2013"), :period_end => Date.parse("04/12/2013"))
+        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/13/2013"), :period_end => Date.parse("04/15/2013"))
+        subject.periods = [ p1, p2]
+        subject.save
+      end
+
+      it "should retreive 04/10/2013" do
+        subject.periods_min_date.should == Date.parse("04/10/2013")
+      end
+      context "when day_types select only tuesday and friday," do
+        before(:each) do
+          # jeudi, vendredi
+          subject.update_attributes( :int_day_types => (2**(1+4) + 2**(1+5)))
+        end
+        it "should retreive 04/11/2013" do
+          subject.periods_min_date.should == Date.parse("04/11/2013")
+        end
+      end
+      context "when day_types select only friday," do
+        before(:each) do
+          # jeudi, vendredi
+          subject.update_attributes( :int_day_types => (2**(1+5)))
+        end
+        it "should retreive 04/12/2013" do
+          subject.periods_min_date.should == Date.parse("04/12/2013")
+        end
+      end
+      context "when day_types select only thursday," do
+        before(:each) do
+          # mardi
+          subject.update_attributes( :int_day_types => (2**(1+2)))
+        end
+        it "should retreive 04/12/2013" do
+          # 04/15/2013 is monday !
+          subject.periods_min_date.should be_nil
+        end
+      end
+    end
+  end
+  describe "#periods.build" do
+    it "should add a new instance of period, and periods_max_date should not raise error" do
+      period = subject.periods.build
+      subject.periods_max_date
+      period.period_start.should be_nil
+      period.period_end.should be_nil
+    end
+  end
+  describe "#periods" do
+    context "when a period is added," do
+      before(:each) do
+        subject.periods << Chouette::TimeTablePeriod.new( :period_start => (subject.bounding_dates.min - 1), :period_end => (subject.bounding_dates.max + 1))
+        subject.save
+      end
+      it "should update shortcut" do
+        subject.start_date.should == subject.bounding_dates.min
+        subject.end_date.should == subject.bounding_dates.max
+      end
+    end
+    context "when a period is removed," do
+      before(:each) do
+        subject.dates = []
+        subject.periods = []
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 4.days.since.to_date, 
+                              :period_end => 6.days.since.to_date)
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 1.days.since.to_date, 
+                              :period_end => 10.days.since.to_date)
+        subject.save
+        subject.periods = subject.periods - [subject.periods.last]
+      end
+      def read_tm
+        Chouette::TimeTable.find subject.id
+      end
+      it "should update shortcut" do
+        tm = read_tm
+        subject.start_date.should == subject.bounding_dates.min
+        subject.start_date.should == tm.bounding_dates.min
+        subject.start_date.should == 4.days.since.to_date
+        subject.end_date.should == subject.bounding_dates.max
+        subject.end_date.should == tm.bounding_dates.max
+        subject.end_date.should == 6.days.since.to_date
+      end
+    end
+  end
+  describe "#dates" do
+    context "when a date is added," do
+      before(:each) do
+        subject.dates << Chouette::TimeTableDate.new( :date => (subject.bounding_dates.max + 1))
+        subject.save
+      end
+      it "should update shortcut" do
+        subject.start_date.should == subject.bounding_dates.min
+        subject.end_date.should == subject.bounding_dates.max
+      end
+    end
+    context "when a date is removed," do
+      before(:each) do
+        subject.periods = []
+        subject.dates = subject.dates - [subject.bounding_dates.max + 1]
+      end
+      it "should update shortcut" do
+        subject.start_date.should == subject.bounding_dates.min
+        subject.end_date.should == subject.bounding_dates.max
+      end
+    end
+    context "when all the dates and periods are removed," do
+      before(:each) do
+        subject.periods = []
+        subject.dates = []
+      end
+      it "should update shortcut" do
+        subject.start_date.should be_nil
+        subject.end_date.should be_nil
+      end
+    end
+  end
+
   describe "#valid_days" do
     it "should begin with position 0" do
       subject.int_day_types = 128
@@ -111,6 +274,26 @@ describe Chouette::TimeTable do
     end
   end
   describe "#bounding_dates" do
+    context "when timetable contains only periods" do
+      before do
+        subject.dates = []
+        subject.save
+      end
+      it "should retreive periods.period_start.min and periods.period_end.max" do
+        subject.bounding_dates.min.should == subject.periods.map(&:period_start).min
+        subject.bounding_dates.max.should == subject.periods.map(&:period_end).max
+      end
+    end
+    context "when timetable contains only dates" do
+      before do
+        subject.periods = []
+        subject.save
+      end
+      it "should retreive dates.min and dates.max" do
+        subject.bounding_dates.min.should == subject.dates.map(&:date).min
+        subject.bounding_dates.max.should == subject.dates.map(&:date).max
+      end
+    end
     it "should contains min date" do
       min_date = subject.bounding_dates.min
       subject.dates.each do |tm_date|

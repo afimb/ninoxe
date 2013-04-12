@@ -78,11 +78,8 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
     dates = []
 
     time_tables.each do |tm|
-      tm_bounding_dates = tm.bounding_dates
-      unless tm_bounding_dates.empty?
-        dates << tm.bounding_dates.min
-        dates << tm.bounding_dates.max
-      end
+      dates << tm.start_date if tm.start_date
+      dates << tm.end_date if tm.end_date
     end
 
     dates.empty? ? [] : [dates.min, dates.max]
