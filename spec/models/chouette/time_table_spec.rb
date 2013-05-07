@@ -10,14 +10,14 @@ describe Chouette::TimeTable do
   describe "#periods_max_date" do
     context "when all period extends from 04/10/2013 to 04/15/2013," do
       before(:each) do
-        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/10/2013"), :period_end => Date.parse("04/12/2013"))
-        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/13/2013"), :period_end => Date.parse("04/15/2013"))
+        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.strptime("04/10/2013", '%m/%d/%Y'), :period_end => Date.strptime("04/12/2013", '%m/%d/%Y'))
+        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.strptime("04/13/2013", '%m/%d/%Y'), :period_end => Date.strptime("04/15/2013", '%m/%d/%Y'))
         subject.periods = [ p1, p2]
         subject.save
       end
 
       it "should retreive 04/15/2013" do
-        subject.periods_max_date.should == Date.parse("04/15/2013")
+        subject.periods_max_date.should == Date.strptime("04/15/2013", '%m/%d/%Y')
       end
       context "when day_types select only sunday and saturday," do
         before(:each) do
@@ -25,7 +25,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+6) + 2**(1+7)))
         end
         it "should retreive 04/14/2013" do
-          subject.periods_max_date.should == Date.parse("04/14/2013")
+          subject.periods_max_date.should == Date.strptime("04/14/2013", '%m/%d/%Y')
         end
       end
       context "when day_types select only friday," do
@@ -34,7 +34,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+6)))
         end
         it "should retreive 04/12/2013" do
-          subject.periods_max_date.should == Date.parse("04/13/2013")
+          subject.periods_max_date.should == Date.strptime("04/13/2013", '%m/%d/%Y')
         end
       end
       context "when day_types select only thursday," do
@@ -52,14 +52,14 @@ describe Chouette::TimeTable do
   describe "#periods_min_date" do
     context "when all period extends from 04/10/2013 to 04/15/2013," do
       before(:each) do
-        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/10/2013"), :period_end => Date.parse("04/12/2013"))
-        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.parse("04/13/2013"), :period_end => Date.parse("04/15/2013"))
+        p1 = Chouette::TimeTablePeriod.new( :period_start => Date.strptime("04/10/2013", '%m/%d/%Y'), :period_end => Date.strptime("04/12/2013", '%m/%d/%Y'))
+        p2 = Chouette::TimeTablePeriod.new( :period_start => Date.strptime("04/13/2013", '%m/%d/%Y'), :period_end => Date.strptime("04/15/2013", '%m/%d/%Y'))
         subject.periods = [ p1, p2]
         subject.save
       end
 
       it "should retreive 04/10/2013" do
-        subject.periods_min_date.should == Date.parse("04/10/2013")
+        subject.periods_min_date.should == Date.strptime("04/10/2013", '%m/%d/%Y')
       end
       context "when day_types select only tuesday and friday," do
         before(:each) do
@@ -67,7 +67,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+4) + 2**(1+5)))
         end
         it "should retreive 04/11/2013" do
-          subject.periods_min_date.should == Date.parse("04/11/2013")
+          subject.periods_min_date.should == Date.strptime("04/11/2013", '%m/%d/%Y')
         end
       end
       context "when day_types select only friday," do
@@ -76,7 +76,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+5)))
         end
         it "should retreive 04/12/2013" do
-          subject.periods_min_date.should == Date.parse("04/12/2013")
+          subject.periods_min_date.should == Date.strptime("04/12/2013", '%m/%d/%Y')
         end
       end
       context "when day_types select only thursday," do
