@@ -177,6 +177,28 @@ describe Chouette::TimeTable do
     end
   end
 
+  describe "#intersects" do
+    it "should return day if a date equal day" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
+      time_table_date = Factory(:time_table_date, :date => Date.today, :time_table_id => time_table.id)
+      time_table.intersects([Date.today]).should == [Date.today]
+    end
+
+    it "should return [] if a period not include days" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12)
+      time_table_period = Factory(:time_table_period, :period_start => Date.new(2013, 05, 27),:period_end =>  Date.new(2013, 05, 30), :time_table_id => time_table.id)
+      time_table.intersects([ Date.new(2013, 05, 29),  Date.new(2013, 05, 30)]).should == []
+    end
+
+    it "should return days if a period include day" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
+      time_table_period = Factory(:time_table_period, :period_start => Date.new(2013, 05, 27),:period_end =>  Date.new(2013, 05, 30), :time_table_id => time_table.id)
+      time_table.intersects([ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]).should == [ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]
+    end
+
+    
+  end
+
   describe "#include_day?" do
     it "should return true if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
@@ -185,9 +207,9 @@ describe Chouette::TimeTable do
     end
 
     it "should return true if a period include day" do
-      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table_period = Factory(:time_table_period, :period_start => Date.yesterday,:period_end => Date.tomorrow, :time_table_id => time_table.id)
-      time_table.include_day?(Date.today).should == true
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
+      time_table_period = Factory(:time_table_period, :period_start => Date.new(2013, 05, 27),:period_end =>  Date.new(2013, 05, 29), :time_table_id => time_table.id)
+      time_table.include_day?( Date.new(2013, 05, 27)).should == true
     end
   end
 

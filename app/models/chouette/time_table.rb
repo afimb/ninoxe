@@ -60,8 +60,17 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     end
   end
 
+  # Return days which intersects with the time table dates and periods
+  def intersects(days)
+    [].tap do |intersect_days|
+      days.each do |day|
+        intersect_days << day if include_day?(day)
+      end
+    end
+  end
+
   def include_day?(day)
-    self.dates.any?{ |d| d.date === day } || self.periods.any?{ |period| period.period_start <= day && day <= period.period_end }
+    include_in_dates?(day) || include_in_periods?(day)
   end
 
   def include_in_dates?(day)
