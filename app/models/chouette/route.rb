@@ -60,6 +60,10 @@ class Chouette::Route < Chouette::TridentActiveRecord
   
   before_destroy :dereference_opposite_route
   
+  def geometry_presenter
+    Chouette::Geometry::RoutePresenter.new self
+  end
+
   def dereference_opposite_route
     self.line.routes.each do |r|
       r.update_attributes( :opposite_route => nil) if r.opposite_route == self

@@ -75,6 +75,10 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     end
   end
 
+  def geometry_presenter
+    Chouette::Geometry::StopAreaPresenter.new self
+  end
+
   def lines
     if (area_type == 'CommercialStopPoint')
       self.children.collect(&:stop_points).flatten.collect(&:route).flatten.collect(&:line).flatten.uniq

@@ -29,6 +29,10 @@ class Chouette::Line < Chouette::TridentActiveRecord
     [:published_name, :number, :comment]
   end
 
+  def geometry_presenter
+    Chouette::Geometry::LinePresenter.new self
+  end
+
   def transport_mode
     # return nil if transport_mode_name is nil
     transport_mode_name && Chouette::TransportMode.new( transport_mode_name.underscore)

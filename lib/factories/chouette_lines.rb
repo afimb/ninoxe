@@ -18,3 +18,14 @@ Factory.define :line_with_stop_areas, :parent => :line do |line|
     end   
   end
 end
+
+Factory.define :line_with_stop_areas_having_parent, :parent => :line do |line|
+  line.after_build do |line|
+    route = Factory(:route, :line => line)
+    route.stop_points.each do |stop_point|
+      commercial = Factory(:stop_area, :area_type => "CommercialStopPoint")
+      physical = Factory(:stop_area, :area_type => "Quay", :parent_id => commercial.id)
+      stop_point.update_attributes( :stop_area_id => physical.id)
+    end
+  end
+end
