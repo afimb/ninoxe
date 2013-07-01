@@ -1,8 +1,14 @@
 class RemoveProjectionFromAccessPoints < ActiveRecord::Migration
   def up
-    remove_column :access_points, :x
-    remove_column :access_points, :y
-    remove_column :access_points, :projection_type
+    if column_exists? :access_points, :x
+      remove_column :access_points, :x
+    end
+    if column_exists? :access_points, :y
+      remove_column :access_points, :y
+    end
+    if column_exists? :access_points, :projection_type
+      remove_column :access_points, :projection_type
+    end
   end
 
   def down
