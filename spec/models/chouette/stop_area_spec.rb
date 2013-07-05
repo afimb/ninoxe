@@ -13,35 +13,7 @@ describe Chouette::StopArea do
   it { should validate_presence_of :area_type }
   it { should validate_numericality_of :latitude }
   it { should validate_numericality_of :longitude }
-  it { should validate_numericality_of :x }
-  it { should validate_numericality_of :y }
 
-  describe ".x_y" do
-    it "should accept x and y both as nil" do
-      subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.x = nil
-      subject.y = nil
-      subject.valid?.should be_true
-    end
-    it "should accept x and y both numerical" do
-      subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.x = 10
-      subject.y = 10
-      subject.valid?.should be_true
-    end
-    it "should reject x nil with y numerical" do
-      subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.x = nil
-      subject.y = 10
-      subject.valid?.should be_false
-    end
-    it "should reject x numerical with y nil" do
-      subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.x = 10
-      subject.y = nil
-      subject.valid?.should be_false
-    end
-  end 
   
   describe ".latitude" do
     it "should accept -90 value" do

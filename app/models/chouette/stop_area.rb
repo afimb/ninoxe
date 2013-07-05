@@ -18,13 +18,14 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   
   attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
   attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
-  attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type, :x, :y, :projection_type
+  attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
+  # attr_accessible  :x, :y, :projection_type
   attr_accessible :country_code, :street_name
   
   # workaround of ruby 1.8 private method y block attribute y reading access
-  def y
-    read_attribute :y
-  end
+  #def y
+  #  read_attribute :y
+  #end
 
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
@@ -36,10 +37,10 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
   validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
 
-  validates_presence_of :x, :if => :y
-  validates_presence_of :y, :if => :x
-  validates_numericality_of :x, :allow_nil => true
-  validates_numericality_of :y, :allow_nil => true
+  #validates_presence_of :x, :if => :y
+  #validates_presence_of :y, :if => :x
+  #validates_numericality_of :x, :allow_nil => true
+  #validates_numericality_of :y, :allow_nil => true
 
   def self.nullable_attributes
     [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :projection_type, :long_lat_type]
