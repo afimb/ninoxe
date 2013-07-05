@@ -1,6 +1,6 @@
 class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
   
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
   attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday

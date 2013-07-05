@@ -1,6 +1,6 @@
 class Chouette::JourneyPattern < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   belongs_to :route
   has_many :vehicle_journeys, :dependent => :destroy

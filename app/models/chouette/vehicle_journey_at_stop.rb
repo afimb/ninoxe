@@ -1,5 +1,5 @@
 class Chouette::VehicleJourneyAtStop < Chouette::ActiveRecord
-  set_primary_key :id
+  self.primary_key = "id"
   
   belongs_to :stop_point
   belongs_to :vehicle_journey

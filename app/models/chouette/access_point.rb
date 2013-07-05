@@ -3,7 +3,7 @@ require 'geo_ruby'
 
 class Chouette::AccessPoint < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
   include Geokit::Mappable
   has_many :access_links, :dependent => :destroy
   belongs_to :stop_area

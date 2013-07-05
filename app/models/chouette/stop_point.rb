@@ -1,6 +1,6 @@
 class Chouette::StopPoint < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   belongs_to :stop_area
   belongs_to :route

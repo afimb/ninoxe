@@ -2,7 +2,7 @@ require 'geokit'
 
 class Chouette::PtLink < Chouette::ActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   attr_accessible :start_of_link_id, :end_of_link_id, :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :link_distance
   include Geokit::Mappable

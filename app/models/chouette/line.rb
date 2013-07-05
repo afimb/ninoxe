@@ -1,6 +1,6 @@
 class Chouette::Line < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   attr_accessor :transport_mode
   attr_accessible :transport_mode, :network_id, :company_id, :objectid, :object_version

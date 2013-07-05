@@ -1,7 +1,7 @@
 class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   #
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   attr_accessor :transport_mode_name
   attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value

@@ -1,6 +1,6 @@
 class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
-  set_primary_key :id
+  self.primary_key = "id"
 
   attr_accessor :connection_link_type
 
