@@ -1,5 +1,4 @@
 class Chouette::Geometry::LinePresenter
-  extend ActiveSupport::Memoizable
   include Chouette::Geometry::GeneralPresenter
 
   def initialize(line)
