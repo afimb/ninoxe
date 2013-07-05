@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('guard')
   s.add_development_dependency('guard-rspec')
   s.add_development_dependency('guard-bundler')
+  s.add_development_dependency('guard-migrate')
   s.add_development_dependency('rspec-rails')
   
   # rails 3.2.12 requires shoulda-matchers >= 1.5.6
@@ -41,6 +42,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('nokogiri', '~> 1.5.9')
 
   s.add_development_dependency('factory_girl_rails', '1.7.0')
-  s.add_development_dependency('database_cleaner')
   s.add_development_dependency("rails", "~> 3.1")
 end

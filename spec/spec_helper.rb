@@ -8,7 +8,6 @@ require 'rspec/autorun'
 require 'shoulda-matchers'
 require 'factory_girl_rails'
 
-require 'database_cleaner'
 require 'geo_ruby'
 
 ENGINE_RAILS_ROOT=File.join(File.dirname(__FILE__), '../')
@@ -19,7 +18,6 @@ Dir[File.join(ENGINE_RAILS_ROOT, "spec/support/**/*.rb")].each {|f| require f }
 Dir[File.join(ENGINE_RAILS_ROOT, "lib/factories/**/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
-  DatabaseCleaner.logger = Rails.logger
   # == Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -41,21 +39,6 @@ RSpec.configure do |config|
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
-
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    #DatabaseCleaner.clean_with( :truncation, {:except => %w[spatial_ref_sys geometry_columns]} )
-
-    Chouette::ActiveRecord.logger = Logger.new("log/test.log")
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
 
 end
 
