@@ -43,7 +43,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   #validates_numericality_of :y, :allow_nil => true
 
   def self.nullable_attributes
-    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :projection_type, :long_lat_type]
+    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :long_lat_type]
   end
 
   after_update :clean_invalid_access_links

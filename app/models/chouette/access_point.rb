@@ -36,7 +36,7 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
   #validates_numericality_of :y, :allow_nil => true
 
   def self.nullable_attributes
-    [:street_name, :country_code, :comment, :projection_type, :long_lat_type, :x, :y]
+    [:street_name, :country_code, :comment, :long_lat_type]
   end
 
   def to_lat_lng
