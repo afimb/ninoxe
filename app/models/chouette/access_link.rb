@@ -59,5 +59,9 @@ class Chouette::AccessLink < Chouette::TridentActiveRecord
       "S_#{stop_area.id}-A_#{access_point.id}"
     end
   end
+
+  def geometry_presenter
+    Chouette::Geometry::AccessLinkPresenter.new self
+  end
 end
 

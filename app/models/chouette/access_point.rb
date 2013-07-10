@@ -143,4 +143,7 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
      matrix
   end
 
+  def geometry_presenter
+    Chouette::Geometry::AccessPointPresenter.new self
+  end
 end

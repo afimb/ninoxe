@@ -95,6 +95,10 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     where :area_type => [ "BoardingPosition", "Quay" ]
   end
 
+  def self.itl
+    where :area_type => "ITL"
+  end
+
   def to_lat_lng
     Geokit::LatLng.new(latitude, longitude) if latitude and longitude
   end
