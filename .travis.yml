@@ -12,8 +12,6 @@ matrix:
       jdk: openjdk7
     - rvm: 2.0.0
       jdk: openjdk7
-env:
-  - DB=postgresql
 before_script: 
   - "RAILS_ENV=test bundle exec rake ci:travis"
   - psql -c 'create database ninoxe_test;' -U postgres
