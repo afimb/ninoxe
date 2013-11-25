@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('jquery-rails')
-  s.add_development_dependency('guard')
+  s.add_development_dependency "guard"
   s.add_development_dependency('guard-rspec')
   s.add_development_dependency('guard-bundler')
   s.add_development_dependency('guard-migrate')
