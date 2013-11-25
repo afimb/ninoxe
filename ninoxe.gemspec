@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('georuby-ext', '0.0.4' )
+  s.add_dependency('georuby-ext', '0.0.5' )
 
   # some client use ninoxe with rails 3.1.3 or rails 3.2.6
   # but gem not yet compliant with rails 4.x
