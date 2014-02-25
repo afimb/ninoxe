@@ -2,17 +2,17 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - jruby-18mode
+  - jruby-19mode
 jdk:
   - oraclejdk7
   - openjdk7
 matrix:
-  exclude: 
+  exclude:
     - rvm: 1.9.3
       jdk: openjdk7
     - rvm: 2.0.0
       jdk: openjdk7
-before_script: 
+before_script:
   - "RAILS_ENV=test bundle exec rake ci:travis"
   - psql -c 'create database ninoxe_test;' -U postgres
 script: "RAILS_ENV=test bundle exec rake ci:build"
