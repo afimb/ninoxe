@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   # e.g. journey_pattern.stop_point_ids may fail
   s.add_dependency('activerecord', '>= 3.1.3', '< 3.2.14' )
   s.add_dependency("acts_as_list", "~> 0.1.6")
-  s.add_dependency("foreigner", "1.4.0")
+  s.add_dependency("foreigner", "1.6.0")
 
   s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('jquery-rails')
