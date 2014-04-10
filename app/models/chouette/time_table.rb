@@ -7,8 +7,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :start_date, :end_date
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
 
-  has_many :dates, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
-  has_many :periods, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :dates, inverse_of: :time_table, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :periods, inverse_of: :time_table, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
 
   def self.object_id_key
     "Timetable"

@@ -136,6 +136,34 @@ describe Chouette::TimeTable do
         subject.end_date.should == 6.days.since.to_date
       end
     end
+    context "when a period is updated," do
+      before(:each) do
+        subject.dates = []
+        subject.periods = []
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 4.days.since.to_date, 
+                              :period_end => 6.days.since.to_date)
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 1.days.since.to_date, 
+                              :period_end => 10.days.since.to_date)
+        subject.save
+        subject.periods.last.period_end = 15.days.since.to_date
+        subject.save
+      end
+      def read_tm
+        Chouette::TimeTable.find subject.id
+      end
+      it "should update shortcut" do
+        tm = read_tm
+        subject.start_date.should == subject.bounding_dates.min
+        subject.start_date.should == tm.bounding_dates.min
+        subject.start_date.should == 1.days.since.to_date
+        subject.end_date.should == subject.bounding_dates.max
+        subject.end_date.should == tm.bounding_dates.max
+        subject.end_date.should == 15.days.since.to_date
+      end
+    end
+
   end
   describe "#dates" do
     context "when a date is added," do
@@ -166,6 +194,35 @@ describe Chouette::TimeTable do
       it "should update shortcut" do
         subject.start_date.should be_nil
         subject.end_date.should be_nil
+      end
+    end
+    context "when a date is updated," do
+      before(:each) do
+        subject.dates = []
+        
+        subject.periods = []
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 4.days.since.to_date, 
+                              :period_end => 6.days.since.to_date)
+        subject.periods << Chouette::TimeTablePeriod.new( 
+                              :period_start => 1.days.since.to_date, 
+                              :period_end => 10.days.since.to_date)
+        subject.dates << Chouette::TimeTableDate.new( :date => 10.days.since.to_date)
+        subject.save
+        subject.dates.last.date = 15.days.since.to_date
+        subject.save
+      end
+      def read_tm
+        Chouette::TimeTable.find subject.id
+      end
+      it "should update shortcut" do
+        tm = read_tm
+        subject.start_date.should == subject.bounding_dates.min
+        subject.start_date.should == tm.bounding_dates.min
+        subject.start_date.should == 1.days.since.to_date
+        subject.end_date.should == subject.bounding_dates.max
+        subject.end_date.should == tm.bounding_dates.max
+        subject.end_date.should == 15.days.since.to_date
       end
     end
   end
