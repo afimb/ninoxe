@@ -7,8 +7,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :start_date, :end_date
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
 
-  has_many :dates, inverse_of: :time_table, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
-  has_many :periods, inverse_of: :time_table, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
 
   def self.object_id_key
     "Timetable"
@@ -19,6 +19,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :dates_attributes,:periods_attributes
 
   validates_presence_of :comment
+  validates_associated :dates
+  validates_associated :periods
 
   def self.start_validity_period
     [Chouette::TimeTable.minimum(:start_date)].compact.min 
@@ -29,11 +31,21 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
 
   def shortcuts_update(date=nil)
     dates_array = bounding_dates
-    if dates_array.empty?
-      update_attributes :start_date => nil, :end_date => nil
-    else
-      update_attributes :start_date => dates_array.min, :end_date => dates_array.max
-    end
+    #if new_record?
+      if dates_array.empty?
+        self.start_date=nil
+        self.end_date=nil
+      else
+        self.start_date=dates_array.min
+        self.end_date=dates_array.max
+      end      
+    #else
+     # if dates_array.empty?
+     #   update_attributes :start_date => nil, :end_date => nil
+     # else
+     #   update_attributes :start_date => dates_array.min, :end_date => dates_array.max
+     # end
+    #end
   end
 
   def validity_out_from_on?(expected_date)

@@ -1,5 +1,7 @@
 class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     before_validation :prepare_auto_columns
+    after_validation :reset_auto_columns
+    
     after_save :build_objectid
 
     self.abstract_class = true
@@ -38,6 +40,16 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       self.creation_time = Time.now
       self.creator_id = 'chouette'
     end
+    
+    def reset_auto_columns
+      clean_object_id unless self.errors.nil? || self.errors.empty?
+    end
+    
+    def clean_object_id
+      if self.objectid.include?("__pending_id__")
+        self.objectid=nil
+      end
+    end  
     
     def build_objectid
       #logger.info 'start after_create : '+self.objectid
