@@ -12,9 +12,9 @@ describe Chouette::Route do
   it { should validate_presence_of :direction_code }
 
   context "reordering methods" do
-    let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}} 
-    let( :ident){subject.stop_points.map(&:id)} 
-    let( :first_last_swap){ [ident.last] + ident[1..-2] + [ident.first]} 
+    let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}}
+    let( :ident){subject.stop_points.map(&:id)}
+    let( :first_last_swap){ [ident.last] + ident[1..-2] + [ident.first]}
 
     describe "#reorder!" do
       context "invalid stop_point_ids" do
@@ -55,6 +55,81 @@ describe Chouette::Route do
     end
   end
 
+  describe "#stop_points_attributes=" do
+      let( :journey_pattern) { Factory( :journey_pattern, :route => subject )}
+      let( :vehicle_journey) { Factory( :vehicle_journey, :journey_pattern => journey_pattern)}
+      def subject_stop_points_attributes
+          {}.tap do |hash|
+              subject.stop_points.each_with_index { |sp,index| hash[ index.to_s ] = sp.attributes }
+          end
+      end
+      context "route having swapped a new stop" do
+          let( :new_stop_point ){Factory.build( :stop_point, :route => subject)}
+          def added_stop_hash
+            subject_stop_points_attributes.tap do |h|
+                h["4"] = new_stop_point.attributes.merge( "position" => "4", "_destroy" => "" )
+            end
+          end
+          let!( :new_route_size ){ subject.stop_points.size+1 }
+
+          it "should have added stop_point in route" do
+              subject.update_attributes( :stop_points_attributes => added_stop_hash)
+              Chouette::Route.find( subject.id ).stop_points.size.should == new_route_size
+          end
+          it "should have added stop_point in route's journey pattern" do
+              subject.update_attributes( :stop_points_attributes => added_stop_hash)
+              Chouette::JourneyPattern.find( journey_pattern.id ).stop_points.size.should == new_route_size
+          end
+          it "should have added stop_point in route's vehicle journey at stop" do
+              subject.update_attributes( :stop_points_attributes => added_stop_hash)
+              Chouette::VehicleJourney.find( vehicle_journey.id ).vehicle_journey_at_stops.size.should == new_route_size
+          end
+      end
+      context "route having swapped stop" do
+          def swapped_stop_hash
+            subject_stop_points_attributes.tap do |h|
+                h[ "1" ][ "position" ] = "3"
+                h[ "3" ][ "position" ] = "1"
+            end
+          end
+          let!( :new_stop_id_list ){ subject.stop_points.map(&:id).tap {|array| array.insert( 1, array.delete_at(3)); array.insert( 3, array.delete_at(2) )}.join(",") }
+
+          it "should have swap stop_points from route" do
+              subject.update_attributes( :stop_points_attributes => swapped_stop_hash)
+              Chouette::Route.find( subject.id ).stop_points.map(&:id).join(",").should == new_stop_id_list
+          end
+          it "should have swap stop_points from route's journey pattern" do
+              subject.update_attributes( :stop_points_attributes => swapped_stop_hash)
+              Chouette::JourneyPattern.find( journey_pattern.id ).stop_points.map(&:id).join(",").should == new_stop_id_list
+          end
+          it "should have swap stop_points from route's vehicle journey at stop" do
+              subject.update_attributes( :stop_points_attributes => swapped_stop_hash)
+              Chouette::VehicleJourney.find( vehicle_journey.id ).vehicle_journey_at_stops.map(&:stop_point_id).join(",").should == new_stop_id_list
+          end
+      end
+      context "route having a deleted stop" do
+          def removed_stop_hash
+            subject_stop_points_attributes.tap do |h|
+                h[ "1" ][ "_destroy" ] = "1"
+            end
+          end
+          let!( :new_stop_id_list ){ subject.stop_points.map(&:id).tap {|array| array.delete_at(1) }.join(",") }
+
+          it "should ignore deleted stop_point from route" do
+              subject.update_attributes( :stop_points_attributes => removed_stop_hash)
+              Chouette::Route.find( subject.id ).stop_points.map(&:id).join(",").should == new_stop_id_list
+          end
+          it "should ignore deleted stop_point from route's journey pattern" do
+              subject.update_attributes( :stop_points_attributes => removed_stop_hash)
+              Chouette::JourneyPattern.find( journey_pattern.id ).stop_points.map(&:id).join(",").should == new_stop_id_list
+          end
+          it "should ignore deleted stop_point from route's vehicle journey at stop" do
+              subject.update_attributes( :stop_points_attributes => removed_stop_hash)
+              Chouette::VehicleJourney.find( vehicle_journey.id ).vehicle_journey_at_stops.map(&:stop_point_id).join(",").should == new_stop_id_list
+          end
+      end
+  end
+
   describe "#stop_points" do
     context "#find_by_stop_area" do
       context "when arg is first quay id" do
@@ -89,7 +164,7 @@ describe Chouette::Route do
 
   describe "#direction_code" do
     def self.legacy_directions
-      %w{A R ClockWise CounterClockWise North NorthWest West SouthWest 
+      %w{A R ClockWise CounterClockWise North NorthWest West SouthWest
         South SouthEast East NorthEast}
     end
     legacy_directions.each do |direction|

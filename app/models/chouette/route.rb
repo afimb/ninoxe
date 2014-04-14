@@ -6,7 +6,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessor :direction_code
 
   attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name
-  attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback
+  attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback, :stop_points_attributes
 
   def self.nullable_attributes
     [:published_name, :comment, :number]
@@ -39,7 +39,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
           endpoint
         else
           raise ActiveRecord::RecordNotFound.new("Can't determine position in route #{proxy_owner.id} with #{departure.inspect}")
-        end        
+        end
       end
       where(" position between ? and ? ", between_positions.first, between_positions.last)
     end
@@ -52,14 +52,15 @@ class Chouette::Route < Chouette::TridentActiveRecord
       proxy_owner.stop_points.between(departure, arrival).includes(:stop_area).collect(&:stop_area)
     end
   end
+  accepts_nested_attributes_for :stop_points, :allow_destroy => :true
 
   validates_presence_of :name
   validates_presence_of :line
   validates_presence_of :direction_code
   validates_presence_of :wayback_code
-  
+
   before_destroy :dereference_opposite_route
-  
+
   def geometry_presenter
     Chouette::Geometry::RoutePresenter.new self
   end
@@ -86,12 +87,12 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
 
   def self.direction_binding
-    { "A" => "straight_forward", 
+    { "A" => "straight_forward",
       "R" => "backward",
       "ClockWise" => "clock_wise",
       "CounterClockWise" => "counter_clock_wise",
       "North" => "north",
-      "NorthWest" => "north_west", 
+      "NorthWest" => "north_west",
       "West" => "west",
       "SouthWest" => "south_west",
       "South" => "south",
@@ -105,7 +106,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
   def direction_code=(direction_code)
     self.direction = nil
-    self.class.direction_binding.each do |k,v| 
+    self.class.direction_binding.each do |k,v|
       self.direction = k if v==direction_code
     end
   end
@@ -122,7 +123,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
   def wayback_code=(wayback_code)
     self.wayback = nil
-    self.class.wayback_binding.each do |k,v| 
+    self.class.wayback_binding.each do |k,v|
       self.wayback = k if v==wayback_code
     end
   end
@@ -130,14 +131,14 @@ class Chouette::Route < Chouette::TridentActiveRecord
   def self.waybacks
     @@waybacks ||= Chouette::Wayback.all
   end
-  
+
   def stop_point_permutation?( stop_point_ids)
     stop_points.map(&:id).map(&:to_s).sort == stop_point_ids.map(&:to_s).sort
   end
 
   def reorder!( stop_point_ids)
     return false unless stop_point_permutation?( stop_point_ids)
-    
+
     stop_area_id_by_stop_point_id = {}
     stop_points.each do |sp|
       stop_area_id_by_stop_point_id.merge!( sp.id => sp.stop_area_id)
