@@ -1,9 +1,11 @@
 development:
   adapter: postgresql
   database: ninoxe_dev
+  port: 5432
   username: <%= ENV['USER'] %>
   
 test:
   adapter: postgresql
   database: ninoxe_test
+  port: 5432  
   username: <%= ENV['USER'] %>

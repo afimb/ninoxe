@@ -17,7 +17,7 @@ class Chouette::Command
   @@command = "chouette"
   cattr_accessor :command
 
-  attr_accessor :database, :schema, :host, :user, :password
+  attr_accessor :database, :schema, :host, :user, :password, :port
 
   def initialize(options = {})
     database_options_from_active_record.merge(options).each do |k,v|
@@ -31,6 +31,7 @@ class Chouette::Command
       :database => config[:database], 
       :user => config[:username],
       :password => config[:password],
+      :port => config[:port],
       :host => (config[:host] or "localhost")
     }
   end
@@ -45,7 +46,7 @@ class Chouette::Command
         #f.puts "database.showsql = true"
         f.puts "hibernate.username = #{user}"
         f.puts "hibernate.password = #{password}"
-        f.puts "jdbc.url=jdbc:postgresql://#{host}:5432/#{database}"
+        f.puts "jdbc.url=jdbc:postgresql://#{host}:#{port}/#{database}"
         f.puts "jdbc.username = #{user}"
         f.puts "jdbc.password = #{password}"
         #f.puts "database.hbm2ddl.auto=update"
