@@ -10,12 +10,11 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
 
   has_many :vehicle_journey_at_stops, :dependent => :destroy
   has_many :vehicle_journeys, :through => :vehicle_journey_at_stops, :uniq => true
-  
+
   before_destroy :remove_dependent_journey_pattern_stop_points
-  
+
   validates_presence_of :stop_area
-  validates_presence_of :route
-  
+
   scope :default_order, order("position")
 
   def self.area_candidates
