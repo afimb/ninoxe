@@ -20,7 +20,7 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
 
   def stop_area_id_validation
       if stop_area_id.nil?
-          errors.add(:stop_area_id,"coucou")
+          errors.add(:stop_area_id, I18n.t("errors.messages.empty"))
       end
   end
 
