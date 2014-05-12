@@ -14,8 +14,15 @@ class Chouette::StopPoint < Chouette::TridentActiveRecord
   before_destroy :remove_dependent_journey_pattern_stop_points
 
   validates_presence_of :stop_area
+  validate :stop_area_id_validation
 
   scope :default_order, order("position")
+
+  def stop_area_id_validation
+      if stop_area_id.nil?
+          errors.add(:stop_area_id,"coucou")
+      end
+  end
 
   def self.area_candidates
     Chouette::StopArea.where( :area_type => ['Quay', 'BoardingPosition'])
