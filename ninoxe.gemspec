@@ -36,7 +36,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency('guard-rspec')
   s.add_development_dependency('guard-bundler')
   s.add_development_dependency('guard-migrate')
-  s.add_development_dependency('rspec-rails')
+  s.add_development_dependency('rspec-rails', '~> 2.14.2')
+  s.add_development_dependency('rspec-mocks', '~> 2.14.6')
 
   # rails 3.2.12 requires shoulda-matchers >= 1.5.6
   s.add_development_dependency('shoulda-matchers', '~> 1.5.6')
