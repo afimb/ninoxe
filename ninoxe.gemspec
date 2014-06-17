@@ -8,8 +8,8 @@ require "ninoxe/version"
 Gem::Specification.new do |s|
   s.name        = "ninoxe"
   s.version     = Ninoxe::VERSION
-  s.authors     = ["Marc Florisson", "Michel Etienne", "Luc Donnet"]
-  s.email       = ["mflorisson@cityway.fr", "metienne@cityway.fr", "ldonnet@cityway.fr"]
+  s.authors     = ["Marc Florisson", "Michel Etienne", "Luc Donnet", "Zakaria Bouziane"]
+  s.email       = ["mflorisson@cityway.fr", "metienne@cityway.fr", "ldonnet@cityway.fr", "zbouziane@cityway.fr"]
   s.homepage    = "http://github.com/afimb/ninoxe"
   s.summary     = "Library dedicated to Chouette access."
   s.description = "This library provides a model to navigate through Chouette database."
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   #
   # 3.2.14 (the latest 3.2.x) with jruby-1.6, jruby-1.7 has a bug on has_many ids_reader
   # e.g. journey_pattern.stop_point_ids may fail
-  s.add_dependency('activerecord', '>= 3.1.3' )
+  s.add_dependency('activerecord', '>= 3.1.3', '< 4.0' )
   s.add_dependency("acts_as_list", "~> 0.1.6")
   s.add_dependency("foreigner", "1.6.0")
 
