@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140617132236) do
+ActiveRecord::Schema.define(:version => 20140618071147) do
 
   create_table "access_links", :force => true do |t|
     t.integer  "access_point_id",                        :limit => 8
@@ -188,7 +188,7 @@ ActiveRecord::Schema.define(:version => 20140617132236) do
     t.string   "comment"
     t.boolean  "mobility_restricted_suitability"
     t.integer  "int_user_needs"
-    t.boolean  "on_demand_transportation"
+    t.boolean  "flexible_service"
   end
 
   add_index "lines", ["objectid"], :name => "lines_objectid_key", :unique => true
@@ -378,7 +378,7 @@ ActiveRecord::Schema.define(:version => 20140617132236) do
     t.string   "vehicle_type_identifier"
     t.integer  "number",                          :limit => 8
     t.boolean  "mobility_restricted_suitability"
-    t.boolean  "on_demand_transportation"
+    t.boolean  "flexible_service"
   end
 
   add_index "vehicle_journeys", ["objectid"], :name => "vehicle_journeys_objectid_key", :unique => true

@@ -6,7 +6,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   attr_accessible :transport_mode, :network_id, :company_id, :objectid, :object_version
   attr_accessible :creation_time, :creator_id, :name, :number, :published_name, :transport_mode_name
   attr_accessible :registration_number, :comment, :mobility_restricted_suitability, :int_user_needs
-  attr_accessible :on_demand_transportation
+  attr_accessible :flexible_service
 
   belongs_to :company
   belongs_to :network
@@ -27,7 +27,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_presence_of :name
   
   def self.nullable_attributes
-    [:published_name, :number, :comment, :mobility_restricted_suitability, :on_demand_transportation]
+    [:published_name, :number, :comment, :mobility_restricted_suitability, :flexible_service]
   end
 
   def geometry_presenter
