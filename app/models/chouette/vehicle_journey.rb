@@ -10,7 +10,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   attr_reader :time_table_tokens
 
   def self.nullable_attributes
-    [:transport_mode, :published_journey_name, :vehicle_type_identifier, :published_journey_identifier, :comment, :status_value, :mobility_restricted_suitability, :flexible_service]
+    [:transport_mode, :published_journey_name, :vehicle_type_identifier, :published_journey_identifier, :comment, :status_value]
   end
 
   belongs_to :company
