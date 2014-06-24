@@ -8,6 +8,8 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
   has_and_belongs_to_many :stop_points, :class_name => 'Chouette::StopPoint', :order => 'stop_points.position', :before_add => :vjas_add, :before_remove => :vjas_remove, :after_add => :shortcuts_update_for_add, :after_remove => :shortcuts_update_for_remove
 
   attr_accessible :route_id, :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :registration_number, :published_name, :departure_stop_point_id, :arrival_stop_point_id, :stop_point_ids, :stop_points
+
+  validates_presence_of :route
   
   # TODO: this a workarround
   # otherwise, we loose the first stop_point 
@@ -33,7 +35,7 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
     ordered_stop_points = stop_points
     ordered_stop_points = ordered_stop_points.sort { |a,b| a.position <=> b.position} unless ordered_stop_points.empty?
 
-    self.update_attributes!( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
+    self.update_attributes( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
                              :arrival_stop_point_id => (ordered_stop_points.last && ordered_stop_points.last.id))
   end
   def shortcuts_update_for_remove( stop_point)
@@ -42,7 +44,7 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
     ordered_stop_points = stop_points
     ordered_stop_points = ordered_stop_points.sort { |a,b| a.position <=> b.position} unless ordered_stop_points.empty?
 
-    self.update_attributes!( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
+    self.update_attributes( :departure_stop_point_id => (ordered_stop_points.first && ordered_stop_points.first.id),
                              :arrival_stop_point_id => (ordered_stop_points.last && ordered_stop_points.last.id))
   end
   def vjas_add( stop_point)
