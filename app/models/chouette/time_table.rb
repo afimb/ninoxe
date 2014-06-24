@@ -6,6 +6,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessible :start_date, :end_date
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
+  attr_accessor :school_holliday,:public_holliday,:market_day
 
   has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
   has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
@@ -183,6 +184,15 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def sunday
     day_by_mask(256)
   end
+  def school_holliday
+    day_by_mask(512)
+  end  
+  def public_holliday
+    day_by_mask(1024)
+  end  
+  def market_day
+    day_by_mask(2048)
+  end  
   
   def set_day(day,flag)
     if (day == '1') 
@@ -214,6 +224,15 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def sunday=(day)
     set_day(day,256)
   end
-  
+  def school_holliday=(day)
+    set_day(day,512)
+  end  
+  def public_holliday=(day)
+    set_day(day,1024)
+  end  
+  def market_day=(day)
+    set_day(day,2048)
+  end  
+
 end
 
