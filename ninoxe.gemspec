@@ -46,5 +46,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('nokogiri', '~> 1.5.9')
 
   s.add_development_dependency('factory_girl_rails', '1.7.0')
-  s.add_development_dependency("rails", "~> 3.1")
+  s.add_development_dependency("rails", ">= 3.1", "< 4.0")
 end
