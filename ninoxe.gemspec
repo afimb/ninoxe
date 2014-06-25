@@ -27,10 +27,11 @@ Gem::Specification.new do |s|
   # 3.2.14 (the latest 3.2.x) with jruby-1.6, jruby-1.7 has a bug on has_many ids_reader
   # e.g. journey_pattern.stop_point_ids may fail
   s.add_dependency('activerecord', '>= 3.1.3' , '< 4.0')
-  s.add_dependency("acts_as_list", "~> 0.1.6")
+  s.add_dependency("acts_as_list", ">= 0.1.6")
+  s.add_dependency("acts_as_tree", ">= 1.1.0")
   s.add_dependency("foreigner", "1.6.0")
 
-  s.add_development_dependency('rake', '~> 0.9')
+  s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('jquery-rails')
   s.add_development_dependency "guard"
   s.add_development_dependency('guard-rspec')
@@ -38,13 +39,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('guard-migrate')
   s.add_development_dependency('rspec-rails', '~> 2.14.2')
   s.add_development_dependency('rspec-mocks', '~> 2.14.6')
-
-  # rails 3.2.12 requires shoulda-matchers >= 1.5.6
-  s.add_development_dependency('shoulda-matchers', '~> 1.5.6')
-
-  # nokogiri 1.6.0 requires ruby >= 1.9.2
-  s.add_development_dependency('nokogiri', '~> 1.5.9')
-
+  s.add_development_dependency('shoulda-matchers', '>= 1.5.6')
   s.add_development_dependency('factory_girl_rails', '1.7.0')
   s.add_development_dependency("rails", ">= 3.1", "< 4.0")
 end

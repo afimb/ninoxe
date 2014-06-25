@@ -21,7 +21,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
     end
   end
   belongs_to :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
-  has_many :stop_points, inverse_of: :route, :order => 'position', :dependent => :destroy do
+  has_many :stop_points, :order => 'position', :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
       where( :stop_area_id => stop_area_ids).first or
