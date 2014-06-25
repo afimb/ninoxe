@@ -246,7 +246,7 @@ describe Chouette::StopArea do
     end
 
     it "should return StopArea.bounds center" do
-      Chouette::StopArea.stub :bounds => mock(:center => "center")
+      Chouette::StopArea.stub :bounds => double(:center => "center")
       subject.default_position.should == Chouette::StopArea.bounds.center
     end
 

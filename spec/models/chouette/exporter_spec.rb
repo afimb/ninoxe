@@ -6,7 +6,7 @@ describe Chouette::Exporter do
 
   describe "#export" do
 
-    let(:chouette_command) { mock :run! => true }
+    let(:chouette_command) { double :run! => true }
 
     before(:each) do
       subject.stub :chouette_command => chouette_command

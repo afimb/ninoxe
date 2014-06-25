@@ -53,7 +53,7 @@ describe Chouette::ActiveRecord do
     let(:modified_options) { {:modified => true}  }
 
     it "should invoke create_reflection_without_chouette_naming with modified options" do
-      Chouette::ActiveRecord::Reflection.stub :new => mock(:options_with_default => modified_options)
+      Chouette::ActiveRecord::Reflection.stub :new => double(:options_with_default => modified_options)
       Chouette::ActiveRecord.should_receive(:create_reflection_without_chouette_naming).with macro, name, modified_options, active_record
 
       Chouette::ActiveRecord.create_reflection macro, name, options, active_record
