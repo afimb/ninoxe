@@ -5,6 +5,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
   attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessible :start_date, :end_date
+  attr_accessible :school_holliday,:public_holliday,:market_day
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessor :school_holliday,:public_holliday,:market_day
 
