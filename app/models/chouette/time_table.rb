@@ -1,7 +1,7 @@
 class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   self.primary_key = "id"
-  
+
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
   attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessible :start_date, :end_date
@@ -25,10 +25,10 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   validates_associated :periods
 
   def self.start_validity_period
-    [Chouette::TimeTable.minimum(:start_date)].compact.min 
+    [Chouette::TimeTable.minimum(:start_date)].compact.min
   end
   def self.end_validity_period
-    [Chouette::TimeTable.maximum(:end_date)].compact.max 
+    [Chouette::TimeTable.maximum(:end_date)].compact.max
   end
 
   def shortcuts_update(date=nil)
@@ -40,7 +40,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       else
         self.start_date=dates_array.min
         self.end_date=dates_array.max
-      end      
+      end
     #else
      # if dates_array.empty?
      #   update_attributes :start_date => nil, :end_date => nil
@@ -88,17 +88,26 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
 
   def include_in_dates?(day)
-    self.dates.any?{ |d| d.date === day }
+    self.dates.any?{ |d| d.date === day && d.in_out == true }
+  end
+
+  def excluded_date?(day)
+    self.dates.any?{ |d| d.date === day && d.in_out == false }
   end
 
   def include_in_periods?(day)
-    self.periods.any?{ |period| period.period_start <= day && day <= period.period_end && valid_days.include?(day.cwday) }
+    self.periods.any?{ |period| period.period_start <= day &&
+                                day <= period.period_end &&
+                                valid_days.include?(day.cwday) &&
+                                ! excluded_date?(day) }
   end
 
   def include_in_overlap_dates?(day)
+    return false if self.excluded_date?(day)
+
     counter = self.dates.select{ |d| d.date === day}.size + self.periods.select{ |period| period.period_start <= day && day <= period.period_end && valid_days.include?(day.cwday) }.size
-    counter <= 1 ? false : true 
-  end
+    counter <= 1 ? false : true
+   end
 
   def periods_max_date
     return nil if self.periods.empty?
@@ -107,11 +116,12 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     max_end = self.periods.map(&:period_end).compact.max
     result = nil
 
-    if max_end
-      max_end.downto(max_end-7) do |date|
-        result = date if result.nil? && 
-                          self.valid_days.include?(date.cwday) &&
-                          ( date >= min_start)
+    if max_end && min_start
+      max_end.downto( min_start) do |date|
+        if self.valid_days.include?(date.cwday) && !self.excluded_date?(date)
+            result = date
+            break
+        end
       end
     end
     result
@@ -123,24 +133,25 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     max_end = self.periods.map(&:period_end).compact.max
     result = nil
 
-    if min_start
-      min_start.upto(min_start+7) do |date|
-        result = date if result.nil? && 
-                          self.valid_days.include?(date.cwday) &&
-                          ( date <= max_end)
+    if max_end && min_start
+      min_start.upto(max_end) do |date|
+        if self.valid_days.include?(date.cwday) && !self.excluded_date?(date)
+            result = date
+            break
+        end
       end
     end
     result
   end
   def bounding_dates
-    bounding_min = self.dates.map(&:date).compact.min
-    bounding_max = self.dates.map(&:date).compact.max
+    bounding_min = self.dates.select{|d| d.in_out}.map(&:date).compact.min
+    bounding_max = self.dates.select{|d| d.in_out}.map(&:date).compact.max
 
     unless self.periods.empty?
       bounding_min = periods_min_date if periods_min_date &&
           (bounding_min.nil? || (periods_min_date < bounding_min))
-                
-      bounding_max = periods_max_date if periods_max_date && 
+
+      bounding_max = periods_max_date if periods_max_date &&
           (bounding_max.nil? || (bounding_max < periods_max_date))
     end
 
@@ -187,23 +198,23 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
   def school_holliday
     day_by_mask(512)
-  end  
+  end
   def public_holliday
     day_by_mask(1024)
-  end  
+  end
   def market_day
     day_by_mask(2048)
-  end  
-  
+  end
+
   def set_day(day,flag)
-    if (day == '1') 
+    if (day == '1')
       self.int_day_types |= flag
     else
       self.int_day_types &= ~flag
     end
     shortcuts_update
   end
-  
+
   def monday=(day)
     set_day(day,4)
   end
@@ -227,13 +238,13 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
   def school_holliday=(day)
     set_day(day,512)
-  end  
+  end
   def public_holliday=(day)
     set_day(day,1024)
-  end  
+  end
   def market_day=(day)
     set_day(day,2048)
-  end  
+  end
 
 end
 

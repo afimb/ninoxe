@@ -19,6 +19,16 @@ describe Chouette::TimeTable do
       it "should retreive 04/15/2013" do
         subject.periods_max_date.should == Date.strptime("04/15/2013", '%m/%d/%Y')
       end
+      context "when 04/15/2013 is excluded, periods_max_dates selects the day before" do
+        before(:each) do
+          excluded_date = Date.strptime("04/15/2013", '%m/%d/%Y')
+          subject.dates = [ Chouette::TimeTableDate.new( :date => excluded_date, :in_out => false)]
+          subject.save
+        end
+        it "should retreive 04/14/2013" do
+          subject.periods_max_date.should == Date.strptime("04/14/2013", '%m/%d/%Y')
+        end
+      end
       context "when day_types select only sunday and saturday," do
         before(:each) do
           # jeudi, vendredi
@@ -60,6 +70,16 @@ describe Chouette::TimeTable do
 
       it "should retreive 04/10/2013" do
         subject.periods_min_date.should == Date.strptime("04/10/2013", '%m/%d/%Y')
+      end
+      context "when 04/10/2013 is excluded, periods_min_dates select the day after" do
+        before(:each) do
+          excluded_date = Date.strptime("04/10/2013", '%m/%d/%Y')
+          subject.dates = [ Chouette::TimeTableDate.new( :date => excluded_date, :in_out => false)]
+          subject.save
+        end
+        it "should retreive 04/11/2013" do
+          subject.periods_min_date.should == Date.strptime("04/11/2013", '%m/%d/%Y')
+        end
       end
       context "when day_types select only tuesday and friday," do
         before(:each) do
@@ -114,11 +134,11 @@ describe Chouette::TimeTable do
       before(:each) do
         subject.dates = []
         subject.periods = []
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 4.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 4.days.since.to_date,
                               :period_end => 6.days.since.to_date)
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 1.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 1.days.since.to_date,
                               :period_end => 10.days.since.to_date)
         subject.save
         subject.periods = subject.periods - [subject.periods.last]
@@ -140,11 +160,11 @@ describe Chouette::TimeTable do
       before(:each) do
         subject.dates = []
         subject.periods = []
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 4.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 4.days.since.to_date,
                               :period_end => 6.days.since.to_date)
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 1.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 1.days.since.to_date,
                               :period_end => 10.days.since.to_date)
         subject.save
         subject.periods.last.period_end = 15.days.since.to_date
@@ -182,7 +202,7 @@ describe Chouette::TimeTable do
                                            "period_end"=>"",
                                            "_destroy"=>""}}})
         subject.save
-        subject.id.should be_nil         
+        subject.id.should be_nil
       end
     end
     context "when a valid period is set," do
@@ -213,7 +233,7 @@ describe Chouette::TimeTable do
   describe "#dates" do
     context "when a date is added," do
       before(:each) do
-        subject.dates << Chouette::TimeTableDate.new( :date => (subject.bounding_dates.max + 1))
+        subject.dates << Chouette::TimeTableDate.new( :date => (subject.bounding_dates.max + 1), :in_out => true)
         subject.save
       end
       it "should update shortcut" do
@@ -244,15 +264,15 @@ describe Chouette::TimeTable do
     context "when a date is updated," do
       before(:each) do
         subject.dates = []
-        
+
         subject.periods = []
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 4.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 4.days.since.to_date,
                               :period_end => 6.days.since.to_date)
-        subject.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => 1.days.since.to_date, 
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => 1.days.since.to_date,
                               :period_end => 10.days.since.to_date)
-        subject.dates << Chouette::TimeTableDate.new( :date => 10.days.since.to_date)
+        subject.dates << Chouette::TimeTableDate.new( :date => 10.days.since.to_date, :in_out => true)
         subject.save
         subject.dates.last.date = 15.days.since.to_date
         subject.save
@@ -284,9 +304,9 @@ describe Chouette::TimeTable do
                                          "sunday"=>"0",
                                          "objectid"=>"",
                                          "dates_attributes"=>{"1397136189216"=>{"date"=>"",
-                                         "_destroy"=>""}}})
+                                         "_destroy"=>"", "in_out" => true}}})
       subject.save
-      subject.id.should be_nil         
+      subject.id.should be_nil
     end
     it "it should save tm if date valid" do
       subject = Chouette::TimeTable.new({"comment"=>"test",
@@ -300,7 +320,7 @@ describe Chouette::TimeTable do
                                          "sunday"=>"1",
                                          "objectid"=>"",
                                          "dates_attributes"=>{"1397136189216"=>{"date"=>"2015-01-01",
-                                         "_destroy"=>""}}})
+                                         "_destroy"=>"", "in_out" => true}}})
       subject.save
       tm = Chouette::TimeTable.find subject.id
       tm.dates.empty?.should be_false
@@ -319,40 +339,40 @@ describe Chouette::TimeTable do
   describe "#intersects" do
     it "should return day if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today)
+      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
       time_table.intersects([Date.today]).should == [Date.today]
     end
 
     it "should return [] if a period not include days" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12)
-      time_table.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => Date.new(2013, 05, 27), 
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 30))
       time_table.intersects([ Date.new(2013, 05, 29),  Date.new(2013, 05, 30)]).should == []
     end
 
     it "should return days if a period include day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
-      time_table.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => Date.new(2013, 05, 27), 
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 30))
       time_table.intersects([ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]).should == [ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]
     end
 
-    
+
   end
 
   describe "#include_day?" do
     it "should return true if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today)
+      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
       time_table.include_day?(Date.today).should == true
     end
 
     it "should return true if a period include day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
-      time_table.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => Date.new(2013, 05, 27), 
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 29))
       time_table.include_day?( Date.new(2013, 05, 27)).should == true
     end
@@ -361,29 +381,54 @@ describe Chouette::TimeTable do
   describe "#include_in_dates?" do
     it "should return true if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
-      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today)
+      time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
       time_table.include_in_dates?(Date.today).should == true
     end
+
+    it "should return false if a period include day  but that is exclued" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
+      excluded_date = Date.new(2013, 05, 27)
+      time_table.dates << Chouette::TimeTableDate.new( :date => excluded_date, :in_out => false)
+      time_table.include_in_dates?( excluded_date).should be_false
+    end
   end
-  
+
   describe "#include_in_periods?" do
     it "should return true if a period include day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
-      time_table.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => Date.new(2012, 1, 1), 
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2012, 1, 1),
                               :period_end => Date.new(2012, 01, 30))
       time_table.include_in_periods?(Date.new(2012, 1, 2)).should == true
+    end
+
+    it "should return false if a period include day  but that is exclued" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
+      excluded_date = Date.new(2013, 05, 27)
+      time_table.dates << Chouette::TimeTableDate.new( :date => excluded_date, :in_out => false)
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2013, 05, 27),
+                              :period_end => Date.new(2013, 05, 29))
+      time_table.include_in_periods?( excluded_date).should be_false
     end
   end
 
   describe "#include_in_overlap_dates?" do
     it "should return true if a day is included in overlap dates" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
-      time_table.periods << Chouette::TimeTablePeriod.new( 
-                              :period_start => Date.new(2012, 1, 1), 
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2012, 1, 1),
                               :period_end => Date.new(2012, 01, 30))
-      time_table.dates << Chouette::TimeTableDate.new( :date => Date.new(2012, 1, 2))
-      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should == true      
+      time_table.dates << Chouette::TimeTableDate.new( :date => Date.new(2012, 1, 2), :in_out => true)
+      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should == true
+    end
+    it "should return false if the day is excluded" do
+      time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
+      time_table.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2012, 1, 1),
+                              :period_end => Date.new(2012, 01, 30))
+      time_table.dates << Chouette::TimeTableDate.new( :date => Date.new(2012, 1, 2), :in_out => false)
+      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should be_false
     end
   end
 
@@ -411,13 +456,13 @@ describe Chouette::TimeTable do
       subject.validity_out_between?( start_date, end_date).should be_true
     end
     it "should be false if calendar is out on start date" do
-      start_date = subject.bounding_dates.max 
+      start_date = subject.bounding_dates.max
       end_date = subject.bounding_dates.max + 2.day
       subject.validity_out_between?( start_date, end_date).should be_false
     end
     it "should be false if calendar is out on end date" do
       start_date = subject.bounding_dates.max - 2.day
-      end_date = subject.bounding_dates.max 
+      end_date = subject.bounding_dates.max
       subject.validity_out_between?( start_date, end_date).should be_true
     end
     it "should be false if calendar is out after start_date" do
@@ -503,19 +548,19 @@ describe Chouette::TimeTable do
       period.period_start = Date.today
       period.period_end = Date.today + 10
       period.valid?.should be_true
-    end  
+    end
     it "should not have period_start after period_end" do
       period = Chouette::TimeTablePeriod.new
       period.period_start = Date.today
       period.period_end = Date.today - 10
       period.valid?.should be_false
-    end  
+    end
     it "should not have period_start equal to period_end" do
       period = Chouette::TimeTablePeriod.new
       period.period_start = Date.today
       period.period_end = Date.today
       period.valid?.should be_false
-    end  
+    end
   end
 
 end
