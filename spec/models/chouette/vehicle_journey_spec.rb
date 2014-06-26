@@ -73,8 +73,8 @@ describe Chouette::VehicleJourney do
         end
         it "should mark vehicle_journey_at_stops as _destroy on even stops" do
           subject.update_journey_pattern( journey_pattern_odd)
-          subject.vehicle_journey_at_stops.each { |vjas| 
-            vjas._destroy.should == journey_pattern_even.stop_points.include?(vjas.stop_point) 
+          subject.vehicle_journey_at_stops.each { |vjas|
+            vjas._destroy.should == journey_pattern_even.stop_points.include?(vjas.stop_point)
           }
         end
       end
@@ -129,9 +129,9 @@ describe Chouette::VehicleJourney do
   end
   describe "#bounding_dates" do
     before(:each) do
-      tm1 = Factory.build(:time_table, :dates => 
-        [ Factory.build(:time_table_date, :date => 1.days.ago.to_date),
-          Factory.build(:time_table_date, :date => 2.days.ago.to_date)])
+      tm1 = Factory.build(:time_table, :dates =>
+        [ Factory.build(:time_table_date, :date => 1.days.ago.to_date, :in_out => true),
+          Factory.build(:time_table_date, :date => 2.days.ago.to_date, :in_out => true)])
       tm2 = Factory.build(:time_table, :periods =>
         [ Factory.build(:time_table_period, :period_start => 4.days.ago.to_date, :period_end => 3.days.ago.to_date)])
       tm3 = Factory.build(:time_table)
@@ -154,13 +154,13 @@ describe Chouette::VehicleJourney do
     end
 
   end
-  
+
     describe "#transport_mode_name" do
 
     def self.legacy_transport_modes
       %w{Air Train LongDistanceTrain LocalTrain RapidTransit Metro Tramway Coach Bus Ferry Waterborne PrivateVehicle Walk Trolleybus Bicycle Shuttle Taxi VAL Other}
     end
-    
+
     legacy_transport_modes.each do |transport_mode|
       context "when transport_mode is #{transport_mode}" do
         transport_mode_name = Chouette::TransportMode.new(transport_mode.underscore)
@@ -180,7 +180,7 @@ describe Chouette::VehicleJourney do
   end
 
   describe "#transport_mode_name=" do
-    
+
     it "should change transport_mode with TransportMode#name" do
       subject.transport_mode_name = "Test"
       subject.transport_mode.should == "Test"
@@ -189,7 +189,7 @@ describe Chouette::VehicleJourney do
   end
 
   describe ".transport_mode_names" do
-    
+
     it "should not include unknown transport_mode_name" do
       Chouette::VehicleJourney.transport_mode_names.should_not include(Chouette::TransportMode.new("unknown"))
     end
