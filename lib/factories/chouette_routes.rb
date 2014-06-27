@@ -1,4 +1,4 @@
-Factory.define :route, :class => "Chouette::Route" do |route|
+Factory.define :route_common, :class => "Chouette::Route" do |route|
   route.sequence(:name) { |n| "Route #{n}" }
   route.sequence(:published_name) { |n| "Long route #{n}" }
   route.sequence(:number) { |n| "#{n}" }
@@ -7,7 +7,9 @@ Factory.define :route, :class => "Chouette::Route" do |route|
   route.sequence(:objectid) { |n| "test:Route:#{n}" }
 
   route.association :line, :factory => :line
+end
 
+Factory.define :route, :class => "Chouette::Route", :parent => :route_common do |route|
   route.after_create do |r|
     0.upto(4) do |i|
       Factory(:stop_point, :position => i, :route => r)

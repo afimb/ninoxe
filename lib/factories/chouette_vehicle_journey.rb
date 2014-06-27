@@ -1,6 +1,7 @@
 Factory.define :vehicle_journey_common, :class => "Chouette::VehicleJourney" do |v|
   v.sequence(:objectid) { |n| "test:VehicleJourney:#{n}" }
 end
+
 Factory.define :vehicle_journey, :parent => :vehicle_journey_common do |v|
   v.association :journey_pattern, :factory => :journey_pattern
   v.after_build do |vj|
