@@ -246,5 +246,17 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     set_day(day,2048)
   end
 
+  def merge(another_tt)
+    # if common day types : merge periods
+    # if common periods : merge day types
+    # if excluded dates are valid in other tt , remove it from result
+    # otherwise : produce include date when no other option exists
+  end
+  def intersect(another_tt)
+    
+  end
+  def disjoin(another_tt)
+    
+  end
 end
 
