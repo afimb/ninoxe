@@ -162,6 +162,11 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     int_day_types & flag == flag
   end
 
+  def self.day_by_mask(int_day_types,flag)
+    int_day_types & flag == flag
+  end
+
+
   def valid_days
     # Build an array with day of calendar week (1-7, Monday is 1).
     [].tap do |valid_days|
@@ -172,6 +177,19 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       valid_days << 5  if friday
       valid_days << 6  if saturday
       valid_days << 7  if sunday
+    end
+  end
+
+  def self.valid_days(int_day_types)
+    # Build an array with day of calendar week (1-7, Monday is 1).
+    [].tap do |valid_days|
+      valid_days << 1  if day_by_mask(int_day_types,4)
+      valid_days << 2  if day_by_mask(int_day_types,8)
+      valid_days << 3  if day_by_mask(int_day_types,16)
+      valid_days << 4  if day_by_mask(int_day_types,32)
+      valid_days << 5  if day_by_mask(int_day_types,64)
+      valid_days << 6  if day_by_mask(int_day_types,128)
+      valid_days << 7  if day_by_mask(int_day_types,256)
     end
   end
 
@@ -207,7 +225,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
 
   def set_day(day,flag)
-    if (day == '1')
+    if day == '1' || day == true
       self.int_day_types |= flag
     else
       self.int_day_types &= ~flag
@@ -246,17 +264,324 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     set_day(day,2048)
   end
 
-  def merge(another_tt)
-    # if common day types : merge periods
-    # if common periods : merge day types
+  def effective_days_of_period(period,valid_days=self.valid_days)
+    days = []
+      period.period_start.upto(period.period_end) do |date|
+        if valid_days.include?(date.cwday) && !self.excluded_date?(date)
+            days << date
+        end
+      end
+    days
+  end
+  
+  def effective_days(valid_days=self.valid_days)
+    days=self.effective_days_of_periods(valid_days)
+    self.dates.each do |d|
+      days |= [d.date] if d.in_out
+    end
+    days.sort
+  end
+  
+  def effective_days_of_periods(valid_days=self.valid_days)
+    days = []
+    self.periods.each { |p| days |= self.effective_days_of_period(p,valid_days)}
+    days.sort
+  end
+  
+  def clone_periods
+    periods = []
+    self.periods.each { |p| periods << p.copy}
+    periods
+  end
+  
+  def included_days
+    days = []
+    self.dates.each do |d|
+      days |= [d.date] if d.in_out
+    end
+    days.sort
+  end
+  
+  def excluded_days
+    days = []
+    self.dates.each do |d|
+      days |= [d.date] unless d.in_out
+    end
+    days.sort
+  end
+
+  
+  # produce a copy of periods without anyone overlapping or including another
+  def optimize_periods
+    periods = self.clone_periods
+    optimized = []
+    i=0
+    while i < periods.length
+      p1 = periods[i]
+      optimized << p1
+      j= i+1
+      while j < periods.length
+        p2 = periods[j]
+        if p1.contains? p2
+          periods.delete p2
+        elsif p1.overlap? p2
+          p1.period_start = [p1.period_start,p2.period_start].min
+          p1.period_end = [p1.period_end,p2.period_end].max
+          periods.delete p2
+        else
+          j += 1
+        end
+      end
+      i+= 1
+    end
+    optimized.sort { |a,b| a.period_start <=> b.period_start}
+  end
+  
+  # merge effective days from another timetable
+  def merge!(another_tt)
+    # save special flags 
+    sh = self.school_holliday && another_tt.school_holliday
+    ph = self.public_holliday && another_tt.public_holliday
+    md = self.market_day && another_tt.market_day
+    # clear special days
+    self.school_holliday=0
+    self.public_holliday=0
+    self.market_day=0
+    # if one tt has no period, just merge lists
+    if self.periods.empty? || another_tt.periods.empty?
+      if !another_tt.periods.empty?
+        # copy periods 
+        self.periods = another_tt.clone_periods
+        # set valid_days 
+        self.int_day_types = another_tt.int_day_types 
+      end
+      # merge dates
+      self.dates ||= []
+      another_tt.dates.each do |d|
+        if d.in_out == true
+          if self.excluded_date?(d.date) 
+             self.dates.each do |date|
+               if date.date === d 
+                 date.in_out = true
+               end
+             end
+          elsif !self.include_in_dates?(d.date)
+             self.dates << Chouette::TimeTableDate.new(:date => d.date, :in_out => true)
+          end
+        end
+      end
+    else
+      # check if periods can be kept
+      common_day_types = self.int_day_types & another_tt.int_day_types & 508
+      periods = self.optimize_periods
+      another_periods = another_tt.optimize_periods
+      # if common day types : merge periods
+      if common_day_types != 0
+        # add not common days of both periods as peculiar days
+        self.effective_days_of_periods(self.class.valid_days(self.int_day_types ^ common_day_types)).each do |d| 
+          self.dates |= [Chouette::TimeTableDate.new(:date => d, :in_out => true)] 
+        end
+        another_tt.effective_days_of_periods(self.class.valid_days(another_tt.int_day_types ^ common_day_types)).each do |d| 
+          if self.excluded_date?(d)
+             self.dates.each do |date|
+               if date.date === d 
+                 date.in_out = true
+               end
+             end
+          elsif !self.include_in_dates?(d)
+             self.dates << Chouette::TimeTableDate.new(:date => d, :in_out => true)
+          end
+        end
+        # merge periods
+        periods |= another_periods
+        self.periods = periods
+        self.int_day_types = common_day_types
+        self.periods =self.optimize_periods
+      else
+        # convert all period in days
+        self.effective_days_of_periods.each do |d| 
+          self.dates << Chouette::TimeTableDate.new(:date => d, :in_out => true) unless self.include_in_dates?(d)
+        end
+        another_tt.effective_days_of_periods.each do |d| 
+          if self.excluded_date?(d)
+             self.dates.each do |date|
+               if date.date === d 
+                 date.in_out = true
+               end
+             end
+          elsif !self.include_in_dates?(d)
+             self.dates << Chouette::TimeTableDate.new(:date => d, :in_out => true)
+          end
+        end
+      end
+    end
     # if excluded dates are valid in other tt , remove it from result
-    # otherwise : produce include date when no other option exists
-  end
-  def intersect(another_tt)
+    self.dates.each do |date|
+      if date.in_out == false
+        if another_tt.include_day?(date.date)
+          date.in_out = true
+        end
+      end
+    end
     
-  end
-  def disjoin(another_tt)
+    # if peculiar dates are valid in new periods, remove them
+    if !self.periods.empty?
+      days_in_period = self.effective_days_of_periods
+      dates = []
+      self.dates.each do |date|
+        dates << date unless date.in_out && days_in_period.include?(date.date)
+      end
+      self.dates = dates
+    end
+    self.dates.sort! { |a,b| a.date <=> b.date}
     
+    # set special flags if common
+    self.school_holliday = sh
+    self.public_holliday = ph
+    self.market_day = md
+    self
   end
+  
+  # remove dates form tt which aren't in another_tt
+  def intersect!(another_tt)
+    
+    common_day_types = self.int_day_types & another_tt.int_day_types & 508
+    # save special flags 
+    sh = self.school_holliday || another_tt.school_holliday
+    ph = self.public_holliday || another_tt.public_holliday
+    md = self.market_day || another_tt.market_day
+    # if both tt have periods with common day_types, intersect them
+    if !self.periods.empty? && !another_tt.periods.empty? 
+      if common_day_types != 0
+        periods = []
+        days = []
+        valid_days = self.class.valid_days(common_day_types)
+        self.optimize_periods.each do |p1|
+          another_tt.optimize_periods.each do |p2|
+            if p1.overlap? p2
+              # create period for intersection
+              pi = Chouette::TimeTablePeriod.new(:period_start => [p1.period_start,p2.period_start].max,
+                                                 :period_end => [p1.period_end,p2.period_end].min)
+              if !self.effective_days_of_period(pi,valid_days).empty? && !another_tt.effective_days_of_period(pi,valid_days).empty?
+                if pi.period_start == pi.period_end
+                  days << pi.period_start
+                else
+                  periods << pi
+                end
+              end
+            end
+          end
+        end
+        # intersect dates
+        days |= another_tt.intersects(self.included_days) & self.intersects(another_tt.included_days)
+        excluded_days = self.excluded_days | another_tt.excluded_days
+        self.dates.clear
+        days.each {|day| self.dates << Chouette::TimeTableDate.new( :date =>day, :in_out => true)}
+        self.periods = periods
+        self.int_day_types = common_day_types
+        days_of_periods = self.effective_days_of_periods
+        excluded_days.each do |day| 
+          self.dates << Chouette::TimeTableDate.new( :date =>day, :in_out => false) if days_of_periods.contains?(day)
+        end  
+      end
+    else
+      # transform tt as effective dates and get common ones
+      days = another_tt.intersects(self.effective_days) & self.intersects(another_tt.effective_days)
+      self.dates.clear
+      days.each {|d| self.dates << Chouette::TimeTableDate.new( :date =>d, :in_out => true)}
+      self.periods.clear
+      self.int_day_types = 0
+    end
+    self.dates.sort! { |a,b| a.date <=> b.date}
+    
+    # set special flags if common
+    self.school_holliday = sh
+    self.public_holliday = ph
+    self.market_day = md
+    self    
+  end
+  
+  
+  def disjoin!(another_tt)
+    common_day_types = self.int_day_types & another_tt.int_day_types & 508
+    # save special flags 
+    sh = self.school_holliday && !another_tt.school_holliday
+    ph = self.public_holliday && !another_tt.public_holliday
+    md = self.market_day && !another_tt.market_day
+    # if both tt have periods with common day_types, reduce first ones to exclude second
+    if !self.periods.empty? && !another_tt.periods.empty? 
+      if common_day_types != 0
+        periods = []
+        days = []
+        valid_days = self.class.valid_days(self.int_day_types & ~another_tt.int_day_types)
+        self.optimize_periods.each do |p1|
+          deleted = false
+          another_tt.optimize_periods.each do |p2|
+            if  p2.contains? p1
+              # p1 is removed, keep remaining dates as included
+              days |= self.effective_days_of_period(p1,valid_days)
+              deleted = true
+              break
+            elsif  p1.contains? p2
+              # p1 is broken in 2; keep remaining dates covered by p2 as included
+              days |= self.effective_days_of_period(p2,valid_days)
+              if  p1.period_start != p2.period_start
+                pi = Chouette::TimeTablePeriod.new(:period_start => p1.period_start,
+                                                   :period_end => p2.period_start - 1)
+                if !self.effective_days_of_period(pi,valid_days).empty?                                   
+                  if pi.period_start == pi.period_end
+                    days << pi.period_start
+                  else
+                    periods << pi
+                  end
+                end
+              end
+              if p1.period_end != p2.period_end
+                 p1.period_start = p2.period_end + 1
+              else
+                 deleted = true
+                 break   
+              end
+            elsif  p1.overlap? p2
+              if p2.period_start <= p1.period_start
+                p2.period_start = p1.period_start
+                p1.period_start = p2.period_end + 1
+              else 
+                p2.period_end = p1.period_end
+                p1.period_end = p2.period_start - 1
+              end
+              days |= self.effective_days_of_period(p2,valid_days)
+            end
+          end
+          periods << p1 unless deleted
+        end
+        # rebuild periods and dates
+        self.periods = periods
+        if periods.empty?
+          self.int_day_types = 0
+        end
+        days.each { |d| self.dates |= [Chouette::TimeTableDate.new( :date =>d, :in_out => true)] }
+      end
+    else 
+      # otherwise remove or exclude dates and delete empty periods
+      # first remove peculiar dates
+      self.intersects(another_tt.effective_days).each do |d|
+        self.dates.delete_if {|date| date.date == d }
+      end
+      # then add excluded dates
+      self.intersects(another_tt.effective_days).each do |d|
+        self.dates |= [Chouette::TimeTableDate.new( :date =>d, :in_out => false)]
+      end
+    end  
+    self.dates.sort! { |a,b| a.date <=> b.date}
+    self.periods.sort! { |a,b| a.period_start <=> b.period_start}
+    
+    # set special flags if common
+    self.school_holliday = sh
+    self.public_holliday = ph
+    self.market_day = md
+    self    
+  end
+  
 end
 
