@@ -54,8 +54,9 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     def build_objectid
       #logger.info 'start after_create : '+self.objectid
       if self.objectid.include? ':__pending_id__'
-        base_objectid = self.objectid.rpartition(":").first
-        self.update_attributes( :objectid => "#{base_objectid}:#{self.id}", :object_version => (self.object_version - 1) )
+        self.objectid = self.objectid.rpartition(":").first+":#{self.id}"
+        self.class.uniq_objectid(self)
+        self.update_attributes( :objectid => self.objectid, :object_version => (self.object_version - 1) )
       end
       #logger.info 'end after_create : '+self.objectid
     end
@@ -74,6 +75,15 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
         #errors.add(:objectid, "doesn't have expected object_type: #{self.class.object_id_key}")
         errors.add(:objectid,I18n.t("activerecord.errors.models.trident.invalid_object_id_type",:type => self.class.object_id_key))
       end
+    end
+  end
+  
+  def self.uniq_objectid(object)
+    i = 0
+    baseobjectid = object.objectid
+    while object.class.exists?(:objectid => object.objectid) 
+      i += 1
+      object.objectid = baseobjectid+"_"+i.to_s
     end
   end
 
