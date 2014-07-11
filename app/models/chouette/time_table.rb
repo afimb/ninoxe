@@ -565,9 +565,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     else 
       # otherwise remove or exclude dates and delete empty periods
       # first remove peculiar dates
-      self.intersects(another_tt.effective_days).each do |d|
-        self.dates.delete_if {|date| date.date == d }
-      end
+      days = self.intersects(another_tt.effective_days)
+      self.dates -= self.dates.select{|date| days.include?(date.date)}
       # then add excluded dates
       self.intersects(another_tt.effective_days).each do |d|
         self.dates |= [Chouette::TimeTableDate.new( :date =>d, :in_out => false)]

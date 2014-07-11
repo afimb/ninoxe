@@ -602,6 +602,8 @@ describe Chouette::TimeTable do
       end
   end
   
+  
+  
   describe "#excluded_days" do
       before do
         subject.dates.clear
@@ -618,6 +620,33 @@ describe Chouette::TimeTable do
         days[1].should == Date.new(2014,7, 19)
       end
   end
+
+  
+  
+  describe "#effective_days" do
+      before do
+        subject.periods.clear
+        subject.periods << Chouette::TimeTablePeriod.new(
+                              :period_start => Date.new(2014, 6, 30),
+                              :period_end => Date.new(2014, 7, 6))
+        subject.int_day_types = 4|8|16
+        subject.dates.clear
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,1), :in_out => false)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
+      end
+      it "should return 5 dates" do
+        days = subject.effective_days
+        days.size.should == 5
+        days[0].should == Date.new(2014, 6, 30)
+        days[1].should == Date.new(2014, 7, 2)
+        days[2].should == Date.new(2014, 7, 16)
+        days[3].should == Date.new(2014, 7, 18)
+        days[4].should == Date.new(2014, 7, 20)
+      end
+  end
+
 
 
   describe "#optimize_periods" do
@@ -663,6 +692,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,5), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,15), :period_end => Date.new(2014,7,25))
         subject.merge! another_tt
+        subject.save
+        subject.reload
       end
       it "should have merged periods" do
         subject.periods.size.should == 3
@@ -702,6 +733,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,15), :period_end => Date.new(2014,7,25))
         subject.intersect! another_tt
+        subject.save
+        subject.reload
       end
       it "should have 1 common period" do
         subject.periods.size.should == 1
@@ -732,6 +765,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,17), :period_end => Date.new(2014,7,25))
         subject.intersect! another_tt
+        subject.save
+        subject.reload
       end
       it "should have 0 period" do
         subject.periods.size.should == 0
@@ -762,6 +797,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,15), :period_end => Date.new(2014,8,2))
         subject.disjoin! another_tt
+        subject.save
+        subject.reload
       end
       it "should have 2 result periods" do
         subject.periods.size.should == 2
@@ -796,6 +833,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,17), :period_end => Date.new(2014,7,25))
         subject.disjoin! another_tt
+        subject.save
+        subject.reload
       end
       it "should have 0 period" do
         subject.periods.size.should == 0
@@ -824,6 +863,8 @@ describe Chouette::TimeTable do
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
         subject.disjoin! another_tt
+        subject.save
+        subject.reload
       end
       it "should have 0 result periods" do
         subject.periods.size.should == 0
@@ -840,6 +881,70 @@ describe Chouette::TimeTable do
       end
     end
 
+    context "timetable with dates against timetable with dates and periods" do
+      before do
+        subject.periods.clear
+        subject.dates.clear
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,17), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,19), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
+        subject.int_day_types = 512
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512) ) 
+        another_tt.periods.clear
+        another_tt.dates.clear
+        another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,17), :in_out => true)
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => true)
+        subject.disjoin! another_tt
+        subject.save
+        subject.reload
+      end
+      it "should have 0 result periods" do
+        subject.periods.size.should == 0
+      end
+      it "should have no remained day_types" do
+        subject.int_day_types == 0
+      end
+      it "should have 3 dates left" do
+        subject.dates.size.should == 3
+        subject.dates[0].date.should == Date.new(2014,7,16)
+        subject.dates[1].date.should == Date.new(2014,7,19)
+        subject.dates[2].date.should == Date.new(2014,7,20)
+      end
+    end
+    context "timetable with dates against timetable with dates and periods all covered" do
+      before do
+        subject.periods.clear
+        subject.dates.clear
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,1), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,2), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,5), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,6), :in_out => true)
+        subject.int_day_types = 512
+        another_tt = Factory(:time_table , :int_day_types => (32|64|512) ) 
+        another_tt.periods.clear
+        another_tt.dates.clear
+        another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,11))
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,1), :in_out => true)
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,2), :in_out => true)
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,5), :in_out => true)
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,6), :in_out => true)
+        subject.disjoin! another_tt
+        subject.save
+        subject.reload
+      end
+      it "should have 0 result periods" do
+        subject.periods.size.should == 0
+      end
+      it "should have no remained day_types" do
+        subject.int_day_types == 0
+      end
+      it "should have 0 dates left" do
+        subject.dates.size.should == 0
+      end
+    end
    
   end 
 

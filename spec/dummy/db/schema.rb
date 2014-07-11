@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140618071147) do
+ActiveRecord::Schema.define(:version => 20140626054725) do
 
   create_table "access_links", :force => true do |t|
     t.integer  "access_point_id",                        :limit => 8
@@ -310,6 +310,7 @@ ActiveRecord::Schema.define(:version => 20140618071147) do
     t.integer "time_table_id", :limit => 8, :null => false
     t.date    "date"
     t.integer "position",                   :null => false
+    t.boolean "in_out"
   end
 
   add_index "time_table_dates", ["time_table_id"], :name => "index_time_table_dates_on_time_table_id"
