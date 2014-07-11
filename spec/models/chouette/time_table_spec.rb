@@ -947,5 +947,22 @@ describe Chouette::TimeTable do
     end
    
   end 
+  describe "#duplicate" do
+      it "should be a copy of" do
+        target=subject.duplicate
+        target.id.should be_nil
+        target.comment.should == "Copy of "+subject.comment
+        target.objectid.should == subject.objectid+"_1"
+        target.int_day_types.should == subject.int_day_types
+        target.dates.size.should == subject.dates.size
+        target.dates.each do |d|
+          d.time_table_id.should be_nil
+        end
+        target.periods.size.should == subject.periods.size
+        target.periods.each do |p|
+          p.time_table_id.should be_nil
+        end
+      end
+  end
 
 end

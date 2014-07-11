@@ -1,5 +1,6 @@
 en:
   activerecord:
+    copy: "Copy of %{comment}"
     errors:
       models:
         trident:

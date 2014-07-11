@@ -9,18 +9,18 @@ describe Chouette::TridentActiveRecord do
     it "should rebuild objectid" do
       tm = Factory(:time_table)
       tm.objectid = subject.objectid
-      Chouette::TridentActiveRecord.uniq_objectid(tm)
+      tm.uniq_objectid
       tm.objectid.should == subject.objectid+"_1"
     end
 
     it "should rebuild objectid" do
       tm = Factory(:time_table)
       tm.objectid = subject.objectid
-      Chouette::TridentActiveRecord.uniq_objectid(tm)
+      tm.uniq_objectid
       tm.save
       tm = Factory(:time_table)
       tm.objectid = subject.objectid
-      Chouette::TridentActiveRecord.uniq_objectid(tm)
+      tm.uniq_objectid
       tm.objectid.should == subject.objectid+"_2"
     end
 
@@ -55,7 +55,6 @@ describe Chouette::TridentActiveRecord do
       tm.save
       tm.objectid.should == "NINOXE:Timetable:"+tm.id.to_s+"_1"
     end
-
 
   end
 

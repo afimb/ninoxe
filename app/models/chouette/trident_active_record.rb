@@ -55,7 +55,7 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       #logger.info 'start after_create : '+self.objectid
       if self.objectid.include? ':__pending_id__'
         self.objectid = self.objectid.rpartition(":").first+":#{self.id}"
-        self.class.uniq_objectid(self)
+        self.uniq_objectid
         self.update_attributes( :objectid => self.objectid, :object_version => (self.object_version - 1) )
       end
       #logger.info 'end after_create : '+self.objectid
@@ -78,12 +78,12 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     end
   end
   
-  def self.uniq_objectid(object)
+  def uniq_objectid
     i = 0
-    baseobjectid = object.objectid
-    while object.class.exists?(:objectid => object.objectid) 
+    baseobjectid = self.objectid
+    while self.class.exists?(:objectid => self.objectid) 
       i += 1
-      object.objectid = baseobjectid+"_"+i.to_s
+      self.objectid = baseobjectid+"_"+i.to_s
     end
   end
 

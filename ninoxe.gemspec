@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency("acts_as_list", ">= 0.1.6")
   s.add_dependency("acts_as_tree", ">= 1.1.0")
   s.add_dependency("foreigner", "1.6.0")
+  s.add_dependency("deep_cloneable", "~> 2.0.0")
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('jquery-rails')
