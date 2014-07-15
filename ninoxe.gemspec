@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   #
   # 3.2.14 (the latest 3.2.x) with jruby-1.6, jruby-1.7 has a bug on has_many ids_reader
   # e.g. journey_pattern.stop_point_ids may fail
-  s.add_dependency('activerecord', "~> 3.2")
+  s.add_dependency('activerecord', "~> 3.2.13")
   s.add_dependency("acts_as_list", ">= 0.1.6")
   s.add_dependency("acts_as_tree", ">= 1.1.0")
   s.add_dependency("foreigner", "1.6.0")
