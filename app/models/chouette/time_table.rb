@@ -8,6 +8,9 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :school_holliday,:public_holliday,:market_day
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessor :school_holliday,:public_holliday,:market_day
+  
+  acts_as_taggable
+  attr_accessible :tag_list
 
   has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
   has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update

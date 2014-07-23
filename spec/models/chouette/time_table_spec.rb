@@ -964,5 +964,15 @@ describe Chouette::TimeTable do
         end
       end
   end
+  
+  describe "#tags" do
+      it "should accept tags" do
+        subject.tag_list = "toto, titi"
+        subject.save
+        subject.reload
+        Chouette::TimeTable.tag_counts.size.should == 2
+        subject.tag_list.size.should == 2
+      end
+  end
 
 end
