@@ -13,6 +13,10 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :tag_list, :tag_search
   attr_accessor :tag_search
 
+  def self.ransackable_attributes auth_object = nil
+    (column_names + ['tag_search']) + _ransackers.keys
+  end
+
   has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
   has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
 
