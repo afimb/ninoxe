@@ -5,9 +5,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
   attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
   attr_accessible :start_date, :end_date
-  attr_accessible :school_holliday,:public_holliday,:market_day
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
-  attr_accessor :school_holliday,:public_holliday,:market_day
   
   acts_as_taggable
   attr_accessible :tag_list, :tag_search
@@ -222,15 +220,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def sunday
     day_by_mask(256)
   end
-  def school_holliday
-    day_by_mask(512)
-  end
-  def public_holliday
-    day_by_mask(1024)
-  end
-  def market_day
-    day_by_mask(2048)
-  end
 
   def set_day(day,flag)
     if day == '1' || day == true
@@ -261,15 +250,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
   def sunday=(day)
     set_day(day,256)
-  end
-  def school_holliday=(day)
-    set_day(day,512)
-  end
-  def public_holliday=(day)
-    set_day(day,1024)
-  end
-  def market_day=(day)
-    set_day(day,2048)
   end
 
   def effective_days_of_period(period,valid_days=self.valid_days)
@@ -347,14 +327,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   
   # merge effective days from another timetable
   def merge!(another_tt)
-    # save special flags 
-    sh = self.school_holliday && another_tt.school_holliday
-    ph = self.public_holliday && another_tt.public_holliday
-    md = self.market_day && another_tt.market_day
-    # clear special days
-    self.school_holliday=0
-    self.public_holliday=0
-    self.market_day=0
     # if one tt has no period, just merge lists
     if self.periods.empty? || another_tt.periods.empty?
       if !another_tt.periods.empty?
@@ -442,11 +414,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       self.dates = dates
     end
     self.dates.sort! { |a,b| a.date <=> b.date}
-    
-    # set special flags if common
-    self.school_holliday = sh
-    self.public_holliday = ph
-    self.market_day = md
     self
   end
   
@@ -454,10 +421,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def intersect!(another_tt)
     
     common_day_types = self.int_day_types & another_tt.int_day_types & 508
-    # save special flags 
-    sh = self.school_holliday || another_tt.school_holliday
-    ph = self.public_holliday || another_tt.public_holliday
-    md = self.market_day || another_tt.market_day
     # if both tt have periods with common day_types, intersect them
     if !self.periods.empty? && !another_tt.periods.empty? 
       if common_day_types != 0
@@ -501,21 +464,12 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       self.int_day_types = 0
     end
     self.dates.sort! { |a,b| a.date <=> b.date}
-    
-    # set special flags if common
-    self.school_holliday = sh
-    self.public_holliday = ph
-    self.market_day = md
     self    
   end
   
   
   def disjoin!(another_tt)
     common_day_types = self.int_day_types & another_tt.int_day_types & 508
-    # save special flags 
-    sh = self.school_holliday && !another_tt.school_holliday
-    ph = self.public_holliday && !another_tt.public_holliday
-    md = self.market_day && !another_tt.market_day
     # if both tt have periods with common day_types, reduce first ones to exclude second
     if !self.periods.empty? && !another_tt.periods.empty? 
       if common_day_types != 0
@@ -582,11 +536,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     end  
     self.dates.sort! { |a,b| a.date <=> b.date}
     self.periods.sort! { |a,b| a.period_start <=> b.period_start}
-    
-    # set special flags if common
-    self.school_holliday = sh
-    self.public_holliday = ph
-    self.market_day = md
     self    
   end
   

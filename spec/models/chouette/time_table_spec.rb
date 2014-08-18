@@ -685,8 +685,8 @@ describe Chouette::TimeTable do
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,5))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,6))
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
-        subject.int_day_types = 4|16|32|128|512
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512|1024) ) 
+        subject.int_day_types = 4|16|32|128
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,5), :period_end => Date.new(2014,8,12))
@@ -705,7 +705,7 @@ describe Chouette::TimeTable do
         subject.periods[2].period_end.should == Date.new(2014, 8, 12)
       end
       it "should have common day_types" do
-        subject.int_day_types == 4|16|128|512
+        subject.int_day_types.should == 4|16|128
       end
       it "should have dates for thursdays and fridays" do
         subject.dates.size.should == 4
@@ -726,8 +726,8 @@ describe Chouette::TimeTable do
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,6))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
-        subject.int_day_types = 4|16|32|128|512
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512|1024) ) 
+        subject.int_day_types = 4|16|32|128
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -742,7 +742,7 @@ describe Chouette::TimeTable do
         subject.periods[0].period_end.should == Date.new(2014, 7, 20)
       end
       it "should have common day_types" do
-        subject.int_day_types == 4|16|128|512
+        subject.int_day_types.should == 4|16|128
       end
       it "should have date for period reduced to one day" do
         subject.dates.size.should == 1
@@ -758,8 +758,8 @@ describe Chouette::TimeTable do
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,19), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
-        subject.int_day_types = 512
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512|1024) ) 
+        subject.int_day_types = 0
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -772,7 +772,7 @@ describe Chouette::TimeTable do
         subject.periods.size.should == 0
       end
       it "should have merges special flags" do
-        subject.int_day_types == 512|1024
+        subject.int_day_types.should == 0
       end
       it "should have date reduced for period" do
         subject.dates.size.should == 2
@@ -790,8 +790,8 @@ describe Chouette::TimeTable do
         subject.dates.clear
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,6))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
-        subject.int_day_types = 4|16|32|128|512|1024
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512) ) 
+        subject.int_day_types = 4|16|32|128
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -808,7 +808,7 @@ describe Chouette::TimeTable do
         subject.periods[1].period_end.should == Date.new(2014, 8, 5)
       end
       it "should have remained day_types" do
-        subject.int_day_types == 4|16|32|128|1024
+        subject.int_day_types.should == 4|16|32|128
       end
       it "should have dates for period reduced" do
         subject.dates.size.should == 1
@@ -826,8 +826,8 @@ describe Chouette::TimeTable do
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,8,6), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,8,7), :in_out => true)
-        subject.int_day_types = 512
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|1024) ) 
+        subject.int_day_types = 0
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -839,8 +839,8 @@ describe Chouette::TimeTable do
       it "should have 0 period" do
         subject.periods.size.should == 0
       end
-      it "should have merges special flags" do
-        subject.int_day_types == 512
+      it "should have no remained day_types" do
+        subject.int_day_types.should == 0
       end
       it "should have date reduced for period" do
         subject.dates.size.should == 4
@@ -856,8 +856,8 @@ describe Chouette::TimeTable do
         subject.dates.clear
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,8))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
-        subject.int_day_types = 4|16|32|128|512|1024
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512) ) 
+        subject.int_day_types = 4|16|32|128
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
@@ -870,7 +870,7 @@ describe Chouette::TimeTable do
         subject.periods.size.should == 0
       end
       it "should have no remained day_types" do
-        subject.int_day_types == 1024
+        subject.int_day_types.should == 0
       end
       it "should have dates for period reduced" do
         subject.dates.size.should == 4
@@ -890,8 +890,8 @@ describe Chouette::TimeTable do
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,19), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
-        subject.int_day_types = 512
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128|512) ) 
+        subject.int_day_types = 0
+        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) ) 
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
