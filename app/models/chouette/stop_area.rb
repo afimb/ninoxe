@@ -15,13 +15,14 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   attr_accessor :stop_area_type
   attr_accessor :children_ids
+  attr_writer :coordinates
   
   attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
   attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
   attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
   attr_accessible :country_code, :street_name
   attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
-
+  attr_accessible :coordinates
   
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
@@ -33,11 +34,40 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
   validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
 
+  validates_format_of :coordinates, :with => %r{\A-?(0?[0-9](\.[0-9]*)?|[0-8][0-9](\.[0-9]*)?|90(\.[0]*)?)\,-?(0?[0-9]?[0-9](\.[0-9]*)?|1[0-7][0-9](\.[0-9]*)?|180(\.[0]*)?)\Z}, :allow_nil => true, :allow_blank => true
+
   def self.nullable_attributes
     [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :long_lat_type]
   end
 
   after_update :clean_invalid_access_links
+  
+  before_save :coordinates_to_lat_lng
+
+  def combine_lat_lng
+    if self.latitude.nil? || self.longitude.nil?
+      ""
+    else
+      self.latitude.to_s+","+self.longitude.to_s 
+    end
+  end
+  
+  def coordinates
+      @coordinates || combine_lat_lng
+  end
+  
+  def coordinates_to_lat_lng
+    if ! @coordinates.nil?
+      if @coordinates.empty?
+        self.latitude = nil
+        self.longitude = nil
+      else
+        self.latitude = BigDecimal.new(@coordinates.split(",").first)
+        self.longitude = BigDecimal.new(@coordinates.split(",").last)
+      end
+      @coordinates = nil 
+    end
+  end  
 
   def children_in_depth
     return [] if self.children.empty?
