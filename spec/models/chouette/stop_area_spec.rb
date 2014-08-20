@@ -350,5 +350,57 @@ describe Chouette::StopArea do
       subject.access_links.size.should == 1
     end
   end
+  
+  describe "#coordinates" do
+    it "should convert coordinates into latitude/longitude" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+   end
+    it "should set empty coordinates into nil latitude/longitude" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+     subject.coordinates = ""
+     subject.save
+     subject.longitude.should be_nil
+     subject.latitude.should be_nil
+   end
+    it "should convert latitude/longitude into coordinates" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :longitude => 120.456, :latitude => 45.123
+     subject.coordinates.should == "45.123,120.456"
+   end
+    it "should convert nil latitude/longitude into empty coordinates" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :longitude => nil, :latitude => nil
+     subject.coordinates.should == ""
+   end
+    it "should accept valid coordinates" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
+     subject.valid?.should be_true
+    end
+    it "should accept valid coordinates on limits" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "90,180"
+     subject.valid?.should be_true
+     subject.coordinates = "-90,-180"
+     subject.valid?.should be_true
+     subject.coordinates = "-90.,180."
+     subject.valid?.should be_true
+     subject.coordinates = "-90.0,180.00"
+     subject.valid?.should be_true
+    end
+    it "should reject invalid coordinates" do
+     subject = Factory :stop_area, :area_type => "BoardingPosition"
+     subject.coordinates = ",12"
+     subject.valid?.should be_false
+     subject.coordinates = "-90"
+     subject.valid?.should be_false
+     subject.coordinates = "-90.1,180."
+     subject.valid?.should be_false
+     subject.coordinates = "-90.0,180.1"
+     subject.valid?.should be_false
+     subject.coordinates = "-91.0,18.1"
+     subject.valid?.should be_false
+    end
+  end
 
 end

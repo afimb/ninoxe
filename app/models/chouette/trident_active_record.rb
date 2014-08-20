@@ -91,6 +91,15 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
       end
     end
   end
+  
+  def uniq_objectid
+    i = 0
+    baseobjectid = self.objectid
+    while self.class.exists?(:objectid => self.objectid) 
+      i += 1
+      self.objectid = baseobjectid+"_"+i.to_s
+    end
+  end
 
   def self.model_name
     ActiveModel::Name.new self, Chouette, self.name.demodulize

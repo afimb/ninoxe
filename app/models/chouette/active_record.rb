@@ -1,5 +1,5 @@
 #require "active_record"
-
+require 'deep_cloneable'
 module Chouette
   class ActiveRecord < ::ActiveRecord::Base
 

@@ -25,7 +25,23 @@ class Chouette::TimeTablePeriod < Chouette::ActiveRecord
       errors.add(:period_end,I18n.t("activerecord.errors.models.time_table_period.start_must_be_before_end"))
     end
   end
+  
   def update_parent
     time_table.shortcuts_update
   end
+  
+  def copy
+    Chouette::TimeTablePeriod.new(:period_start => self.period_start,:period_end => self.period_end)
+  end
+  
+  # Test to see if a period overlap this period
+  def overlap?(p)
+     (p.period_start >= self.period_start && p.period_start <= self.period_end) || (p.period_end >= self.period_start && p.period_end <= self.period_end)
+  end
+
+  # Test to see if a period is included in this period
+  def contains?(p)
+     (p.period_start >= self.period_start && p.period_end <= self.period_end)
+  end
+  
 end

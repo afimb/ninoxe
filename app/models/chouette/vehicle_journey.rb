@@ -6,7 +6,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   attr_accessor :transport_mode_name
   attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value
   attr_accessible :route, :transport_mode,:transport_mode_name, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
-  attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables
+  attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables, :mobility_restricted_suitability, :flexible_service
   attr_reader :time_table_tokens
 
   def self.nullable_attributes

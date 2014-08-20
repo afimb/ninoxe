@@ -189,5 +189,64 @@ describe Chouette::AccessPoint do
       end
     end
   end
+
+  describe "#coordinates" do
+    it "should convert coordinates into latitude/longitude" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+   end
+    it "should set empty coordinates into nil latitude/longitude" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+     subject.coordinates = ""
+     subject.save
+     subject.longitude.should be_nil
+     subject.latitude.should be_nil
+   end
+    it "should convert latitude/longitude into coordinates" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :longitude => 120.456, :latitude => 45.123
+     subject.coordinates.should == "45.123,120.456"
+   end
+    it "should convert nil latitude/longitude into empty coordinates" do
+    commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :longitude => nil, :latitude => nil
+     subject.coordinates.should == ""
+   end
+    it "should accept valid coordinates" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     subject.valid?.should be_true
+    end
+    it "should accept valid coordinates on limits" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "90,180"
+     subject.valid?.should be_true
+     subject.coordinates = "-90,-180"
+     subject.valid?.should be_true
+     subject.coordinates = "-90.,180."
+     subject.valid?.should be_true
+     subject.coordinates = "-90.0,180.00"
+     subject.valid?.should be_true
+    end
+    it "should reject invalid coordinates" do
+     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
+     subject = Factory :access_point, :stop_area => commercial_stop_point
+     subject.coordinates = ",12"
+     subject.valid?.should be_false
+     subject.coordinates = "-90"
+     subject.valid?.should be_false
+     subject.coordinates = "-90.1,180."
+     subject.valid?.should be_false
+     subject.coordinates = "-90.0,180.1"
+     subject.valid?.should be_false
+     subject.coordinates = "-91.0,18.1"
+     subject.valid?.should be_false
+    end
+  end
   
 end

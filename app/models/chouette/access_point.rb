@@ -9,19 +9,16 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
   belongs_to :stop_area
   
   attr_accessor :access_point_type
+  attr_writer :coordinates
+
   attr_accessible :objectid, :object_version, :creation_time, :creator_id, :name, :comment
   attr_accessible :longitude, :latitude, :long_lat_type
-  #attr_accessible :x, :y, :projection_type
-  attr_accessible :country_code, :street_name
+  attr_accessible :country_code, :street_name, :zip_code, :city_name
   attr_accessible :openning_time, :closing_time, :access_type, :access_point_type
   attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability
   attr_accessible :stop_area_id
+  attr_accessible :coordinates
   
-  # workaround of ruby 1.8 private method y block attribute y reading access
-  #def y
-  #  read_attribute :y
-  #end
-
   validates_presence_of :name
   validates_presence_of :access_type
 
@@ -30,14 +27,38 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
   validates_numericality_of :latitude, :less_than_or_equal_to => 90, :greater_than_or_equal_to => -90, :allow_nil => true
   validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
 
-  #validates_presence_of :x, :if => :y
-  #validates_presence_of :y, :if => :x
-  #validates_numericality_of :x, :allow_nil => true
-  #validates_numericality_of :y, :allow_nil => true
+  validates_format_of :coordinates, :with => %r{\A-?(0?[0-9](\.[0-9]*)?|[0-8][0-9](\.[0-9]*)?|90(\.[0]*)?)\,-?(0?[0-9]?[0-9](\.[0-9]*)?|1[0-7][0-9](\.[0-9]*)?|180(\.[0]*)?)\Z}, :allow_nil => true, :allow_blank => true
 
   def self.nullable_attributes
-    [:street_name, :country_code, :comment, :long_lat_type]
+    [:street_name, :country_code, :comment, :long_lat_type, :zip_code, :city_name]
   end
+
+  before_save :coordinates_to_lat_lng
+
+  def combine_lat_lng
+    if self.latitude.nil? || self.longitude.nil?
+      ""
+    else
+      self.latitude.to_s+","+self.longitude.to_s 
+    end
+  end
+  
+  def coordinates
+      @coordinates || combine_lat_lng
+  end
+  
+  def coordinates_to_lat_lng
+    if ! @coordinates.nil?
+      if @coordinates.empty?
+        self.latitude = nil
+        self.longitude = nil
+      else
+        self.latitude = BigDecimal.new(@coordinates.split(",").first)
+        self.longitude = BigDecimal.new(@coordinates.split(",").last)
+      end
+      @coordinates = nil 
+    end
+  end  
 
   def to_lat_lng
     Geokit::LatLng.new(latitude, longitude) if latitude and longitude
