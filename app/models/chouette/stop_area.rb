@@ -20,7 +20,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
   attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
   attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
-  attr_accessible :country_code, :street_name
+  attr_accessible :country_code, :street_name, :zip_code, :city_name
   attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
   attr_accessible :coordinates
   
@@ -37,7 +37,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_format_of :coordinates, :with => %r{\A-?(0?[0-9](\.[0-9]*)?|[0-8][0-9](\.[0-9]*)?|90(\.[0]*)?)\,-?(0?[0-9]?[0-9](\.[0-9]*)?|1[0-7][0-9](\.[0-9]*)?|180(\.[0]*)?)\Z}, :allow_nil => true, :allow_blank => true
 
   def self.nullable_attributes
-    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :long_lat_type]
+    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :long_lat_type, :zip_code, :city_name]
   end
 
   after_update :clean_invalid_access_links
