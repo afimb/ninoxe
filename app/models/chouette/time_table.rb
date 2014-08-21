@@ -327,6 +327,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   
   # merge effective days from another timetable
   def merge!(another_tt)
+    transaction do
     # if one tt has no period, just merge lists
     if self.periods.empty? || another_tt.periods.empty?
       if !another_tt.periods.empty?
@@ -414,12 +415,13 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       self.dates = dates
     end
     self.dates.sort! { |a,b| a.date <=> b.date}
-    self
+    self.save!
+    end
   end
   
   # remove dates form tt which aren't in another_tt
   def intersect!(another_tt)
-    
+    transaction do
     common_day_types = self.int_day_types & another_tt.int_day_types & 508
     # if both tt have periods with common day_types, intersect them
     if !self.periods.empty? && !another_tt.periods.empty? 
@@ -464,11 +466,13 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
       self.int_day_types = 0
     end
     self.dates.sort! { |a,b| a.date <=> b.date}
-    self    
+    self.save!
+    end    
   end
   
   
   def disjoin!(another_tt)
+    transaction do
     common_day_types = self.int_day_types & another_tt.int_day_types & 508
     # if both tt have periods with common day_types, reduce first ones to exclude second
     if !self.periods.empty? && !another_tt.periods.empty? 
@@ -536,7 +540,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
     end  
     self.dates.sort! { |a,b| a.date <=> b.date}
     self.periods.sort! { |a,b| a.period_start <=> b.period_start}
-    self    
+    self.save!
+    end
   end
   
   def duplicate
