@@ -555,7 +555,7 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   def duplicate
     tt = self.deep_clone :include => [:periods, :dates], :except => :object_version
     tt.uniq_objectid
-    tt.comment = I18n.t("activerecord.copy", :comment => self.comment)
+    tt.comment = I18n.t("activerecord.copy", :name => self.comment)
     tt
   end
   

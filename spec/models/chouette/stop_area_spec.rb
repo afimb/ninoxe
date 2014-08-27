@@ -403,4 +403,24 @@ describe Chouette::StopArea do
     end
   end
 
+  describe "#duplicate" do
+      it "should be a copy of" do
+        stop_place = Factory :stop_area, :area_type => "StopPlace" 
+        subject = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place, :coordinates => "45.123,120.456"
+        access_point1 = Factory :access_point, :stop_area => subject
+        access_point2 = Factory :access_point, :stop_area => subject
+        quay1 = Factory :stop_area, :parent => subject, :area_type => "Quay"
+        target=subject.duplicate
+        target.id.should be_nil
+        target.name.should == "Copy of "+subject.name
+        target.objectid.should == subject.objectid+"_1"
+        target.area_type.should == subject.area_type
+        target.parent.should be_nil
+        target.children.size.should == 0
+        target.access_points.size.should == 0
+        target.coordinates.should == "45.123,120.456"
+      end
+  end
+
+
 end
