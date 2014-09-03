@@ -672,10 +672,43 @@ describe Chouette::TimeTable do
         periods[0].period_start.should == Date.new(2014, 6, 1)
         periods[0].period_end.should == Date.new(2014, 6, 14)
         periods[1].period_start.should == Date.new(2014, 6, 30)
-        periods[1].period_end.should == Date.new(2014, 7, 14)
-        
+        periods[1].period_end.should == Date.new(2014, 7, 14)        
       end
   end
+  
+  describe "#add_included_day" do
+      before do
+        subject.dates.clear
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,18), :in_out => false)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
+      end
+      it "should do nothing" do
+        subject.add_included_day(Date.new(2014,7,16))
+        days = subject.included_days
+        days.size.should == 2
+        days.include?(Date.new(2014,7,16)).should be_true
+        days.include?(Date.new(2014,7,18)).should be_false
+        days.include?(Date.new(2014,7,20)).should be_true
+      end
+      it "should switch in_out flag" do
+        subject.add_included_day(Date.new(2014,7,18))
+        days = subject.included_days
+        days.size.should == 3
+        days.include?(Date.new(2014,7,16)).should be_true
+        days.include?(Date.new(2014,7,18)).should be_true
+        days.include?(Date.new(2014,7,20)).should be_true
+      end
+      it "should add date" do
+        subject.add_included_day(Date.new(2014,7,21))
+        days = subject.included_days
+        days.size.should == 3
+        days.include?(Date.new(2014,7,16)).should be_true
+        days.include?(Date.new(2014,7,20)).should be_true
+        days.include?(Date.new(2014,7,21)).should be_true
+      end
+  end
+
   
   describe "#merge!" do
     context "timetables have periods with common day_types " do
