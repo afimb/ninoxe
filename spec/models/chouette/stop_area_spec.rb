@@ -377,6 +377,16 @@ describe Chouette::StopArea do
     it "should accept valid coordinates" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
      subject.valid?.should be_true
+     subject.coordinates = "45.123, 120.456"
+     subject.valid?.should be_true
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+     subject.coordinates = "45.123,  -120.456"
+     subject.valid?.should be_true
+     subject.coordinates = " 45.123,120.456"
+     subject.valid?.should be_true
+     subject.coordinates = "45.123,120.456  "
+     subject.valid?.should be_true
     end
     it "should accept valid coordinates on limits" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "90,180"

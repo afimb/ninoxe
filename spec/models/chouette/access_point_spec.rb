@@ -221,6 +221,16 @@ describe Chouette::AccessPoint do
      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
      subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
      subject.valid?.should be_true
+     subject.coordinates = "45.123, 120.456"
+     subject.valid?.should be_true
+     subject.longitude.should be_within(0.001).of(120.456)
+     subject.latitude.should be_within(0.001).of(45.123)
+     subject.coordinates = "45.123,  -120.456"
+     subject.valid?.should be_true
+     subject.coordinates = " 45.123,120.456"
+     subject.valid?.should be_true
+     subject.coordinates = "45.123,120.456  "
+     subject.valid?.should be_true
     end
     it "should accept valid coordinates on limits" do
      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
