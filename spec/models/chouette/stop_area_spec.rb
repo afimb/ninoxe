@@ -383,6 +383,10 @@ describe Chouette::StopArea do
      subject.latitude.should be_within(0.001).of(45.123)
      subject.coordinates = "45.123,  -120.456"
      subject.valid?.should be_true
+     subject.coordinates = "45.123 ,120.456"
+     subject.valid?.should be_true
+     subject.coordinates = "45.123   ,   120.456"
+     subject.valid?.should be_true
      subject.coordinates = " 45.123,120.456"
      subject.valid?.should be_true
      subject.coordinates = "45.123,120.456  "
