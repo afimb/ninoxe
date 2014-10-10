@@ -309,7 +309,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   end
   
   def duplicate
-    sa = self.deep_clone :except => [:object_version, :parent_id] 
+    sa = self.deep_clone :except => [:object_version, :parent_id, :registration_number] 
     sa.uniq_objectid
     sa.name = I18n.t("activerecord.copy", :name => self.name)
     sa
