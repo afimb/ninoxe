@@ -16,6 +16,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
 
   has_and_belongs_to_many :group_of_lines, :class_name => 'Chouette::GroupOfLine', :order => 'group_of_lines.name'
   attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
+  attr_accessible :url, :color, :text_color
   attr_reader :group_of_line_tokens
 
   validates_presence_of :network
@@ -23,12 +24,15 @@ class Chouette::Line < Chouette::TridentActiveRecord
 
   validates_presence_of :registration_number
   validates_uniqueness_of :registration_number
-  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}
+  validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}
+  validates_format_of :url, :with => %r{\Ahttps?:\/\/[\d\w_\-\.]+\/.*\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :color, :with => %r{\A[\da-fA-F]\{6\}\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :text_color, :with => %r{\A[\da-fA-F]\{6\}\Z}, :allow_nil => true, :allow_blank => true
 
   validates_presence_of :name
   
   def self.nullable_attributes
-    [:published_name, :number, :comment]
+    [:published_name, :number, :comment, :url, :color, :text_color]
   end
 
   def geometry_presenter

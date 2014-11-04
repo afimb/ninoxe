@@ -23,9 +23,10 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessible :country_code, :street_name, :zip_code, :city_name
   attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
   attr_accessible :coordinates
+  attr_accessible :url, :time_zone
   
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
-  validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_blank => true
+  validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
 
@@ -35,9 +36,11 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_numericality_of :longitude, :less_than_or_equal_to => 180, :greater_than_or_equal_to => -180, :allow_nil => true
 
   validates_format_of :coordinates, :with => %r{\A *-?(0?[0-9](\.[0-9]*)?|[0-8][0-9](\.[0-9]*)?|90(\.[0]*)?) *\, *-?(0?[0-9]?[0-9](\.[0-9]*)?|1[0-7][0-9](\.[0-9]*)?|180(\.[0]*)?) *\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :url, :with => %r{\Ahttps?:\/\/[\d\w_\-\.]+\/.*\Z}, :allow_nil => true, :allow_blank => true
 
   def self.nullable_attributes
-    [:registration_number, :street_name, :country_code, :fare_code, :nearest_topic_name, :comment, :long_lat_type, :zip_code, :city_name]
+    [:registration_number, :street_name, :country_code, :fare_code, 
+     :nearest_topic_name, :comment, :long_lat_type, :zip_code, :city_name, :url, :time_zone]
   end
 
   after_update :clean_invalid_access_links
