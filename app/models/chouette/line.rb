@@ -25,9 +25,9 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_presence_of :registration_number
   validates_uniqueness_of :registration_number
   validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}
-  validates_format_of :url, :with => %r{\Ahttps?:\/\/[\d\w_\-\.]+\/.*\Z}, :allow_nil => true, :allow_blank => true
-  validates_format_of :color, :with => %r{\A[\da-fA-F]\{6\}\Z}, :allow_nil => true, :allow_blank => true
-  validates_format_of :text_color, :with => %r{\A[\da-fA-F]\{6\}\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :url, :with => %r{\Ahttps?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :color, :with => %r{\A[0-9a-fA-F]{6}\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :text_color, :with => %r{\A[0-9a-fA-F]{6}\Z}, :allow_nil => true, :allow_blank => true
 
   validates_presence_of :name
   
