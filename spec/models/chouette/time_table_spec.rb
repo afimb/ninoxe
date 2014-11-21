@@ -68,8 +68,11 @@ describe "update_attributes on periods and dates" do
                 [ :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday ].each { |d| hash[d] = false }
             end
             subject.update_attributes( days_hash)
-            subject.start_date.should == subject.dates.select{|d| d.in_out}.map(&:date).compact.min
-            subject.end_date.should == subject.dates.select{|d| d.in_out}.map(&:date).compact.max
+
+            read = Chouette::TimeTable.find( subject.id )
+            read.start_date.should == read.dates.select{|d| d.in_out}.map(&:date).compact.min
+            read.end_date.should == read.dates.select{|d| d.in_out}.map(&:date).compact.max
+
         end
     end
     context "add a new period" do
@@ -82,8 +85,10 @@ describe "update_attributes on periods and dates" do
         }
         it "should update start_date and end_end" do
             subject.update_attributes( :periods_attributes => new_period_attributes)
-            subject.start_date.should == new_start_date
-            subject.end_date.should == new_end_date
+
+            read = Chouette::TimeTable.find( subject.id )
+            read.start_date.should == new_start_date
+            read.end_date.should == new_end_date
         end
     end
     context "update period end" do
@@ -95,7 +100,9 @@ describe "update_attributes on periods and dates" do
         }
         it "should update end_date" do
             subject.update_attributes :periods_attributes => new_period_attributes
-            subject.end_date.should == new_end_date
+
+            read = Chouette::TimeTable.find( subject.id )
+            read.end_date.should == new_end_date
         end
     end
     context "update period start" do
@@ -107,7 +114,9 @@ describe "update_attributes on periods and dates" do
         }
         it "should update start_date" do
             subject.update_attributes :periods_attributes => new_period_attributes
-            subject.start_date.should == new_start_date
+
+            read = Chouette::TimeTable.find( subject.id )
+            read.start_date.should == new_start_date
         end
     end
     context "remove periods and dates and add a new period" do
@@ -125,10 +134,11 @@ describe "update_attributes on periods and dates" do
             pa
         }
         it "should update start_date and end_date with new period added" do
-            puts subject.dates.inspect
             subject.update_attributes :periods_attributes => new_period_attributes, :dates_attributes => new_dates_attributes
-            subject.start_date.should == new_start_date
-            subject.end_date.should == new_end_date
+
+            read = Chouette::TimeTable.find( subject.id )
+            read.start_date.should == new_start_date
+            read.end_date.should == new_end_date
         end
     end
     def dates_attributes

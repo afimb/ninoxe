@@ -20,6 +20,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
   has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
 
+  after_save :save_shortcuts
+
   def self.object_id_key
     "Timetable"
   end
@@ -37,6 +39,12 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   end
   def self.end_validity_period
     [Chouette::TimeTable.maximum(:end_date)].compact.max
+  end
+
+  def save_shortcuts
+      shortcuts_update
+      self.update_column(:start_date, start_date)
+      self.update_column(:end_date, end_date)
   end
 
   def shortcuts_update(date=nil)
