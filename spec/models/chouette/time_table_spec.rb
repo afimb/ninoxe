@@ -240,6 +240,7 @@ end
                               :period_end => 10.days.since.to_date)
         subject.save
         subject.periods = subject.periods - [subject.periods.last]
+        subject.save_shortcuts
       end
       def read_tm
         Chouette::TimeTable.find subject.id
@@ -343,6 +344,7 @@ end
       before(:each) do
         subject.periods = []
         subject.dates = subject.dates - [subject.bounding_dates.max + 1]
+        subject.save_shortcuts
       end
       it "should update shortcut" do
         subject.start_date.should == subject.bounding_dates.min
@@ -353,6 +355,7 @@ end
       before(:each) do
         subject.periods = []
         subject.dates = []
+        subject.save_shortcuts
       end
       it "should update shortcut" do
         subject.start_date.should be_nil

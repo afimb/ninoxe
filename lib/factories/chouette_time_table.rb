@@ -18,5 +18,6 @@ Factory.define :time_table, :class => "Chouette::TimeTable" do |time_table|
       start_date = start_date + 20
       end_date = start_date + 10
     end
+    t.save_shortcuts
   }
 end

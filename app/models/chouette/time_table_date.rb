@@ -8,14 +8,9 @@ class Chouette::TimeTableDate < Chouette::ActiveRecord
 
   attr_accessible :date, :position, :time_table_id, :time_table, :in_out
 
-  after_update :update_parent
-
   def self.model_name
     ActiveModel::Name.new Chouette::TimeTableDate, Chouette, "TimeTableDate"
   end
 
-  def update_parent
-    time_table.shortcuts_update
-  end
 end
 

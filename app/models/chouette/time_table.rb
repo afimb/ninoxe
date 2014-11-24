@@ -17,8 +17,8 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
 
   has_and_belongs_to_many :vehicle_journeys, :class_name => 'Chouette::VehicleJourney'
 
-  has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
-  has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy, :after_add => :shortcuts_update, :after_remove => :shortcuts_update
+  has_many :dates, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTableDate", :order => :date, :dependent => :destroy
+  has_many :periods, inverse_of: :time_table, :validate => :true, :class_name => "Chouette::TimeTablePeriod", :order => :period_start, :dependent => :destroy
 
   after_save :save_shortcuts
 
