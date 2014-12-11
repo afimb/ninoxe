@@ -3,6 +3,6 @@ module Chouette
     extend Enumerize
     extend ActiveModel::Naming
 
-    enumerize :for_boarding, in: %w[undefined normal forbidden request_stop is_flexible], default: "undefined"
+    enumerize :for_boarding, in: %w[normal forbidden request_stop is_flexible]
   end
 end
