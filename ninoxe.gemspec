@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency("foreigner", "1.6.0")
   s.add_dependency("deep_cloneable", "~> 2.0.0")
   s.add_dependency("acts-as-taggable-on", ">= 3")
+  s.add_dependency("enumerize", "~> 0.8.0")
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('jquery-rails')
