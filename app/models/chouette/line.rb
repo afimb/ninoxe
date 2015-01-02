@@ -2,11 +2,12 @@ class Chouette::Line < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   self.primary_key = "id"
 
-  attr_accessor :transport_mode
-  attr_accessible :transport_mode, :network_id, :company_id, :objectid, :object_version
-  attr_accessible :creation_time, :creator_id, :name, :number, :published_name, :transport_mode_name
-  attr_accessible :registration_number, :comment, :mobility_restricted_suitability, :int_user_needs
-  attr_accessible :flexible_service
+  # attr_accessible :transport_mode, :network_id, :company_id, :objectid, :object_version
+  # attr_accessible :creation_time, :creator_id, :name, :number, :published_name, :transport_mode_name
+  # attr_accessible :registration_number, :comment, :mobility_restricted_suitability, :int_user_needs
+  # attr_accessible :flexible_service
+  # attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
+  # attr_accessible :url, :color, :text_color
 
   belongs_to :company
   belongs_to :network
@@ -15,9 +16,8 @@ class Chouette::Line < Chouette::TridentActiveRecord
   has_many :vehicle_journeys, :through => :journey_patterns
 
   has_and_belongs_to_many :group_of_lines, :class_name => 'Chouette::GroupOfLine', :order => 'group_of_lines.name'
-  attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
-  attr_accessible :url, :color, :text_color
   attr_reader :group_of_line_tokens
+  attr_accessor :transport_mode
 
   validates_presence_of :network
   validates_presence_of :company

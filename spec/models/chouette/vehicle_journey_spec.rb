@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Chouette::VehicleJourney do
+describe Chouette::VehicleJourney, :type => :model do
   subject { Factory(:vehicle_journey_odd) }
 
   describe "in_relation_to_a_journey_pattern methods" do
@@ -13,37 +13,37 @@ describe Chouette::VehicleJourney do
       subject { Factory(:vehicle_journey, :route => route, :journey_pattern => journey_pattern_odd)}
       describe "#extra_stops_in_relation_to_a_journey_pattern" do
         it "should be empty" do
-          subject.extra_stops_in_relation_to_a_journey_pattern( journey_pattern).should be_empty
+          expect(subject.extra_stops_in_relation_to_a_journey_pattern( journey_pattern)).to be_empty
         end
       end
       describe "#extra_vjas_in_relation_to_a_journey_pattern" do
         it "should be empty" do
-          subject.extra_vjas_in_relation_to_a_journey_pattern( journey_pattern).should be_empty
+          expect(subject.extra_vjas_in_relation_to_a_journey_pattern( journey_pattern)).to be_empty
         end
       end
       describe "#missing_stops_in_relation_to_a_journey_pattern" do
         it "should return even stops" do
           result = subject.missing_stops_in_relation_to_a_journey_pattern( journey_pattern)
-          result.should == journey_pattern_even.stop_points
+          expect(result).to eq(journey_pattern_even.stop_points)
         end
       end
       describe "#update_journey_pattern" do
         it "should new_record for added vjas" do
           subject.update_journey_pattern( journey_pattern)
           subject.vehicle_journey_at_stops.select{ |vjas| vjas.new_record? }.each do |vjas|
-            journey_pattern_even.stop_points.should include( vjas.stop_point)
+            expect(journey_pattern_even.stop_points).to include( vjas.stop_point)
           end
         end
         it "should add vjas on each even stops" do
           subject.update_journey_pattern( journey_pattern)
           vehicle_stops = subject.vehicle_journey_at_stops.map(&:stop_point)
           journey_pattern_even.stop_points.each do |sp|
-            vehicle_stops.should include(sp)
+            expect(vehicle_stops).to include(sp)
           end
         end
         it "should not mark any vjas as _destroy" do
           subject.update_journey_pattern( journey_pattern)
-          subject.vehicle_journey_at_stops.any?{ |vjas| vjas._destroy }.should be_false
+          expect(subject.vehicle_journey_at_stops.any?{ |vjas| vjas._destroy }).to be_falsey
         end
       end
     end
@@ -51,30 +51,30 @@ describe Chouette::VehicleJourney do
       subject { Factory(:vehicle_journey, :route => route, :journey_pattern => journey_pattern)}
       describe "#missing_stops_in_relation_to_a_journey_pattern" do
         it "should be empty" do
-          subject.missing_stops_in_relation_to_a_journey_pattern( journey_pattern_odd).should be_empty
+          expect(subject.missing_stops_in_relation_to_a_journey_pattern( journey_pattern_odd)).to be_empty
         end
       end
       describe "#extra_stops_in_relation_to_a_journey_pattern" do
         it "should return even stops" do
           result = subject.extra_stops_in_relation_to_a_journey_pattern( journey_pattern_odd)
-          result.should == journey_pattern_even.stop_points
+          expect(result).to eq(journey_pattern_even.stop_points)
         end
       end
       describe "#extra_vjas_in_relation_to_a_journey_pattern" do
         it "should return vjas on even stops" do
           result = subject.extra_vjas_in_relation_to_a_journey_pattern( journey_pattern_odd)
-          result.map(&:stop_point).should == journey_pattern_even.stop_points
+          expect(result.map(&:stop_point)).to eq(journey_pattern_even.stop_points)
         end
       end
       describe "#update_journey_pattern" do
         it "should add no new vjas" do
           subject.update_journey_pattern( journey_pattern_odd)
-          subject.vehicle_journey_at_stops.any?{ |vjas| vjas.new_record? }.should be_false
+          expect(subject.vehicle_journey_at_stops.any?{ |vjas| vjas.new_record? }).to be_falsey
         end
         it "should mark vehicle_journey_at_stops as _destroy on even stops" do
           subject.update_journey_pattern( journey_pattern_odd)
           subject.vehicle_journey_at_stops.each { |vjas|
-            vjas._destroy.should == journey_pattern_even.stop_points.include?(vjas.stop_point)
+            expect(vjas._destroy).to eq(journey_pattern_even.stop_points.include?(vjas.stop_point))
           }
         end
       end
@@ -90,8 +90,8 @@ describe Chouette::VehicleJourney do
       end
       it "should make instance invalid" do
         subject.increasing_times
-        subject.vehicle_journey_at_stops[1].errors[:departure_time].should_not be_blank
-        subject.should_not be_valid
+        expect(subject.vehicle_journey_at_stops[1].errors[:departure_time]).not_to be_blank
+        expect(subject).not_to be_valid
       end
     end
     describe "#update_attributes" do
@@ -100,19 +100,19 @@ describe Chouette::VehicleJourney do
             "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "arrival_time" => (1.minutes.ago + 2.hour),"departure_time" => (1.minutes.ago + 2.hour)}
          }}}
       it "should return false" do
-        subject.update_attributes(params).should be_false
+        expect(subject.update_attributes(params)).to be_falsey
       end
       it "should make instance invalid" do
         subject.update_attributes(params)
-        subject.should_not be_valid
+        expect(subject).not_to be_valid
       end
       it "should let first vjas without any errors" do
         subject.update_attributes(params)
-        subject.vehicle_journey_at_stops[0].errors.should be_empty
+        expect(subject.vehicle_journey_at_stops[0].errors).to be_empty
       end
       it "should add an error on second vjas" do
         subject.update_attributes(params)
-        subject.vehicle_journey_at_stops[1].errors[:departure_time].should_not be_blank
+        expect(subject.vehicle_journey_at_stops[1].errors[:departure_time]).not_to be_blank
       end
     end
   end
@@ -123,8 +123,8 @@ describe Chouette::VehicleJourney do
 
     it "should return associated time table ids" do
       subject.update_attributes :time_table_tokens => [tm1.id, tm2.id].join(',')
-      subject.time_tables.should include( tm1)
-      subject.time_tables.should include( tm2)
+      expect(subject.time_tables).to include( tm1)
+      expect(subject.time_tables).to include( tm2)
     end
   end
   describe "#bounding_dates" do
@@ -138,10 +138,10 @@ describe Chouette::VehicleJourney do
       subject.time_tables = [ tm1, tm2, tm3]
     end
     it "should return min date from associated calendars" do
-      subject.bounding_dates.min.should == 4.days.ago.to_date
+      expect(subject.bounding_dates.min).to eq(4.days.ago.to_date)
     end
     it "should return max date from associated calendars" do
-      subject.bounding_dates.max.should == 1.days.ago.to_date
+      expect(subject.bounding_dates.max).to eq(1.days.ago.to_date)
     end
   end
   context "#vehicle_journey_at_stops" do
@@ -150,7 +150,7 @@ describe Chouette::VehicleJourney do
       vj_stop_ids = subject.vehicle_journey_at_stops.map(&:stop_point_id)
       expected_order = route.stop_points.map(&:id).select {|s_id| vj_stop_ids.include?(s_id)}
 
-      vj_stop_ids.should == expected_order
+      expect(vj_stop_ids).to eq(expected_order)
     end
 
   end
@@ -166,14 +166,14 @@ describe Chouette::VehicleJourney do
         transport_mode_name = Chouette::TransportMode.new(transport_mode.underscore)
         it "should be #{transport_mode_name}" do
           subject.transport_mode = transport_mode
-          subject.transport_mode_name.should == transport_mode_name
+          expect(subject.transport_mode_name).to eq(transport_mode_name)
         end
       end
     end
     context "when transport_mode is nil" do
       it "should be nil" do
         subject.transport_mode = nil
-        subject.transport_mode_name.should be_nil
+        expect(subject.transport_mode_name).to be_nil
       end
     end
 
@@ -183,7 +183,7 @@ describe Chouette::VehicleJourney do
 
     it "should change transport_mode with TransportMode#name" do
       subject.transport_mode_name = "Test"
-      subject.transport_mode.should == "Test"
+      expect(subject.transport_mode).to eq("Test")
     end
 
   end
@@ -191,11 +191,11 @@ describe Chouette::VehicleJourney do
   describe ".transport_mode_names" do
 
     it "should not include unknown transport_mode_name" do
-      Chouette::VehicleJourney.transport_mode_names.should_not include(Chouette::TransportMode.new("unknown"))
+      expect(Chouette::VehicleJourney.transport_mode_names).not_to include(Chouette::TransportMode.new("unknown"))
     end
 
     it "should not include interchange transport_mode" do
-      Chouette::VehicleJourney.transport_mode_names.should_not include(Chouette::TransportMode.new("interchange"))
+      expect(Chouette::VehicleJourney.transport_mode_names).not_to include(Chouette::TransportMode.new("interchange"))
     end
 
   end

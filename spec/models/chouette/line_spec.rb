@@ -1,20 +1,24 @@
 require 'spec_helper'
 
-describe Chouette::Line do
+describe Chouette::Line, :type => :model do
 
   subject { Factory(:line) }
 
-  it { should validate_presence_of :network }
-  it { should validate_presence_of :company }
+  it { is_expected.to validate_presence_of :network }
+  it { is_expected.to validate_presence_of :company }
 
-  it { should validate_presence_of :registration_number }
-  it { should validate_uniqueness_of :registration_number }
+  it { is_expected.to validate_presence_of :registration_number }
+  it { is_expected.to validate_uniqueness_of :registration_number }
 
-  it { should validate_presence_of :name }
+  it { is_expected.to validate_presence_of :name }
   
   # it { should validate_presence_of :objectid }
-  it { should validate_uniqueness_of :objectid }
-  its(:objectid) { should be_kind_of(Chouette::ObjectId) }
+  it { is_expected.to validate_uniqueness_of :objectid }
+
+  describe '#objectid' do
+    subject { super().objectid }
+    it { is_expected.to be_kind_of(Chouette::ObjectId) }
+  end
 
   # it { should validate_numericality_of :objectversion }
 
@@ -22,7 +26,7 @@ describe Chouette::Line do
     
     it "should return stop areas if no parents" do
       line = Factory(:line_with_stop_areas)
-      line.stop_areas_last_parents.should == line.stop_areas
+      expect(line.stop_areas_last_parents).to eq(line.stop_areas)
     end
 
     it "should return stop areas parents if parents" do
@@ -34,7 +38,7 @@ describe Chouette::Line do
         Factory(:stop_point, :stop_area => stop_area, :route => route)
       end   
 
-      line.stop_areas_last_parents.should =~ line.stop_areas[0..(line.stop_areas.size - 2)].push(parent)
+      expect(line.stop_areas_last_parents).to match(line.stop_areas[0..(line.stop_areas.size - 2)].push(parent))
     end
     
   end
@@ -42,7 +46,7 @@ describe Chouette::Line do
   describe "#stop_areas" do
     let!(:route){Factory(:route, :line => subject)}
     it "should retreive route's stop_areas" do
-      subject.stop_areas.count.should == route.stop_points.count
+      expect(subject.stop_areas.count).to eq(route.stop_points.count)
     end
   end
 
@@ -57,14 +61,14 @@ describe Chouette::Line do
         transport_mode = Chouette::TransportMode.new(transport_mode_name.underscore)
         it "should be #{transport_mode}" do
           subject.transport_mode_name = transport_mode_name
-          subject.transport_mode.should == transport_mode
+          expect(subject.transport_mode).to eq(transport_mode)
         end
       end
     end
     context "when transport_mode_name is nil" do
       it "should be nil" do
         subject.transport_mode_name = nil
-        subject.transport_mode.should be_nil
+        expect(subject.transport_mode).to be_nil
       end
     end
 
@@ -74,7 +78,7 @@ describe Chouette::Line do
     
     it "should change transport_mode_name with TransportMode#name" do
       subject.transport_mode = "Test"
-      subject.transport_mode_name.should == "Test"
+      expect(subject.transport_mode_name).to eq("Test")
     end
 
   end
@@ -82,11 +86,11 @@ describe Chouette::Line do
   describe ".transport_modes" do
     
     it "should not include unknown transport_mode" do
-      Chouette::Line.transport_modes.should_not include(Chouette::TransportMode.new("unknown"))
+      expect(Chouette::Line.transport_modes).not_to include(Chouette::TransportMode.new("unknown"))
     end
 
     it "should not include interchange transport_mode" do
-      Chouette::Line.transport_modes.should_not include(Chouette::TransportMode.new("interchange"))
+      expect(Chouette::Line.transport_modes).not_to include(Chouette::TransportMode.new("interchange"))
     end
 
   end
@@ -97,8 +101,8 @@ describe Chouette::Line do
 
     it "should return associated group_of_line ids" do
       subject.update_attributes :group_of_line_tokens => [group_of_line1.id, group_of_line2.id].join(',')
-      subject.group_of_lines.should include( group_of_line1)
-      subject.group_of_lines.should include( group_of_line2)
+      expect(subject.group_of_lines).to include( group_of_line1)
+      expect(subject.group_of_lines).to include( group_of_line2)
     end
   end
 

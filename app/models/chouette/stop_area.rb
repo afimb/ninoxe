@@ -17,13 +17,13 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessor :children_ids
   attr_writer :coordinates
   
-  attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
-  attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
-  attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
-  attr_accessible :country_code, :street_name, :zip_code, :city_name
-  attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
-  attr_accessible :coordinates
-  attr_accessible :url, :time_zone
+  # attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
+  # attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
+  # attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
+  # attr_accessible :country_code, :street_name, :zip_code, :city_name
+  # attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
+  # attr_accessible :coordinates
+  # attr_accessible :url, :time_zone
   
   validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
   validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}, :allow_blank => true

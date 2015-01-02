@@ -1,24 +1,24 @@
 require 'spec_helper'
 
-describe Chouette::Direction do
+describe Chouette::Direction, :type => :model do
 
   describe ".new" do
     context "when single argument provided is a direction" do
       let(:text) { "dummy"}
       let(:direction){ Chouette::Direction.new( text, 1)}
       it "should be equals to the provided direction" do
-        direction.should == Chouette::Direction.new( direction)
+        expect(direction).to eq(Chouette::Direction.new( direction))
       end
     end
   end
 
   shared_examples_for "west direction" do
     it "should return true to #west? " do
-      direction.should be_west
+      expect(direction).to be_west
     end
     context "#to_i" do
       it "should return 6" do
-        direction.to_i.should == 6
+        expect(direction.to_i).to eq(6)
       end
     end
   end
@@ -38,22 +38,22 @@ describe Chouette::Direction do
     let(:direction){ Chouette::Direction.new( text, number)}
 
     it "should return true to #dummy? " do
-      direction.send( "#{text}?".to_sym).should be_true
+      expect(direction.send( "#{text}?".to_sym)).to be_truthy
     end
 
     it "should return false to #other-dummy? " do
-      direction.send( "other-#{text}?".to_sym).should be_false
+      expect(direction.send( "other-#{text}?".to_sym)).to be_falsey
     end
 
     context "#to_i" do
       it "should return provided number" do
-        direction.to_i.should == number
+        expect(direction.to_i).to eq(number)
       end
     end
 
     context "#name" do
       it "should return provided text" do
-        direction.name.should == text
+        expect(direction.name).to eq(text)
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Chouette::ObjectId do
+describe Chouette::ObjectId, :type => :model do
 
   def objectid(value = "abc:StopArea:abc123")
     Chouette::ObjectId.new value
@@ -12,10 +12,17 @@ describe Chouette::ObjectId do
 
     subject { objectid("abc") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
 
-    its(:parts) { should be_nil }
-    its(:system_id) { should be_nil }
+    describe '#parts' do
+      subject { super().parts }
+      it { is_expected.to be_nil }
+    end
+
+    describe '#system_id' do
+      subject { super().system_id }
+      it { is_expected.to be_nil }
+    end
 
   end
   
@@ -23,7 +30,7 @@ describe Chouette::ObjectId do
 
     subject { objectid("abc:Line:Aze toto") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
 
 
   end
@@ -32,7 +39,7 @@ describe Chouette::ObjectId do
 
     subject { objectid("ae abc:Line:Aze") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
 
 
   end
@@ -41,7 +48,7 @@ describe Chouette::ObjectId do
 
     subject { objectid("aeabc:Li ne:Aze") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
     
 
   end
@@ -50,33 +57,33 @@ describe Chouette::ObjectId do
 
     subject { objectid("Abc_+19:Line:Abc") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
   
   context "when invalid in middle part" do
 
     subject { objectid("Abc_19:Li56ne:Abc") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
 
   context "when invalid in last part" do
 
     subject { objectid("Abc_19:Line:Ab+c") }
 
-    it { should_not be_valid }
+    it { is_expected.not_to be_valid }
   end
   context "when valid" do
 
     subject { objectid("Abc_19:Line:Abc_12-") }
 
-    it { should be_valid }
+    it { is_expected.to be_valid }
   end
 
   describe "#parts" do
 
     it "should be the 3 parts of the ObjectId" do
-      objectid("abc:StopArea:abc123").parts.should == %w{abc StopArea abc123}
+      expect(objectid("abc:StopArea:abc123").parts).to eq(%w{abc StopArea abc123})
     end
 
   end
@@ -84,7 +91,7 @@ describe Chouette::ObjectId do
   describe "#system_id" do
     
     it "should be the first ObjectId parts" do
-      objectid("first:second:third").system_id.should == "first"
+      expect(objectid("first:second:third").system_id).to eq("first")
     end
 
   end
@@ -92,7 +99,7 @@ describe Chouette::ObjectId do
   describe "#object_type" do
     
     it "should be the second ObjectId parts" do
-      objectid("first:second:third").object_type.should == "second"
+      expect(objectid("first:second:third").object_type).to eq("second")
     end
 
   end
@@ -100,14 +107,14 @@ describe Chouette::ObjectId do
   describe "#local_id" do
     
     it "should be the third ObjectId parts" do
-      objectid("first:second:third").local_id.should == "third"
+      expect(objectid("first:second:third").local_id).to eq("third")
     end
 
   end
 
   it "should be valid when parts are found" do
-    subject.stub :parts => "dummy"
-    subject.should be_valid
+    allow(subject).to receive_messages :parts => "dummy"
+    expect(subject).to be_valid
   end
 
   describe ".create" do
@@ -120,24 +127,24 @@ describe Chouette::ObjectId do
     
     RSpec::Matchers.define :return_an_objectid_with_given do |attribute|
       match do |actual|
-        actual.send(attribute).should == send("given_#{attribute}")
+        expect(actual.send(attribute)).to eq(send("given_#{attribute}"))
       end
     end
 
-    it { should return_an_objectid_with_given(:system_id) }
-    it { should return_an_objectid_with_given(:object_type) }
-    it { should return_an_objectid_with_given(:local_id) }
+    it { is_expected.to return_an_objectid_with_given(:system_id) }
+    it { is_expected.to return_an_objectid_with_given(:object_type) }
+    it { is_expected.to return_an_objectid_with_given(:local_id) }
 
   end
 
   describe ".new" do
     
     it "should return an existing ObjectId" do
-      Chouette::ObjectId.new(objectid).should == objectid
+      expect(Chouette::ObjectId.new(objectid)).to eq(objectid)
     end
 
     it "should create an empty ObjectId with nil" do
-      Chouette::ObjectId.new(nil).should be_empty
+      expect(Chouette::ObjectId.new(nil)).to be_empty
     end
 
   end

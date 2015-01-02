@@ -6,8 +6,8 @@ class Chouette::GroupOfLine < Chouette::TridentActiveRecord
 
   validates_presence_of :name
 
-  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :lines, :registration_number 
-  attr_accessible :line_tokens
+  # attr_accessible :objectid, :object_version, :creation_time, :creator_id, :name, :comment, :lines, :registration_number 
+  # attr_accessible :line_tokens
   attr_reader :line_tokens
   
   def self.nullable_attributes

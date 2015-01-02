@@ -1,13 +1,16 @@
 require 'spec_helper'
 
-describe Chouette::StopPoint do
+describe Chouette::StopPoint, :type => :model do
   let!(:vehicle_journey) { Factory(:vehicle_journey)}
   subject { Chouette::Route.find( vehicle_journey.route_id).stop_points.first }
 
-  it { should validate_uniqueness_of :objectid }
-  it { should validate_presence_of :stop_area }
+  it { is_expected.to validate_uniqueness_of :objectid }
+  it { is_expected.to validate_presence_of :stop_area }
 
-  its(:objectid) { should be_kind_of(Chouette::ObjectId) }
+  describe '#objectid' do
+    subject { super().objectid }
+    it { is_expected.to be_kind_of(Chouette::ObjectId) }
+  end
 
   describe "#destroy" do
     before(:each) do
@@ -21,18 +24,18 @@ describe Chouette::StopPoint do
       Chouette::JourneyPattern.find( journey_id).stop_points.map(&:id)
     end
     it "should remove dependent vehicle_journey_at_stop" do
-      vjas_stop_point_ids(@vehicle.id).should include(@stop_point.id)
+      expect(vjas_stop_point_ids(@vehicle.id)).to include(@stop_point.id)
 
       @stop_point.destroy
 
-      vjas_stop_point_ids(@vehicle.id).should_not include(@stop_point.id)
+      expect(vjas_stop_point_ids(@vehicle.id)).not_to include(@stop_point.id)
     end
     it "should remove dependent journey_pattern_stop_point" do
-      jpsp_stop_point_ids(@vehicle.journey_pattern_id).should include(@stop_point.id)
+      expect(jpsp_stop_point_ids(@vehicle.journey_pattern_id)).to include(@stop_point.id)
 
       @stop_point.destroy
 
-      jpsp_stop_point_ids(@vehicle.journey_pattern_id).should_not include(@stop_point.id)
+      expect(jpsp_stop_point_ids(@vehicle.journey_pattern_id)).not_to include(@stop_point.id)
     end
   end
 end

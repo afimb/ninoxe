@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Chouette::AreaType do
+describe Chouette::AreaType, :type => :model do
   
   def mode(text_code = "test", numerical_code = nil)
     numerical_code ||= 1 if text_code == "test"
@@ -10,31 +10,31 @@ describe Chouette::AreaType do
   describe "#to_i" do
     
     it "should return numerical code" do
-      mode("test", 1).to_i.should == 1
+      expect(mode("test", 1).to_i).to eq(1)
     end
 
   end
 
   it "should return true to #test? when text code is 'test'" do
-    mode("test").should be_test
+    expect(mode("test")).to be_test
   end
 
   it "should be equal when text codes are identical" do
-    mode("test",1).should == mode("test", 2)
+    expect(mode("test",1)).to eq(mode("test", 2))
   end
 
   describe ".new" do
 
     it "should find numerical code from text code" do
-      mode("boarding_position").to_i.should == 0
+      expect(mode("boarding_position").to_i).to eq(0)
     end
 
     it "should find text code from numerical code" do
-      mode(0).should == "boarding_position"
+      expect(mode(0)).to eq("boarding_position")
     end
 
     it "should accept another mode" do
-      Chouette::AreaType.new(mode("test")).should == mode("test")
+      expect(Chouette::AreaType.new(mode("test"))).to eq(mode("test"))
     end
     
   end
@@ -44,7 +44,7 @@ describe Chouette::AreaType do
     
     Chouette::AreaType.definitions.each do |text_code, numerical_code|
       it "should include a AreaType #{text_code}" do
-        Chouette::AreaType.all.should include(Chouette::AreaType.new(text_code))
+        expect(Chouette::AreaType.all).to include(Chouette::AreaType.new(text_code))
       end
     end
 

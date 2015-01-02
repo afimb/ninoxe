@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe Chouette::Company do
+describe Chouette::Company, :type => :model do
 
   subject { Factory(:company) }
 
-  it { should validate_presence_of :registration_number }
-  it { should validate_uniqueness_of :registration_number }
+  it { is_expected.to validate_presence_of :registration_number }
+  it { is_expected.to validate_uniqueness_of :registration_number }
 
-  it { should validate_presence_of :name }
+  it { is_expected.to validate_presence_of :name }
 
   # it { should validate_presence_of :objectid }
-  it { should validate_uniqueness_of :objectid }
+  it { is_expected.to validate_uniqueness_of :objectid }
   
   describe "#nullables empty" do
     it "should set null empty nullable attributes" do
@@ -21,12 +21,12 @@ describe Chouette::Company do
       subject.fax = ''
       subject.email = ''
       subject.nil_if_blank
-      subject.organizational_unit.should be_nil
-      subject.operating_department_name.should be_nil
-      subject.code.should be_nil
-      subject.phone.should be_nil
-      subject.fax.should be_nil
-      subject.email.should be_nil
+      expect(subject.organizational_unit).to be_nil
+      expect(subject.operating_department_name).to be_nil
+      expect(subject.code).to be_nil
+      expect(subject.phone).to be_nil
+      expect(subject.fax).to be_nil
+      expect(subject.email).to be_nil
     end
   end
 
@@ -39,12 +39,12 @@ describe Chouette::Company do
       subject.fax = 'z'
       subject.email = 'r'
       subject.nil_if_blank
-      subject.organizational_unit.should_not be_nil
-      subject.operating_department_name.should_not be_nil
-      subject.code.should_not be_nil
-      subject.phone.should_not be_nil
-      subject.fax.should_not be_nil
-      subject.email.should_not be_nil
+      expect(subject.organizational_unit).not_to be_nil
+      expect(subject.operating_department_name).not_to be_nil
+      expect(subject.code).not_to be_nil
+      expect(subject.phone).not_to be_nil
+      expect(subject.fax).not_to be_nil
+      expect(subject.email).not_to be_nil
     end
   end
 

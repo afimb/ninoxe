@@ -10,7 +10,7 @@ module Chouette
     belongs_to :vehicle_journey
 
     attr_accessor :_destroy
-    attr_accessible :vehicle_journey_id, :stop_point_id, :connecting_service_id, :boarding_alighting_possibility, :arrival_time, :departure_time, :waiting_time, :elapse_duration, :headway_frequency, :_destroy, :stop_point, :for_boarding, :for_alighting
+    # attr_accessible :vehicle_journey_id, :stop_point_id, :connecting_service_id, :boarding_alighting_possibility, :arrival_time, :departure_time, :waiting_time, :elapse_duration, :headway_frequency, :_destroy, :stop_point, :for_boarding, :for_alighting
 
     validate :arrival_must_be_before_departure
     def arrival_must_be_before_departure

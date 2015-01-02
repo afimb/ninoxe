@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Chouette::TimeTable do
+describe Chouette::TimeTable, :type => :model do
 
   subject { Factory(:time_table) }
 
-  it { should validate_presence_of :comment }
-  it { should validate_uniqueness_of :objectid }
+  it { is_expected.to validate_presence_of :comment }
+  it { is_expected.to validate_uniqueness_of :objectid }
 
   describe "#periods_max_date" do
     context "when all period extends from 04/10/2013 to 04/15/2013," do
@@ -17,7 +17,7 @@ describe Chouette::TimeTable do
       end
 
       it "should retreive 04/15/2013" do
-        subject.periods_max_date.should == Date.strptime("04/15/2013", '%m/%d/%Y')
+        expect(subject.periods_max_date).to eq(Date.strptime("04/15/2013", '%m/%d/%Y'))
       end
       context "when 04/15/2013 is excluded, periods_max_dates selects the day before" do
         before(:each) do
@@ -26,7 +26,7 @@ describe Chouette::TimeTable do
           subject.save
         end
         it "should retreive 04/14/2013" do
-          subject.periods_max_date.should == Date.strptime("04/14/2013", '%m/%d/%Y')
+          expect(subject.periods_max_date).to eq(Date.strptime("04/14/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only sunday and saturday," do
@@ -35,7 +35,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+6) + 2**(1+7)))
         end
         it "should retreive 04/14/2013" do
-          subject.periods_max_date.should == Date.strptime("04/14/2013", '%m/%d/%Y')
+          expect(subject.periods_max_date).to eq(Date.strptime("04/14/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only friday," do
@@ -44,7 +44,7 @@ describe Chouette::TimeTable do
           subject.update_attributes( :int_day_types => (2**(1+6)))
         end
         it "should retreive 04/12/2013" do
-          subject.periods_max_date.should == Date.strptime("04/13/2013", '%m/%d/%Y')
+          expect(subject.periods_max_date).to eq(Date.strptime("04/13/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only thursday," do
@@ -54,7 +54,7 @@ describe Chouette::TimeTable do
         end
         it "should retreive 04/12/2013" do
           # 04/15/2013 is monday !
-          subject.periods_max_date.should be_nil
+          expect(subject.periods_max_date).to be_nil
         end
       end
     end
@@ -70,8 +70,8 @@ describe "update_attributes on periods and dates" do
             subject.update_attributes( days_hash)
 
             read = Chouette::TimeTable.find( subject.id )
-            read.start_date.should == read.dates.select{|d| d.in_out}.map(&:date).compact.min
-            read.end_date.should == read.dates.select{|d| d.in_out}.map(&:date).compact.max
+            expect(read.start_date).to eq(read.dates.select{|d| d.in_out}.map(&:date).compact.min)
+            expect(read.end_date).to eq(read.dates.select{|d| d.in_out}.map(&:date).compact.max)
 
         end
     end
@@ -87,8 +87,8 @@ describe "update_attributes on periods and dates" do
             subject.update_attributes( :periods_attributes => new_period_attributes)
 
             read = Chouette::TimeTable.find( subject.id )
-            read.start_date.should == new_start_date
-            read.end_date.should == new_end_date
+            expect(read.start_date).to eq(new_start_date)
+            expect(read.end_date).to eq(new_end_date)
         end
     end
     context "update period end" do
@@ -102,7 +102,7 @@ describe "update_attributes on periods and dates" do
             subject.update_attributes :periods_attributes => new_period_attributes
 
             read = Chouette::TimeTable.find( subject.id )
-            read.end_date.should == new_end_date
+            expect(read.end_date).to eq(new_end_date)
         end
     end
     context "update period start" do
@@ -116,7 +116,7 @@ describe "update_attributes on periods and dates" do
             subject.update_attributes :periods_attributes => new_period_attributes
 
             read = Chouette::TimeTable.find( subject.id )
-            read.start_date.should == new_start_date
+            expect(read.start_date).to eq(new_start_date)
         end
     end
     context "remove periods and dates and add a new period" do
@@ -137,8 +137,8 @@ describe "update_attributes on periods and dates" do
             subject.update_attributes :periods_attributes => new_period_attributes, :dates_attributes => new_dates_attributes
 
             read = Chouette::TimeTable.find( subject.id )
-            read.start_date.should == new_start_date
-            read.end_date.should == new_end_date
+            expect(read.start_date).to eq(new_start_date)
+            expect(read.end_date).to eq(new_end_date)
         end
     end
     def dates_attributes
@@ -167,7 +167,7 @@ end
       end
 
       it "should retreive 04/10/2013" do
-        subject.periods_min_date.should == Date.strptime("04/10/2013", '%m/%d/%Y')
+        expect(subject.periods_min_date).to eq(Date.strptime("04/10/2013", '%m/%d/%Y'))
       end
       context "when 04/10/2013 is excluded, periods_min_dates select the day after" do
         before(:each) do
@@ -176,7 +176,7 @@ end
           subject.save
         end
         it "should retreive 04/11/2013" do
-          subject.periods_min_date.should == Date.strptime("04/11/2013", '%m/%d/%Y')
+          expect(subject.periods_min_date).to eq(Date.strptime("04/11/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only tuesday and friday," do
@@ -185,7 +185,7 @@ end
           subject.update_attributes( :int_day_types => (2**(1+4) + 2**(1+5)))
         end
         it "should retreive 04/11/2013" do
-          subject.periods_min_date.should == Date.strptime("04/11/2013", '%m/%d/%Y')
+          expect(subject.periods_min_date).to eq(Date.strptime("04/11/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only friday," do
@@ -194,7 +194,7 @@ end
           subject.update_attributes( :int_day_types => (2**(1+5)))
         end
         it "should retreive 04/12/2013" do
-          subject.periods_min_date.should == Date.strptime("04/12/2013", '%m/%d/%Y')
+          expect(subject.periods_min_date).to eq(Date.strptime("04/12/2013", '%m/%d/%Y'))
         end
       end
       context "when day_types select only thursday," do
@@ -204,7 +204,7 @@ end
         end
         it "should retreive 04/12/2013" do
           # 04/15/2013 is monday !
-          subject.periods_min_date.should be_nil
+          expect(subject.periods_min_date).to be_nil
         end
       end
     end
@@ -213,8 +213,8 @@ end
     it "should add a new instance of period, and periods_max_date should not raise error" do
       period = subject.periods.build
       subject.periods_max_date
-      period.period_start.should be_nil
-      period.period_end.should be_nil
+      expect(period.period_start).to be_nil
+      expect(period.period_end).to be_nil
     end
   end
   describe "#periods" do
@@ -224,8 +224,8 @@ end
         subject.save
       end
       it "should update shortcut" do
-        subject.start_date.should == subject.bounding_dates.min
-        subject.end_date.should == subject.bounding_dates.max
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
       end
     end
     context "when a period is removed," do
@@ -247,12 +247,12 @@ end
       end
       it "should update shortcut" do
         tm = read_tm
-        subject.start_date.should == subject.bounding_dates.min
-        subject.start_date.should == tm.bounding_dates.min
-        subject.start_date.should == 4.days.since.to_date
-        subject.end_date.should == subject.bounding_dates.max
-        subject.end_date.should == tm.bounding_dates.max
-        subject.end_date.should == 6.days.since.to_date
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.start_date).to eq(tm.bounding_dates.min)
+        expect(subject.start_date).to eq(4.days.since.to_date)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
+        expect(subject.end_date).to eq(tm.bounding_dates.max)
+        expect(subject.end_date).to eq(6.days.since.to_date)
       end
     end
     context "when a period is updated," do
@@ -274,12 +274,12 @@ end
       end
       it "should update shortcut" do
         tm = read_tm
-        subject.start_date.should == subject.bounding_dates.min
-        subject.start_date.should == tm.bounding_dates.min
-        subject.start_date.should == 1.days.since.to_date
-        subject.end_date.should == subject.bounding_dates.max
-        subject.end_date.should == tm.bounding_dates.max
-        subject.end_date.should == 15.days.since.to_date
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.start_date).to eq(tm.bounding_dates.min)
+        expect(subject.start_date).to eq(1.days.since.to_date)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
+        expect(subject.end_date).to eq(tm.bounding_dates.max)
+        expect(subject.end_date).to eq(15.days.since.to_date)
       end
     end
 
@@ -301,7 +301,7 @@ end
                                            "period_end"=>"",
                                            "_destroy"=>""}}})
         subject.save
-        subject.id.should be_nil
+        expect(subject.id).to be_nil
       end
     end
     context "when a valid period is set," do
@@ -321,9 +321,9 @@ end
                                            "_destroy"=>""}}})
         subject.save
         tm = Chouette::TimeTable.find subject.id
-        tm.periods.empty?.should be_false
-        tm.start_date.should == Date.new(2014, 01, 01)
-        tm.end_date.should == Date.new(2015, 01, 01)
+        expect(tm.periods.empty?).to be_falsey
+        expect(tm.start_date).to eq(Date.new(2014, 01, 01))
+        expect(tm.end_date).to eq(Date.new(2015, 01, 01))
 
       end
     end
@@ -336,8 +336,8 @@ end
         subject.save
       end
       it "should update shortcut" do
-        subject.start_date.should == subject.bounding_dates.min
-        subject.end_date.should == subject.bounding_dates.max
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
       end
     end
     context "when a date is removed," do
@@ -347,8 +347,8 @@ end
         subject.save_shortcuts
       end
       it "should update shortcut" do
-        subject.start_date.should == subject.bounding_dates.min
-        subject.end_date.should == subject.bounding_dates.max
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
       end
     end
     context "when all the dates and periods are removed," do
@@ -358,8 +358,8 @@ end
         subject.save_shortcuts
       end
       it "should update shortcut" do
-        subject.start_date.should be_nil
-        subject.end_date.should be_nil
+        expect(subject.start_date).to be_nil
+        expect(subject.end_date).to be_nil
       end
     end
     context "when a date is updated," do
@@ -383,12 +383,12 @@ end
       end
       it "should update shortcut" do
         tm = read_tm
-        subject.start_date.should == subject.bounding_dates.min
-        subject.start_date.should == tm.bounding_dates.min
-        subject.start_date.should == 1.days.since.to_date
-        subject.end_date.should == subject.bounding_dates.max
-        subject.end_date.should == tm.bounding_dates.max
-        subject.end_date.should == 15.days.since.to_date
+        expect(subject.start_date).to eq(subject.bounding_dates.min)
+        expect(subject.start_date).to eq(tm.bounding_dates.min)
+        expect(subject.start_date).to eq(1.days.since.to_date)
+        expect(subject.end_date).to eq(subject.bounding_dates.max)
+        expect(subject.end_date).to eq(tm.bounding_dates.max)
+        expect(subject.end_date).to eq(15.days.since.to_date)
       end
     end
   end
@@ -407,7 +407,7 @@ end
                                          "dates_attributes"=>{"1397136189216"=>{"date"=>"",
                                          "_destroy"=>"", "in_out" => true}}})
       subject.save
-      subject.id.should be_nil
+      expect(subject.id).to be_nil
     end
     it "it should save tm if date valid" do
       subject = Chouette::TimeTable.new({"comment"=>"test",
@@ -424,16 +424,16 @@ end
                                          "_destroy"=>"", "in_out" => true}}})
       subject.save
       tm = Chouette::TimeTable.find subject.id
-      tm.dates.empty?.should be_false
-      tm.start_date.should == Date.new(2015, 01, 01)
-      tm.end_date.should == Date.new(2015, 01, 01)
+      expect(tm.dates.empty?).to be_falsey
+      expect(tm.start_date).to eq(Date.new(2015, 01, 01))
+      expect(tm.end_date).to eq(Date.new(2015, 01, 01))
     end
   end
 
   describe "#valid_days" do
     it "should begin with position 0" do
       subject.int_day_types = 128
-      subject.valid_days.should == [6]
+      expect(subject.valid_days).to eq([6])
     end
   end
 
@@ -441,7 +441,7 @@ end
     it "should return day if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
       time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
-      time_table.intersects([Date.today]).should == [Date.today]
+      expect(time_table.intersects([Date.today])).to eq([Date.today])
     end
 
     it "should return [] if a period not include days" do
@@ -449,7 +449,7 @@ end
       time_table.periods << Chouette::TimeTablePeriod.new(
                               :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 30))
-      time_table.intersects([ Date.new(2013, 05, 29),  Date.new(2013, 05, 30)]).should == []
+      expect(time_table.intersects([ Date.new(2013, 05, 29),  Date.new(2013, 05, 30)])).to eq([])
     end
 
     it "should return days if a period include day" do
@@ -457,7 +457,7 @@ end
       time_table.periods << Chouette::TimeTablePeriod.new(
                               :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 30))
-      time_table.intersects([ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]).should == [ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)]
+      expect(time_table.intersects([ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)])).to eq([ Date.new(2013, 05, 27),  Date.new(2013, 05, 28)])
     end
 
 
@@ -467,7 +467,7 @@ end
     it "should return true if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
       time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
-      time_table.include_day?(Date.today).should == true
+      expect(time_table.include_day?(Date.today)).to eq(true)
     end
 
     it "should return true if a period include day" do
@@ -475,7 +475,7 @@ end
       time_table.periods << Chouette::TimeTablePeriod.new(
                               :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 29))
-      time_table.include_day?( Date.new(2013, 05, 27)).should == true
+      expect(time_table.include_day?( Date.new(2013, 05, 27))).to eq(true)
     end
   end
 
@@ -483,14 +483,14 @@ end
     it "should return true if a date equal day" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1")
       time_table.dates << Chouette::TimeTableDate.new( :date => Date.today, :in_out => true)
-      time_table.include_in_dates?(Date.today).should == true
+      expect(time_table.include_in_dates?(Date.today)).to eq(true)
     end
 
     it "should return false if a period include day  but that is exclued" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 12) # Day type monday and tuesday
       excluded_date = Date.new(2013, 05, 27)
       time_table.dates << Chouette::TimeTableDate.new( :date => excluded_date, :in_out => false)
-      time_table.include_in_dates?( excluded_date).should be_false
+      expect(time_table.include_in_dates?( excluded_date)).to be_falsey
     end
   end
 
@@ -500,7 +500,7 @@ end
       time_table.periods << Chouette::TimeTablePeriod.new(
                               :period_start => Date.new(2012, 1, 1),
                               :period_end => Date.new(2012, 01, 30))
-      time_table.include_in_periods?(Date.new(2012, 1, 2)).should == true
+      expect(time_table.include_in_periods?(Date.new(2012, 1, 2))).to eq(true)
     end
 
     it "should return false if a period include day  but that is exclued" do
@@ -510,7 +510,7 @@ end
       time_table.periods << Chouette::TimeTablePeriod.new(
                               :period_start => Date.new(2013, 05, 27),
                               :period_end => Date.new(2013, 05, 29))
-      time_table.include_in_periods?( excluded_date).should be_false
+      expect(time_table.include_in_periods?( excluded_date)).to be_falsey
     end
   end
 
@@ -521,7 +521,7 @@ end
                               :period_start => Date.new(2012, 1, 1),
                               :period_end => Date.new(2012, 01, 30))
       time_table.dates << Chouette::TimeTableDate.new( :date => Date.new(2012, 1, 2), :in_out => true)
-      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should == true
+      expect(time_table.include_in_overlap_dates?(Date.new(2012, 1, 2))).to eq(true)
     end
     it "should return false if the day is excluded" do
       time_table = Chouette::TimeTable.create!(:comment => "Test", :objectid => "test:Timetable:1", :int_day_types => 4)
@@ -529,65 +529,65 @@ end
                               :period_start => Date.new(2012, 1, 1),
                               :period_end => Date.new(2012, 01, 30))
       time_table.dates << Chouette::TimeTableDate.new( :date => Date.new(2012, 1, 2), :in_out => false)
-      time_table.include_in_overlap_dates?(Date.new(2012, 1, 2)).should be_false
+      expect(time_table.include_in_overlap_dates?(Date.new(2012, 1, 2))).to be_falsey
     end
   end
 
   describe "#dates" do
     it "should have with position 0" do
-      subject.dates.first.position.should == 0
+      expect(subject.dates.first.position).to eq(0)
     end
     context "when first date has been removed" do
       before do
         subject.dates.first.destroy
       end
       it "should begin with position 0" do
-        subject.dates.first.position.should == 0
+        expect(subject.dates.first.position).to eq(0)
       end
     end
   end
   describe "#validity_out_between?" do
     let(:empty_tm) {Factory.build(:time_table)}
     it "should be false if empty calendar" do
-      empty_tm.validity_out_between?( Date.today, Date.today + 7.day).should be_false
+      expect(empty_tm.validity_out_between?( Date.today, Date.today + 7.day)).to be_falsey
     end
     it "should be true if caldendar is out during start_date and end_date period" do
       start_date = subject.bounding_dates.max - 2.day
       end_date = subject.bounding_dates.max + 2.day
-      subject.validity_out_between?( start_date, end_date).should be_true
+      expect(subject.validity_out_between?( start_date, end_date)).to be_truthy
     end
     it "should be false if calendar is out on start date" do
       start_date = subject.bounding_dates.max
       end_date = subject.bounding_dates.max + 2.day
-      subject.validity_out_between?( start_date, end_date).should be_false
+      expect(subject.validity_out_between?( start_date, end_date)).to be_falsey
     end
     it "should be false if calendar is out on end date" do
       start_date = subject.bounding_dates.max - 2.day
       end_date = subject.bounding_dates.max
-      subject.validity_out_between?( start_date, end_date).should be_true
+      expect(subject.validity_out_between?( start_date, end_date)).to be_truthy
     end
     it "should be false if calendar is out after start_date" do
       start_date = subject.bounding_dates.max + 2.day
       end_date = subject.bounding_dates.max + 4.day
-      subject.validity_out_between?( start_date, end_date).should be_false
+      expect(subject.validity_out_between?( start_date, end_date)).to be_falsey
     end
   end
   describe "#validity_out_from_on?" do
     let(:empty_tm) {Factory.build(:time_table)}
     it "should be false if empty calendar" do
-      empty_tm.validity_out_from_on?( Date.today).should be_false
+      expect(empty_tm.validity_out_from_on?( Date.today)).to be_falsey
     end
     it "should be true if caldendar ends on expected date" do
       expected_date = subject.bounding_dates.max
-      subject.validity_out_from_on?( expected_date).should be_true
+      expect(subject.validity_out_from_on?( expected_date)).to be_truthy
     end
     it "should be true if calendar ends before expected date" do
       expected_date = subject.bounding_dates.max + 30.day
-      subject.validity_out_from_on?( expected_date).should be_true
+      expect(subject.validity_out_from_on?( expected_date)).to be_truthy
     end
     it "should be false if calendars ends after expected date" do
       expected_date = subject.bounding_dates.max - 30.day
-      subject.validity_out_from_on?( expected_date).should be_false
+      expect(subject.validity_out_from_on?( expected_date)).to be_falsey
     end
   end
   describe "#bounding_dates" do
@@ -597,8 +597,8 @@ end
         subject.save
       end
       it "should retreive periods.period_start.min and periods.period_end.max" do
-        subject.bounding_dates.min.should == subject.periods.map(&:period_start).min
-        subject.bounding_dates.max.should == subject.periods.map(&:period_end).max
+        expect(subject.bounding_dates.min).to eq(subject.periods.map(&:period_start).min)
+        expect(subject.bounding_dates.max).to eq(subject.periods.map(&:period_end).max)
       end
     end
     context "when timetable contains only dates" do
@@ -607,60 +607,60 @@ end
         subject.save
       end
       it "should retreive dates.min and dates.max" do
-        subject.bounding_dates.min.should == subject.dates.map(&:date).min
-        subject.bounding_dates.max.should == subject.dates.map(&:date).max
+        expect(subject.bounding_dates.min).to eq(subject.dates.map(&:date).min)
+        expect(subject.bounding_dates.max).to eq(subject.dates.map(&:date).max)
       end
     end
     it "should contains min date" do
       min_date = subject.bounding_dates.min
       subject.dates.each do |tm_date|
-        (min_date <= tm_date.date).should be_true
+        expect(min_date <= tm_date.date).to be_truthy
       end
       subject.periods.each do |tm_period|
-        (min_date <= tm_period.period_start).should be_true
+        expect(min_date <= tm_period.period_start).to be_truthy
       end
 
     end
     it "should contains max date" do
       max_date = subject.bounding_dates.max
       subject.dates.each do |tm_date|
-        (tm_date.date <= max_date).should be_true
+        expect(tm_date.date <= max_date).to be_truthy
       end
       subject.periods.each do |tm_period|
-        (tm_period.period_end <= max_date).should be_true
+        expect(tm_period.period_end <= max_date).to be_truthy
       end
 
     end
   end
   describe "#periods" do
     it "should begin with position 0" do
-      subject.periods.first.position.should == 0
+      expect(subject.periods.first.position).to eq(0)
     end
     context "when first period has been removed" do
       before do
         subject.periods.first.destroy
       end
       it "should begin with position 0" do
-        subject.periods.first.position.should == 0
+        expect(subject.periods.first.position).to eq(0)
       end
     end
     it "should have period_start before period_end" do
       period = Chouette::TimeTablePeriod.new
       period.period_start = Date.today
       period.period_end = Date.today + 10
-      period.valid?.should be_true
+      expect(period.valid?).to be_truthy
     end
     it "should not have period_start after period_end" do
       period = Chouette::TimeTablePeriod.new
       period.period_start = Date.today
       period.period_end = Date.today - 10
-      period.valid?.should be_false
+      expect(period.valid?).to be_falsey
     end
     it "should not have period_start equal to period_end" do
       period = Chouette::TimeTablePeriod.new
       period.period_start = Date.today
       period.period_end = Date.today
-      period.valid?.should be_false
+      expect(period.valid?).to be_falsey
     end
   end
 
@@ -673,14 +673,14 @@ end
         subject.int_day_types = 4|8|16
       end
       it "should return monday to wednesday" do
-        subject.effective_days_of_periods.size.should == 3
-        subject.effective_days_of_periods[0].should == Date.new(2014, 6, 30)
-        subject.effective_days_of_periods[1].should == Date.new(2014, 7, 1)
-        subject.effective_days_of_periods[2].should == Date.new(2014, 7, 2)
+        expect(subject.effective_days_of_periods.size).to eq(3)
+        expect(subject.effective_days_of_periods[0]).to eq(Date.new(2014, 6, 30))
+        expect(subject.effective_days_of_periods[1]).to eq(Date.new(2014, 7, 1))
+        expect(subject.effective_days_of_periods[2]).to eq(Date.new(2014, 7, 2))
       end
       it "should return thursday" do
-        subject.effective_days_of_periods(Chouette::TimeTable.valid_days(32)).size.should == 1
-        subject.effective_days_of_periods(Chouette::TimeTable.valid_days(32))[0].should == Date.new(2014, 7, 3)
+        expect(subject.effective_days_of_periods(Chouette::TimeTable.valid_days(32)).size).to eq(1)
+        expect(subject.effective_days_of_periods(Chouette::TimeTable.valid_days(32))[0]).to eq(Date.new(2014, 7, 3))
       end
 
   end
@@ -696,10 +696,10 @@ end
       end
       it "should return 3 dates" do
         days = subject.included_days
-        days.size.should == 3
-        days[0].should == Date.new(2014, 7, 16)
-        days[1].should == Date.new(2014,7, 18)
-        days[2].should == Date.new(2014, 7,20)
+        expect(days.size).to eq(3)
+        expect(days[0]).to eq(Date.new(2014, 7, 16))
+        expect(days[1]).to eq(Date.new(2014,7, 18))
+        expect(days[2]).to eq(Date.new(2014, 7,20))
       end
   end
 
@@ -716,9 +716,9 @@ end
       end
       it "should return 3 dates" do
         days = subject.excluded_days
-        days.size.should == 2
-        days[0].should == Date.new(2014, 7, 17)
-        days[1].should == Date.new(2014,7, 19)
+        expect(days.size).to eq(2)
+        expect(days[0]).to eq(Date.new(2014, 7, 17))
+        expect(days[1]).to eq(Date.new(2014,7, 19))
       end
   end
 
@@ -739,12 +739,12 @@ end
       end
       it "should return 5 dates" do
         days = subject.effective_days
-        days.size.should == 5
-        days[0].should == Date.new(2014, 6, 30)
-        days[1].should == Date.new(2014, 7, 2)
-        days[2].should == Date.new(2014, 7, 16)
-        days[3].should == Date.new(2014, 7, 18)
-        days[4].should == Date.new(2014, 7, 20)
+        expect(days.size).to eq(5)
+        expect(days[0]).to eq(Date.new(2014, 6, 30))
+        expect(days[1]).to eq(Date.new(2014, 7, 2))
+        expect(days[2]).to eq(Date.new(2014, 7, 16))
+        expect(days[3]).to eq(Date.new(2014, 7, 18))
+        expect(days[4]).to eq(Date.new(2014, 7, 20))
       end
   end
 
@@ -769,11 +769,11 @@ end
       end
       it "should return 2 ordered periods" do
         periods = subject.optimize_periods
-        periods.size.should == 2
-        periods[0].period_start.should == Date.new(2014, 6, 1)
-        periods[0].period_end.should == Date.new(2014, 6, 14)
-        periods[1].period_start.should == Date.new(2014, 6, 30)
-        periods[1].period_end.should == Date.new(2014, 7, 14)
+        expect(periods.size).to eq(2)
+        expect(periods[0].period_start).to eq(Date.new(2014, 6, 1))
+        expect(periods[0].period_end).to eq(Date.new(2014, 6, 14))
+        expect(periods[1].period_start).to eq(Date.new(2014, 6, 30))
+        expect(periods[1].period_end).to eq(Date.new(2014, 7, 14))
       end
   end
 
@@ -787,26 +787,26 @@ end
       it "should do nothing" do
         subject.add_included_day(Date.new(2014,7,16))
         days = subject.included_days
-        days.size.should == 2
-        days.include?(Date.new(2014,7,16)).should be_true
-        days.include?(Date.new(2014,7,18)).should be_false
-        days.include?(Date.new(2014,7,20)).should be_true
+        expect(days.size).to eq(2)
+        expect(days.include?(Date.new(2014,7,16))).to be_truthy
+        expect(days.include?(Date.new(2014,7,18))).to be_falsey
+        expect(days.include?(Date.new(2014,7,20))).to be_truthy
       end
       it "should switch in_out flag" do
         subject.add_included_day(Date.new(2014,7,18))
         days = subject.included_days
-        days.size.should == 3
-        days.include?(Date.new(2014,7,16)).should be_true
-        days.include?(Date.new(2014,7,18)).should be_true
-        days.include?(Date.new(2014,7,20)).should be_true
+        expect(days.size).to eq(3)
+        expect(days.include?(Date.new(2014,7,16))).to be_truthy
+        expect(days.include?(Date.new(2014,7,18))).to be_truthy
+        expect(days.include?(Date.new(2014,7,20))).to be_truthy
       end
       it "should add date" do
         subject.add_included_day(Date.new(2014,7,21))
         days = subject.included_days
-        days.size.should == 3
-        days.include?(Date.new(2014,7,16)).should be_true
-        days.include?(Date.new(2014,7,20)).should be_true
-        days.include?(Date.new(2014,7,21)).should be_true
+        expect(days.size).to eq(3)
+        expect(days.include?(Date.new(2014,7,16))).to be_truthy
+        expect(days.include?(Date.new(2014,7,20))).to be_truthy
+        expect(days.include?(Date.new(2014,7,21))).to be_truthy
       end
   end
 
@@ -829,23 +829,23 @@ end
         subject.reload
       end
       it "should have merged periods" do
-        subject.periods.size.should == 3
-        subject.periods[0].period_start.should == Date.new(2014, 6, 30)
-        subject.periods[0].period_end.should == Date.new(2014, 7, 6)
-        subject.periods[1].period_start.should == Date.new(2014, 7, 15)
-        subject.periods[1].period_end.should == Date.new(2014, 7, 25)
-        subject.periods[2].period_start.should == Date.new(2014, 8, 1)
-        subject.periods[2].period_end.should == Date.new(2014, 8, 12)
+        expect(subject.periods.size).to eq(3)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014, 6, 30))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014, 7, 6))
+        expect(subject.periods[1].period_start).to eq(Date.new(2014, 7, 15))
+        expect(subject.periods[1].period_end).to eq(Date.new(2014, 7, 25))
+        expect(subject.periods[2].period_start).to eq(Date.new(2014, 8, 1))
+        expect(subject.periods[2].period_end).to eq(Date.new(2014, 8, 12))
       end
       it "should have common day_types" do
-        subject.int_day_types.should == 4|16|128
+        expect(subject.int_day_types).to eq(4|16|128)
       end
       it "should have dates for thursdays and fridays" do
-        subject.dates.size.should == 4
-        subject.dates[0].date.should == Date.new(2014,7,3)
-        subject.dates[1].date.should == Date.new(2014,7,18)
-        subject.dates[2].date.should == Date.new(2014,7,25)
-        subject.dates[3].date.should == Date.new(2014,8,8)
+        expect(subject.dates.size).to eq(4)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,3))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,18))
+        expect(subject.dates[2].date).to eq(Date.new(2014,7,25))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,8))
       end
     end
 
@@ -869,16 +869,16 @@ end
         subject.reload
       end
       it "should have 1 common period" do
-        subject.periods.size.should == 1
-        subject.periods[0].period_start.should == Date.new(2014, 7, 15)
-        subject.periods[0].period_end.should == Date.new(2014, 7, 20)
+        expect(subject.periods.size).to eq(1)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014, 7, 15))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014, 7, 20))
       end
       it "should have common day_types" do
-        subject.int_day_types.should == 4|16|128
+        expect(subject.int_day_types).to eq(4|16|128)
       end
       it "should have date for period reduced to one day" do
-        subject.dates.size.should == 1
-        subject.dates[0].date.should == Date.new(2014,8,6)
+        expect(subject.dates.size).to eq(1)
+        expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
       end
     end
     context "timetables have periods or dates " do
@@ -900,15 +900,15 @@ end
         subject.reload
       end
       it "should have 0 period" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have merges special flags" do
-        subject.int_day_types.should == 0
+        expect(subject.int_day_types).to eq(0)
       end
       it "should have date reduced for period" do
-        subject.dates.size.should == 2
-        subject.dates[0].date.should == Date.new(2014,7,18)
-        subject.dates[1].date.should == Date.new(2014,7,19)
+        expect(subject.dates.size).to eq(2)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,18))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,19))
       end
     end
     context "with only periods : intersect timetable have no one day period" do
@@ -925,14 +925,14 @@ end
         subject.reload
       end
       it "should have 0 result periods" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have no day_types" do
-        subject.int_day_types.should == 0
+        expect(subject.int_day_types).to eq(0)
       end
       it "should have 1 date " do
-        subject.dates.size.should == 1
-        subject.dates[0].date.should == Date.new(2014,8,6)
+        expect(subject.dates.size).to eq(1)
+        expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
       end
     end
 
@@ -955,18 +955,18 @@ end
         subject.reload
       end
       it "should have 2 result periods" do
-        subject.periods.size.should == 2
-        subject.periods[0].period_start.should == Date.new(2014, 6, 30)
-        subject.periods[0].period_end.should == Date.new(2014, 7, 14)
-        subject.periods[1].period_start.should == Date.new(2014, 8, 3)
-        subject.periods[1].period_end.should == Date.new(2014, 8, 5)
+        expect(subject.periods.size).to eq(2)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014, 6, 30))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014, 7, 14))
+        expect(subject.periods[1].period_start).to eq(Date.new(2014, 8, 3))
+        expect(subject.periods[1].period_end).to eq(Date.new(2014, 8, 5))
       end
       it "should have remained day_types" do
-        subject.int_day_types.should == 4|16|32|128
+        expect(subject.int_day_types).to eq(4|16|32|128)
       end
       it "should have dates for period reduced" do
-        subject.dates.size.should == 1
-        subject.dates[0].date.should == Date.new(2014,7,17)
+        expect(subject.dates.size).to eq(1)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,17))
       end
     end
     context "timetables have periods or dates " do
@@ -990,17 +990,17 @@ end
         subject.reload
       end
       it "should have 0 period" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have no remained day_types" do
-        subject.int_day_types.should == 0
+        expect(subject.int_day_types).to eq(0)
       end
       it "should have date reduced for period" do
-        subject.dates.size.should == 4
-        subject.dates[0].date.should == Date.new(2014,7,16)
-        subject.dates[1].date.should == Date.new(2014,7,17)
-        subject.dates[2].date.should == Date.new(2014,7,20)
-        subject.dates[3].date.should == Date.new(2014,8,7)
+        expect(subject.dates.size).to eq(4)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,16))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,17))
+        expect(subject.dates[2].date).to eq(Date.new(2014,7,20))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,7))
       end
     end
     context "disjoined timetable have all periods in removed ones " do
@@ -1019,17 +1019,17 @@ end
         subject.reload
       end
       it "should have 0 result periods" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have no remained day_types" do
-        subject.int_day_types.should == 0
+        expect(subject.int_day_types).to eq(0)
       end
       it "should have dates for period reduced" do
-        subject.dates.size.should == 4
-        subject.dates[0].date.should == Date.new(2014,7,3)
-        subject.dates[1].date.should == Date.new(2014,7,10)
-        subject.dates[2].date.should == Date.new(2014,7,17)
-        subject.dates[3].date.should == Date.new(2014,8,7)
+        expect(subject.dates.size).to eq(4)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,3))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,10))
+        expect(subject.dates[2].date).to eq(Date.new(2014,7,17))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,7))
       end
     end
 
@@ -1053,16 +1053,16 @@ end
         subject.reload
       end
       it "should have 0 result periods" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have no remained day_types" do
         subject.int_day_types == 0
       end
       it "should have 3 dates left" do
-        subject.dates.size.should == 3
-        subject.dates[0].date.should == Date.new(2014,7,16)
-        subject.dates[1].date.should == Date.new(2014,7,19)
-        subject.dates[2].date.should == Date.new(2014,7,20)
+        expect(subject.dates.size).to eq(3)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,16))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,19))
+        expect(subject.dates[2].date).to eq(Date.new(2014,7,20))
       end
     end
     context "timetable with dates against timetable with dates and periods all covered" do
@@ -1086,13 +1086,13 @@ end
         subject.reload
       end
       it "should have 0 result periods" do
-        subject.periods.size.should == 0
+        expect(subject.periods.size).to eq(0)
       end
       it "should have no remained day_types" do
         subject.int_day_types == 0
       end
       it "should have 0 dates left" do
-        subject.dates.size.should == 0
+        expect(subject.dates.size).to eq(0)
       end
     end
 
@@ -1111,15 +1111,15 @@ end
         subject.reload
       end
       it "should have 1 result periods" do
-        subject.periods.size.should == 1
-        subject.periods[0].period_start.should == Date.new(2014,8,10)
-        subject.periods[0].period_end.should == Date.new(2014,8,31)
+        expect(subject.periods.size).to eq(1)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,10))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,31))
       end
       it "should have same day_types" do
-        subject.int_day_types.should == 4|8
+        expect(subject.int_day_types).to eq(4|8)
       end
       it "should have no dates " do
-        subject.dates.size.should == 0
+        expect(subject.dates.size).to eq(0)
       end
     end
 
@@ -1138,16 +1138,16 @@ end
         subject.reload
       end
       it "should have 1 result periods" do
-        subject.periods.size.should == 1
-        subject.periods[0].period_start.should == Date.new(2014,8,10)
-        subject.periods[0].period_end.should == Date.new(2014,8,31)
+        expect(subject.periods.size).to eq(1)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,10))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,31))
       end
       it "should have same day_types" do
-        subject.int_day_types.should == 4|8|16
+        expect(subject.int_day_types).to eq(4|8|16)
       end
       it "should have 1 date " do
-        subject.dates.size.should == 1
-        subject.dates[0].date.should == Date.new(2014,8,6)
+        expect(subject.dates.size).to eq(1)
+        expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
       end
     end
 
@@ -1168,20 +1168,20 @@ end
         subject.reload
       end
       it "should have same 2 result periods" do
-        subject.periods.size.should == 2
-        subject.periods[0].period_start.should == Date.new(2014,8,1)
-        subject.periods[0].period_end.should == Date.new(2014,8,8)
-        subject.periods[1].period_start.should == Date.new(2014,8,10)
-        subject.periods[1].period_end.should == Date.new(2014,8,31)
+        expect(subject.periods.size).to eq(2)
+        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,1))
+        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,8))
+        expect(subject.periods[1].period_start).to eq(Date.new(2014,8,10))
+        expect(subject.periods[1].period_end).to eq(Date.new(2014,8,31))
       end
       it "should have same day_types" do
-        subject.int_day_types.should == 4|8|16
+        expect(subject.int_day_types).to eq(4|8|16)
       end
       it "should have only 2 excluded dates " do
-        subject.included_days.size.should == 0
-        subject.excluded_days.size.should == 2
-        subject.excluded_days[0].should == Date.new(2014,8,4)
-        subject.excluded_days[1].should == Date.new(2014,8,5)
+        expect(subject.included_days.size).to eq(0)
+        expect(subject.excluded_days.size).to eq(2)
+        expect(subject.excluded_days[0]).to eq(Date.new(2014,8,4))
+        expect(subject.excluded_days[1]).to eq(Date.new(2014,8,5))
       end
     end
 
@@ -1190,17 +1190,17 @@ end
   describe "#duplicate" do
       it "should be a copy of" do
         target=subject.duplicate
-        target.id.should be_nil
-        target.comment.should == "Copy of "+subject.comment
-        target.objectid.should == subject.objectid+"_1"
-        target.int_day_types.should == subject.int_day_types
-        target.dates.size.should == subject.dates.size
+        expect(target.id).to be_nil
+        expect(target.comment).to eq("Copy of "+subject.comment)
+        expect(target.objectid).to eq(subject.objectid+"_1")
+        expect(target.int_day_types).to eq(subject.int_day_types)
+        expect(target.dates.size).to eq(subject.dates.size)
         target.dates.each do |d|
-          d.time_table_id.should be_nil
+          expect(d.time_table_id).to be_nil
         end
-        target.periods.size.should == subject.periods.size
+        expect(target.periods.size).to eq(subject.periods.size)
         target.periods.each do |p|
-          p.time_table_id.should be_nil
+          expect(p.time_table_id).to be_nil
         end
       end
   end
@@ -1210,8 +1210,8 @@ end
         subject.tag_list = "toto, titi"
         subject.save
         subject.reload
-        Chouette::TimeTable.tag_counts.size.should == 2
-        subject.tag_list.size.should == 2
+        expect(Chouette::TimeTable.tag_counts.size).to eq(2)
+        expect(subject.tag_list.size).to eq(2)
       end
   end
 

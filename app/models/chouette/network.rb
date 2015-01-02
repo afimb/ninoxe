@@ -10,8 +10,8 @@ class Chouette::Network < Chouette::TridentActiveRecord
 
   validates_presence_of :name
 
-  attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version_date, :description, :name
-  attr_accessible :registration_number, :source_name, :source_type, :source_identifier, :comment
+  # attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version_date, :description, :name
+  # attr_accessible :registration_number, :source_name, :source_type, :source_identifier, :comment
 
   def self.object_id_key
     "GroupOfLine"

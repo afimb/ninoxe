@@ -5,8 +5,8 @@ class Chouette::Route < Chouette::TridentActiveRecord
   attr_accessor :wayback_code
   attr_accessor :direction_code
 
-  attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name
-  attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback, :stop_points_attributes
+  # attr_accessible :direction_code, :wayback_code, :line_id, :objectid, :object_version, :creation_time, :creator_id, :name
+  # attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback, :stop_points_attributes
 
   def self.nullable_attributes
     [:published_name, :comment, :number]
@@ -21,7 +21,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
     end
   end
   belongs_to :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
-  has_many :stop_points, :order => 'position', :dependent => :destroy do
+  has_many :stop_points, -> { order('position ASC') }, :dependent => :destroy do
     def find_by_stop_area(stop_area)
       stop_area_ids = Integer === stop_area ? [stop_area] : (stop_area.children_in_depth + [stop_area]).map(&:id)
       where( :stop_area_id => stop_area_ids).first or
@@ -44,7 +44,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
       where(" position between ? and ? ", between_positions.first, between_positions.last)
     end
   end
-  has_many :stop_areas, :through => :stop_points, :order => 'stop_points.position' do
+  has_many :stop_areas, -> { order('stop_points.position ASC') }, :through => :stop_points do
     def between(departure, arrival)
       departure, arrival = [departure, arrival].collect do |endpoint|
         String === endpoint ? Chouette::StopArea.find_by_objectid(endpoint) : endpoint

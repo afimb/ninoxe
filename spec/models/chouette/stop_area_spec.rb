@@ -1,40 +1,43 @@
 require 'spec_helper'
 
-describe Chouette::StopArea do
+describe Chouette::StopArea, :type => :model do
   let!(:quay) { Factory :stop_area, :area_type => "Quay" }
   let!(:boarding_position) { Factory :stop_area, :area_type => "BoardingPosition" }
   let!(:commercial_stop_point) { Factory :stop_area, :area_type => "CommercialStopPoint" }
   let!(:stop_place) { Factory :stop_area, :area_type => "StopPlace" }
   let!(:itl) { Factory :stop_area, :area_type => "ITL" }
 
-  its(:objectid) { should be_kind_of(Chouette::ObjectId) }
+  describe '#objectid' do
+    subject { super().objectid }
+    it { is_expected.to be_kind_of(Chouette::ObjectId) }
+  end
 
-  it { should validate_presence_of :name }
-  it { should validate_presence_of :area_type }
-  it { should validate_numericality_of :latitude }
-  it { should validate_numericality_of :longitude }
+  it { is_expected.to validate_presence_of :name }
+  it { is_expected.to validate_presence_of :area_type }
+  it { is_expected.to validate_numericality_of :latitude }
+  it { is_expected.to validate_numericality_of :longitude }
 
   
   describe ".latitude" do
     it "should accept -90 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.latitude = -90
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should reject < -90 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.latitude = -90.0001
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
     it "should accept 90 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.latitude = 90
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should reject > 90 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.latitude = 90.0001
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
   end
 
@@ -42,22 +45,22 @@ describe Chouette::StopArea do
     it "should accept -180 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = -180
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should reject < -180 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = -180.0001
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
     it "should accept 180 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = 180
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should reject > 180 value" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = 180.0001
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
   end
 
@@ -66,25 +69,25 @@ describe Chouette::StopArea do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = nil
       subject.latitude = nil
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should accept longitude and latitude both numerical" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = 10
       subject.latitude = 10
-      subject.valid?.should be_true
+      expect(subject.valid?).to be_truthy
     end
     it "should reject longitude nil with latitude numerical" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = nil
       subject.latitude = 10
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
     it "should reject longitude numerical with latitude nil" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
       subject.longitude = 10
       subject.latitude = nil
-      subject.valid?.should be_false
+      expect(subject.valid?).to be_falsey
     end
   end 
   
@@ -95,44 +98,44 @@ describe Chouette::StopArea do
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => subject 
       commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => commercial_stop_point
       quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.children_in_depth.should =~ [commercial_stop_point, commercial_stop_point2, quay]
+      expect(subject.children_in_depth).to match_array([commercial_stop_point, commercial_stop_point2, quay])
     end
     it "should return only the deepest children from stop area" do
       subject = Factory :stop_area, :area_type => "StopPlace"
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => subject 
       commercial_stop_point2 = Factory :stop_area, :area_type => "CommercialStopPoint", :parent => commercial_stop_point
       quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.children_at_base.should =~ [quay]
+      expect(subject.children_at_base).to match_array([quay])
     end
   end
 
   describe ".stop_area_type" do
     it "should have area_type of BoardingPosition when stop_area_type is set to boarding_position" do
       subject = Factory :stop_area, :stop_area_type => "boarding_position"
-      subject.area_type.should == "BoardingPosition"
+      expect(subject.area_type).to eq("BoardingPosition")
     end
     it "should have area_type of Quay when stop_area_type is set to quay" do
       subject = Factory :stop_area, :stop_area_type => "quay"
-      subject.area_type.should == "Quay"
+      expect(subject.area_type).to eq("Quay")
     end
     it "should have area_type of CommercialStopPoint when stop_area_type is set to commercial_stop_point" do
       subject = Factory :stop_area, :stop_area_type => "commercial_stop_point"
-      subject.area_type.should == "CommercialStopPoint"
+      expect(subject.area_type).to eq("CommercialStopPoint")
     end
     it "should have area_type of StopPlace when stop_area_type is set to stop_place" do
       subject = Factory :stop_area, :stop_area_type => "stop_place"
-      subject.area_type.should == "StopPlace"
+      expect(subject.area_type).to eq("StopPlace")
     end
     it "should have area_type of ITL when stop_area_type is set to itl" do
       subject = Factory :stop_area, :stop_area_type => "itl"
-      subject.area_type.should == "ITL"
+      expect(subject.area_type).to eq("ITL")
     end
   end
 
   describe ".parent" do
     it "should check if parent method exists" do
       subject = Factory :stop_area, :parent_id => commercial_stop_point.id
-      subject.parent.should == commercial_stop_point
+      expect(subject.parent).to eq(commercial_stop_point)
     end
   end
 
@@ -140,27 +143,27 @@ describe Chouette::StopArea do
     
     it "should find no possible descendant for stop area type quay" do
       subject = Factory :stop_area, :area_type => "Quay"
-      subject.possible_children.should == [] 
+      expect(subject.possible_children).to eq([]) 
     end
 
     it "should find no possible descendant for stop area type boarding position" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.possible_children.should == [] 
+      expect(subject.possible_children).to eq([]) 
     end
 
     it "should find descendant of type quay or boarding position for stop area type commercial stop point" do
       subject = Factory :stop_area, :area_type => "CommercialStopPoint"
-      subject.possible_children.should =~ [quay, boarding_position] 
+      expect(subject.possible_children).to match_array([quay, boarding_position]) 
     end
 
     it "should find no children of type stop place or commercial stop point for stop area type stop place" do
       subject = Factory :stop_area, :area_type => "StopPlace"
-      subject.possible_children.should =~ [stop_place, commercial_stop_point] 
+      expect(subject.possible_children).to match_array([stop_place, commercial_stop_point]) 
     end
 
     it "should find no children of type ITL for stop area type ITL" do
       subject = Factory :stop_area, :area_type => "ITL"
-      subject.possible_children.should =~ [stop_place, commercial_stop_point, quay, boarding_position] 
+      expect(subject.possible_children).to match_array([stop_place, commercial_stop_point, quay, boarding_position]) 
     end
 
   end
@@ -169,22 +172,22 @@ describe Chouette::StopArea do
 
     it "should find parent type commercial stop point for stop area type boarding position" do
       subject = Factory :stop_area, :area_type => "BoardingPosition"
-      subject.possible_parents.should == [commercial_stop_point] 
+      expect(subject.possible_parents).to eq([commercial_stop_point]) 
     end
 
     it "should find parent type commercial stop point for stop area type quay" do
       subject = Factory :stop_area, :area_type => "Quay"
-      subject.possible_parents.should == [commercial_stop_point] 
+      expect(subject.possible_parents).to eq([commercial_stop_point]) 
     end    
 
     it "should find parent type stop place for stop area type commercial stop point" do
       subject = Factory :stop_area, :area_type => "CommercialStopPoint"
-      subject.possible_parents.should == [stop_place] 
+      expect(subject.possible_parents).to eq([stop_place]) 
     end    
 
     it "should find parent type stop place for stop area type stop place" do
       subject = Factory :stop_area, :area_type => "StopPlace"
-      subject.possible_parents.should == [stop_place] 
+      expect(subject.possible_parents).to eq([stop_place]) 
     end    
 
   end
@@ -196,11 +199,11 @@ describe Chouette::StopArea do
     let(:stop_area2) { Factory :stop_area, :latitude => 1, :longitude => 1 }
     
     it "should find a StopArea at 300m from given origin" do
-      Chouette::StopArea.near(stop_area.to_lat_lng.endpoint(0, 0.250, :units => :kms)).should == [stop_area]
+      expect(Chouette::StopArea.near(stop_area.to_lat_lng.endpoint(0, 0.250, :units => :kms))).to eq([stop_area])
     end
 
     it "should not find a StopArea at more than 300m from given origin" do
-      Chouette::StopArea.near(stop_area2.to_lat_lng.endpoint(0, 0.350, :units => :kms)).should be_empty
+      expect(Chouette::StopArea.near(stop_area2.to_lat_lng.endpoint(0, 0.350, :units => :kms))).to be_empty
     end
 
   end
@@ -209,12 +212,12 @@ describe Chouette::StopArea do
     
     it "should return nil if latitude is nil" do
       subject.latitude = nil
-      subject.to_lat_lng.should be_nil
+      expect(subject.to_lat_lng).to be_nil
     end
 
     it "should return nil if longitude is nil" do
       subject.longitude = nil
-      subject.to_lat_lng.should be_nil
+      expect(subject.to_lat_lng).to be_nil
     end
 
   end
@@ -222,8 +225,8 @@ describe Chouette::StopArea do
   describe "#geometry" do
     
     it "should be nil when to_lat_lng is nil" do
-      subject.stub :to_lat_lng => nil
-      subject.geometry.should be_nil
+      allow(subject).to receive_messages :to_lat_lng => nil
+      expect(subject.geometry).to be_nil
     end
 
   end
@@ -231,8 +234,8 @@ describe Chouette::StopArea do
   describe ".bounds" do
     
     it "should return transform coordinates in floats" do
-      Chouette::StopArea.connection.stub :select_rows => [["113.5292500000000000", "22.1127580000000000", "113.5819330000000000", "22.2157050000000000"]]
-      GeoRuby::SimpleFeatures::Envelope.should_receive(:from_coordinates).with([[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]])
+      allow(Chouette::StopArea.connection).to receive_messages :select_rows => [["113.5292500000000000", "22.1127580000000000", "113.5819330000000000", "22.2157050000000000"]]
+      expect(GeoRuby::SimpleFeatures::Envelope).to receive(:from_coordinates).with([[113.5292500000000000, 22.1127580000000000], [113.5819330000000000, 22.2157050000000000]])
       Chouette::StopArea.bounds
     end
 
@@ -241,13 +244,13 @@ describe Chouette::StopArea do
   describe "#default_position" do
     
     it "should return nil when StopArea.bounds is nil" do
-      Chouette::StopArea.stub :bounds => nil
-      subject.default_position.should be_nil
+      allow(Chouette::StopArea).to receive_messages :bounds => nil
+      expect(subject.default_position).to be_nil
     end
 
     it "should return StopArea.bounds center" do
-      Chouette::StopArea.stub :bounds => double(:center => "center")
-      subject.default_position.should == Chouette::StopArea.bounds.center
+      allow(Chouette::StopArea).to receive_messages :bounds => double(:center => "center")
+      expect(subject.default_position).to eq(Chouette::StopArea.bounds.center)
     end
 
   end
@@ -258,7 +261,7 @@ describe Chouette::StopArea do
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
       quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.children_at_base.size.should == 2
+      expect(subject.children_at_base.size).to eq(2)
     end
    end 
 
@@ -267,14 +270,14 @@ describe Chouette::StopArea do
     it "should have no access_links in matrix with no access_point" do
       subject = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
-      subject.generic_access_link_matrix.size.should == 0
+      expect(subject.generic_access_link_matrix.size).to eq(0)
     end
     it "should have 4 generic_access_links in matrix with 2 access_points" do
       subject = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
       access_point1 = Factory :access_point, :stop_area => subject
       access_point2 = Factory :access_point, :stop_area => subject
-      subject.generic_access_link_matrix.size.should == 4
+      expect(subject.generic_access_link_matrix.size).to eq(4)
     end
    end 
   describe "#detail_access_link_matrix" do
@@ -283,7 +286,7 @@ describe Chouette::StopArea do
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => subject
       quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.detail_access_link_matrix.size.should == 0
+      expect(subject.detail_access_link_matrix.size).to eq(0)
     end
     it "should have 8 detail_access_links in matrix with 2 children_at_base and 2 access_points" do
       subject = Factory :stop_area, :area_type => "StopPlace" 
@@ -292,7 +295,7 @@ describe Chouette::StopArea do
       quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
       access_point1 = Factory :access_point, :stop_area => subject
       access_point2 = Factory :access_point, :stop_area => subject
-      subject.detail_access_link_matrix.size.should == 8
+      expect(subject.detail_access_link_matrix.size).to eq(8)
     end
    end 
   describe "#parents" do
@@ -300,11 +303,11 @@ describe Chouette::StopArea do
       stop_place = Factory :stop_area, :area_type => "StopPlace" 
       commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
       subject = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject.parents.size.should == 2
+      expect(subject.parents.size).to eq(2)
     end
     it "should return empty parent hireachy list" do
       subject = Factory :stop_area, :area_type => "Quay"
-      subject.parents.size.should == 0
+      expect(subject.parents.size).to eq(0)
     end
   end
   
@@ -321,13 +324,13 @@ describe Chouette::StopArea do
       access_link1 = Factory :access_link, :stop_area => subject, :access_point => access_point1
       access_link2 = Factory :access_link, :stop_area => quay, :access_point => access_point2
       subject.save 
-      subject.access_links.size.should == 1
-      quay.access_links.size.should == 1
+      expect(subject.access_links.size).to eq(1)
+      expect(quay.access_links.size).to eq(1)
       subject.parent=nil
       subject.save 
       subject.reload
-      subject.access_links.size.should == 0
-      quay.access_links.size.should == 0
+      expect(subject.access_links.size).to eq(0)
+      expect(quay.access_links.size).to eq(0)
     end
     it "should not remove still valid access links" do
       # subject is a Q of CSP with a SP as parent
@@ -343,77 +346,77 @@ describe Chouette::StopArea do
       access_link1 = Factory :access_link, :stop_area => subject, :access_point => access_point1
       access_link2 = Factory :access_link, :stop_area => subject, :access_point => access_point2
       subject.save 
-      subject.access_links.size.should == 2
+      expect(subject.access_links.size).to eq(2)
       subject.parent=commercial_stop_point2
       subject.save 
       subject.reload
-      subject.access_links.size.should == 1
+      expect(subject.access_links.size).to eq(1)
     end
   end
   
   describe "#coordinates" do
     it "should convert coordinates into latitude/longitude" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
-     subject.longitude.should be_within(0.001).of(120.456)
-     subject.latitude.should be_within(0.001).of(45.123)
+     expect(subject.longitude).to be_within(0.001).of(120.456)
+     expect(subject.latitude).to be_within(0.001).of(45.123)
    end
     it "should set empty coordinates into nil latitude/longitude" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
-     subject.longitude.should be_within(0.001).of(120.456)
-     subject.latitude.should be_within(0.001).of(45.123)
+     expect(subject.longitude).to be_within(0.001).of(120.456)
+     expect(subject.latitude).to be_within(0.001).of(45.123)
      subject.coordinates = ""
      subject.save
-     subject.longitude.should be_nil
-     subject.latitude.should be_nil
+     expect(subject.longitude).to be_nil
+     expect(subject.latitude).to be_nil
    end
     it "should convert latitude/longitude into coordinates" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :longitude => 120.456, :latitude => 45.123
-     subject.coordinates.should == "45.123,120.456"
+     expect(subject.coordinates).to eq("45.123,120.456")
    end
     it "should convert nil latitude/longitude into empty coordinates" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :longitude => nil, :latitude => nil
-     subject.coordinates.should == ""
+     expect(subject.coordinates).to eq("")
    end
     it "should accept valid coordinates" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "45.123,120.456"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "45.123, 120.456"
-     subject.valid?.should be_true
-     subject.longitude.should be_within(0.001).of(120.456)
-     subject.latitude.should be_within(0.001).of(45.123)
+     expect(subject.valid?).to be_truthy
+     expect(subject.longitude).to be_within(0.001).of(120.456)
+     expect(subject.latitude).to be_within(0.001).of(45.123)
      subject.coordinates = "45.123,  -120.456"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "45.123 ,120.456"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "45.123   ,   120.456"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = " 45.123,120.456"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "45.123,120.456  "
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
     end
     it "should accept valid coordinates on limits" do
      subject = Factory :stop_area, :area_type => "BoardingPosition", :coordinates => "90,180"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "-90,-180"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "-90.,180."
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
      subject.coordinates = "-90.0,180.00"
-     subject.valid?.should be_true
+     expect(subject.valid?).to be_truthy
     end
     it "should reject invalid coordinates" do
      subject = Factory :stop_area, :area_type => "BoardingPosition"
      subject.coordinates = ",12"
-     subject.valid?.should be_false
+     expect(subject.valid?).to be_falsey
      subject.coordinates = "-90"
-     subject.valid?.should be_false
+     expect(subject.valid?).to be_falsey
      subject.coordinates = "-90.1,180."
-     subject.valid?.should be_false
+     expect(subject.valid?).to be_falsey
      subject.coordinates = "-90.0,180.1"
-     subject.valid?.should be_false
+     expect(subject.valid?).to be_falsey
      subject.coordinates = "-91.0,18.1"
-     subject.valid?.should be_false
+     expect(subject.valid?).to be_falsey
     end
   end
 
@@ -425,14 +428,14 @@ describe Chouette::StopArea do
         access_point2 = Factory :access_point, :stop_area => subject
         quay1 = Factory :stop_area, :parent => subject, :area_type => "Quay"
         target=subject.duplicate
-        target.id.should be_nil
-        target.name.should == "Copy of "+subject.name
-        target.objectid.should == subject.objectid+"_1"
-        target.area_type.should == subject.area_type
-        target.parent.should be_nil
-        target.children.size.should == 0
-        target.access_points.size.should == 0
-        target.coordinates.should == "45.123,120.456"
+        expect(target.id).to be_nil
+        expect(target.name).to eq("Copy of "+subject.name)
+        expect(target.objectid).to eq(subject.objectid+"_1")
+        expect(target.area_type).to eq(subject.area_type)
+        expect(target.parent).to be_nil
+        expect(target.children.size).to eq(0)
+        expect(target.access_points.size).to eq(0)
+        expect(target.coordinates).to eq("45.123,120.456")
       end
   end
 
