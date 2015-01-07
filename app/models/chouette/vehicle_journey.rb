@@ -6,7 +6,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   # attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value
   #  attr_accessible :route, :transport_mode,:transport_mode_name, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
   #  attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables, :mobility_restricted_suitability, :flexible_service
-  
+
   attr_accessor :transport_mode_name
   attr_reader :time_table_tokens
 
@@ -21,7 +21,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   validates_presence_of :route
   validates_presence_of :journey_pattern
 
-  has_many :vehicle_journey_at_stops, -> { includes :stop_point }, :dependent => :destroy # , order("stop_points.position")
+  has_many :vehicle_journey_at_stops, -> { includes( :stop_point).order("stop_points.position") }, :dependent => :destroy # , order("stop_points.position")
   has_and_belongs_to_many :time_tables, :class_name => 'Chouette::TimeTable', :foreign_key => "vehicle_journey_id", :association_foreign_key => "time_table_id"
   has_many :stop_points, -> { order("stop_points.position") }, :through => :vehicle_journey_at_stops
 
@@ -29,14 +29,14 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
 
   validate :increasing_times
   validates_presence_of :number
-  
+
   before_validation :set_default_values
   def set_default_values
     if number.nil?
       self.number = 0
     end
   end
-  
+
   def transport_mode_name
     # return nil if transport_mode is nil
     transport_mode && Chouette::TransportMode.new( transport_mode.underscore)
@@ -57,7 +57,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   def increasing_times
     previous = nil
     vehicle_journey_at_stops.select{|vjas| vjas.departure_time && vjas.arrival_time}.each do |vjas|
-      errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous) 
+      errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous)
       previous = vjas
     end
   end
