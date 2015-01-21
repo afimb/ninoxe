@@ -200,5 +200,24 @@ describe Chouette::VehicleJourney do
 
   end
 
+  describe "#footnote_ids=" do
+    context "when line have footnotes, " do
+      let!( :route) { Factory( :route ) }
+      let!( :line) { route.line }
+      let!( :footnote_first) {Factory( :footnote, :code => "1", :label => "dummy 1", :line => route.line)}
+      let!( :footnote_second) {Factory( :footnote, :code => "2", :label => "dummy 2", :line => route.line)}
+
+
+      it "should update vehicle's footnotes" do
+        Chouette::VehicleJourney.find(subject.id).footnotes.should be_empty
+        subject.footnote_ids = [ footnote_first.id ]
+        subject.save
+        Chouette::VehicleJourney.find(subject.id).footnotes.count.should == 1
+      end
+
+    end
+
+  end
+
 end
 

@@ -17,6 +17,9 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   belongs_to :route
   belongs_to :journey_pattern
 
+  has_and_belongs_to_many :footnotes, :class_name => 'Chouette::Footnote'
+  attr_accessible :footnote_ids
+
   validates_presence_of :route
   validates_presence_of :journey_pattern
 
@@ -28,14 +31,14 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
 
   validate :increasing_times
   validates_presence_of :number
-  
+
   before_validation :set_default_values
   def set_default_values
     if number.nil?
       self.number = 0
     end
   end
-  
+
   def transport_mode_name
     # return nil if transport_mode is nil
     transport_mode && Chouette::TransportMode.new( transport_mode.underscore)
@@ -56,7 +59,7 @@ class Chouette::VehicleJourney < Chouette::TridentActiveRecord
   def increasing_times
     previous = nil
     vehicle_journey_at_stops.select{|vjas| vjas.departure_time && vjas.arrival_time}.each do |vjas|
-      errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous) 
+      errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous)
       previous = vjas
     end
   end

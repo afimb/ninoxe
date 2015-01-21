@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141216084607) do
+ActiveRecord::Schema.define(:version => 20150119160029) do
 
   create_table "access_links", :force => true do |t|
     t.integer  "access_point_id",                        :limit => 8
@@ -136,6 +136,19 @@ ActiveRecord::Schema.define(:version => 20141216084607) do
   create_table "facilities_features", :id => false, :force => true do |t|
     t.integer "facility_id", :limit => 8
     t.integer "choice_code"
+  end
+
+  create_table "footnotes", :force => true do |t|
+    t.integer  "line_id",    :limit => 8
+    t.string   "code"
+    t.string   "label"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  create_table "footnotes_vehicle_journeys", :id => false, :force => true do |t|
+    t.integer "vehicle_journey_id", :limit => 8
+    t.integer "footnote_id",        :limit => 8
   end
 
   create_table "group_of_lines", :force => true do |t|
