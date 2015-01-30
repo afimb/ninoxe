@@ -1,8 +1,8 @@
 language: ruby
 rvm:
   - 1.9.3
-  - 2.0.0
-  - jruby-19mode
+  - 2.1.3
+  - jruby-1.7.16.1
 jdk:
   - oraclejdk7
   - openjdk7
@@ -10,15 +10,16 @@ matrix:
   exclude:
     - rvm: 1.9.3
       jdk: openjdk7
-    - rvm: 2.0.0
+    - rvm: 2.1.3
       jdk: openjdk7
-before_script:
-  - "RAILS_ENV=test bundle exec rake ci:travis"
-  - psql -c 'create database ninoxe_test;' -U postgres
-script: "RAILS_ENV=test bundle exec rake ci:build"
 notifications:
   recipients:
     - mflorisson@gmail.com
     - ldonnet@cityway.fr
     - metienne@cityway.fr
-    - zbouziane@cityway.fr
+    - zbouziane@cityway.fr      
+before_script:
+  - "bundle exec rake ci:db_travis_config"
+  - "bundle exec rake db:create"
+  - "bundle exec rake db:migrate"
+script: "bundle exec rake spec"  

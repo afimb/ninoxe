@@ -6,13 +6,9 @@ rescue LoadError
 end
 
 namespace :ci do
-  task :prepare do
-    cp "config/database.yml.ci", "config/database.yml"
-  end
-  task :travis do
+  :db_travis_config do
     cp "config/database.yml.travis", "config/database.yml"
   end  
-  task :build => ["db:migrate", "spec"]
 end
 
 begin
