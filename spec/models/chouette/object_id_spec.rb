@@ -124,16 +124,12 @@ describe Chouette::ObjectId, :type => :model do
     let(:given_local_id) { "localId" }
 
     subject { Chouette::ObjectId.create(given_system_id, given_object_type, given_local_id) }
-    
-    RSpec::Matchers.define :return_an_objectid_with_given do |attribute|
-      match do |actual|
-        expect(actual.send(attribute)).to eq(send("given_#{attribute}"))
-      end
-    end
 
-    it { is_expected.to return_an_objectid_with_given(:system_id) }
-    it { is_expected.to return_an_objectid_with_given(:object_type) }
-    it { is_expected.to return_an_objectid_with_given(:local_id) }
+    it "should return ObjectId attributes" do
+      expect(subject.send(:system_id)).to eq(given_system_id)
+      expect(subject.send(:object_type)).to eq(given_object_type)
+      expect(subject.send(:local_id)).to eq(given_local_id)
+    end
 
   end
 
