@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Chouette::AccessLink, :type => :model do
-  subject { Factory(:access_link) }
+  subject { create(:access_link) }
 
   it { is_expected.to validate_uniqueness_of :objectid }
 

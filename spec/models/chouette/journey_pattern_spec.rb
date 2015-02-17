@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Chouette::JourneyPattern, :type => :model do
   describe "#stop_point_ids" do
     context "for a journey_pattern using only route's stop on odd position" do
-      let!(:journey_pattern){ Factory( :journey_pattern_odd)}
-      let!(:vehicle_journey){ Factory( :vehicle_journey_odd, :journey_pattern => journey_pattern)}
+      let!(:journey_pattern){ create( :journey_pattern_odd)}
+      let!(:vehicle_journey){ create( :vehicle_journey_odd, :journey_pattern => journey_pattern)}
       
       # workaroud
       #subject { journey_pattern}

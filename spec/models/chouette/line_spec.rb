@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Chouette::Line, :type => :model do
 
-  subject { Factory(:line) }
+  subject { create(:line) }
 
   it { is_expected.to validate_presence_of :network }
   it { is_expected.to validate_presence_of :company }
@@ -25,17 +25,17 @@ describe Chouette::Line, :type => :model do
   describe ".last_stop_areas_parents" do
     
     it "should return stop areas if no parents" do
-      line = Factory(:line_with_stop_areas)
+      line = create(:line_with_stop_areas)
       expect(line.stop_areas_last_parents).to eq(line.stop_areas)
     end
 
     it "should return stop areas parents if parents" do
-      line = Factory(:line_with_stop_areas)
-      route = Factory(:route, :line => line)
-      parent = Factory(:stop_area)
-      stop_areas = [ Factory(:stop_area),  Factory(:stop_area), Factory(:stop_area, :parent_id => parent.id) ]
+      line = create(:line_with_stop_areas)
+      route = create(:route, :line => line)
+      parent = create(:stop_area)
+      stop_areas = [ create(:stop_area),  create(:stop_area), create(:stop_area, :parent_id => parent.id) ]
       stop_areas.each do |stop_area|
-        Factory(:stop_point, :stop_area => stop_area, :route => route)
+        create(:stop_point, :stop_area => stop_area, :route => route)
       end   
 
       expect(line.stop_areas_last_parents).to match(line.stop_areas[0..(line.stop_areas.size - 2)].push(parent))
@@ -44,7 +44,7 @@ describe Chouette::Line, :type => :model do
   end
 
   describe "#stop_areas" do
-    let!(:route){Factory(:route, :line => subject)}
+    let!(:route){create(:route, :line => subject)}
     it "should retreive route's stop_areas" do
       expect(subject.stop_areas.count).to eq(route.stop_points.count)
     end
@@ -96,8 +96,8 @@ describe Chouette::Line, :type => :model do
   end
   
   context "#group_of_line_tokens=" do
-    let!(:group_of_line1){Factory(:group_of_line)}
-    let!(:group_of_line2){Factory(:group_of_line)}
+    let!(:group_of_line1){create(:group_of_line)}
+    let!(:group_of_line2){create(:group_of_line)}
 
     it "should return associated group_of_line ids" do
       subject.update_attributes :group_of_line_tokens => [group_of_line1.id, group_of_line2.id].join(',')

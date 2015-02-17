@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Chouette::ConnectionLink, :type => :model do
-  let!(:quay) { Factory :stop_area, :area_type => "Quay" }
-  let!(:boarding_position) { Factory :stop_area, :area_type => "BoardingPosition" }
-  let!(:commercial_stop_point) { Factory :stop_area, :area_type => "CommercialStopPoint" }
-  let!(:stop_place) { Factory :stop_area, :area_type => "StopPlace" }
-  let!(:itl) { Factory :stop_area, :area_type => "ITL" }
-  subject { Factory(:connection_link) }
+  let!(:quay) { create :stop_area, :area_type => "Quay" }
+  let!(:boarding_position) { create :stop_area, :area_type => "BoardingPosition" }
+  let!(:commercial_stop_point) { create :stop_area, :area_type => "CommercialStopPoint" }
+  let!(:stop_place) { create :stop_area, :area_type => "StopPlace" }
+  let!(:itl) { create :stop_area, :area_type => "ITL" }
+  subject { create(:connection_link) }
 
   it { is_expected.to validate_uniqueness_of :objectid }
 

@@ -1,20 +1,26 @@
-Factory.define :route_common, :class => "Chouette::Route" do |route|
-  route.sequence(:name) { |n| "Route #{n}" }
-  route.sequence(:published_name) { |n| "Long route #{n}" }
-  route.sequence(:number) { |n| "#{n}" }
-  route.sequence(:wayback_code) { |n| Chouette::Wayback.new( n % 2) }
-  route.sequence(:direction_code) { |n| Chouette::Direction.new( n % 12) }
-  route.sequence(:objectid) { |n| "test:Route:#{n}" }
+FactoryGirl.define do
 
-  route.association :line, :factory => :line
-end
+  factory :route_common, :class => Chouette::Route do
+    sequence(:name) { |n| "Route #{n}" }
+    sequence(:published_name) { |n| "Long route #{n}" }
+    sequence(:number) { |n| "#{n}" }
+    sequence(:wayback_code) { |n| Chouette::Wayback.new( n % 2) }
+    sequence(:direction_code) { |n| Chouette::Direction.new( n % 12) }
+    sequence(:objectid) { |n| "test:Route:#{n}" }
+    
+    association :line, :factory => :line
+    
+    factory :route do
 
-Factory.define :route, :class => "Chouette::Route", :parent => :route_common do |route|
-  route.after_create do |r|
-    0.upto(4) do |i|
-      Factory(:stop_point, :position => i, :route => r)
+      transient do
+        stop_points_count 4
+      end
+      
+      after(:create) do |route, evaluator|
+        create_list(:stop_point, evaluator.stop_points_count, route: route)
+      end
+      
     end
   end
   
 end
-

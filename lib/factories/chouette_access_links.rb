@@ -1,11 +1,13 @@
-Factory.define :access_link, :class => "Chouette::AccessLink" do |link|
-  link.sequence(:name) { |n| "Access link #{n}" }
-  link.link_type "Mixed" 
-  link.link_orientation "AccessPointToStopArea"
-  link.sequence(:objectid) { |n| "test:AccessLink:#{n}" }
+FactoryGirl.define do
+  
+  factory :access_link, :class => Chouette::AccessLink do
+    sequence(:name) { |n| "Access link #{n}" }
+    sequence(:objectid) { |n| "test:AccessLink:#{n}" }
+    link_type "Mixed" 
+    link_orientation "AccessPointToStopArea"
 
-  link.association :stop_area, :factory => :stop_area
-  link.association :access_point, :factory => :access_point
+    association :stop_area, :factory => :stop_area
+    association :access_point, :factory => :access_point
+  end
 
 end
-

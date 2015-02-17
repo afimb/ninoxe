@@ -4,23 +4,23 @@ describe Chouette::TridentActiveRecord, :type => :model do
 
   it { expect(Chouette::TridentActiveRecord.ancestors).to include(Chouette::ActiveRecord) }
 
-  subject { Factory(:time_table) }
+  subject { create(:time_table) }
 
   describe "#uniq_objectid" do
 
     it "should rebuild objectid" do
-      tm = Factory(:time_table)
+      tm = create(:time_table)
       tm.objectid = subject.objectid
       tm.uniq_objectid
       expect(tm.objectid).to eq(subject.objectid+"_1")
     end
 
     it "should rebuild objectid" do
-      tm = Factory(:time_table)
+      tm = create(:time_table)
       tm.objectid = subject.objectid
       tm.uniq_objectid
       tm.save
-      tm = Factory(:time_table)
+      tm = create(:time_table)
       tm.objectid = subject.objectid
       tm.uniq_objectid
       expect(tm.objectid).to eq(subject.objectid+"_2")

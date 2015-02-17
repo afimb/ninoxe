@@ -1,7 +1,8 @@
 require 'spec_helper'
+require 'pp'
 
 describe Chouette::VehicleJourneyAtStop, :type => :model do
-  let!(:vehicle_journey){ Factory(:vehicle_journey_odd)}
+  let!(:vehicle_journey) { create(:vehicle_journey_odd)}
   subject { vehicle_journey.vehicle_journey_at_stops.first }
 
   describe "#exceeds_gap?" do

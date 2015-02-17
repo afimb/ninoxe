@@ -1,7 +1,10 @@
-Factory.define :stop_point, :class => "Chouette::StopPoint" do |stop|
-  stop.sequence(:objectid) { |n| "test:StopPoint:#{n}" }
+FactoryGirl.define do
+  
+  factory :stop_point, :class => Chouette::StopPoint do
+    sequence(:objectid) { |n| "test:StopPoint:#{n}" }
+    association :route, :factory => :route
+    association :stop_area, :factory => :stop_area
+  end
 
-  stop.association :route, :factory => :route
-  stop.association :stop_area, :factory => :stop_area
 end
 

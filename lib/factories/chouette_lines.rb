@@ -1,31 +1,44 @@
-Factory.define :line, :class => "Chouette::Line" do |line|
-  line.sequence(:name) { |n| "Line #{n}" }
-  line.sequence(:objectid) { |n| "test:Line:#{n}" }
-  line.sequence(:transport_mode_name) { |n| "Bus" }
+FactoryGirl.define do
 
-  line.association :network, :factory => :network
-  line.association :company, :factory => :company
+  factory :line, :class => Chouette::Line do
+    sequence(:name) { |n| "Line #{n}" }
+    sequence(:objectid) { |n| "test:Line:#{n}" }
+    sequence(:transport_mode_name) { |n| "Bus" }
 
-  line.sequence(:registration_number) { |n| "test-#{n}" }
-end
+    association :network, :factory => :network
+    association :company, :factory => :company
 
-Factory.define :line_with_stop_areas, :parent => :line do |line|
-  line.after_build do |line|
-    route = Factory(:route, :line => line)
-    stop_areas = Array.new(3) { Factory(:stop_area) }
-    stop_areas.each do |stop_area|
-      Factory(:stop_point, :stop_area => stop_area, :route => route)
-    end   
-  end
-end
+    sequence(:registration_number) { |n| "test-#{n}" }
+    
+    factory :line_with_stop_areas do
+      
+      transient do
+        routes_count 2
+        stop_areas_count 5
+      end
+      
+      after(:create) do |line, evaluator|
+        create_list(:route, evaluator.routes_count, :line => line) do |route|
+          create_list(:stop_area, evaluator.stop_areas_count, area_type: "Quay") do |stop_area|
+            create(:stop_point, :stop_area => stop_area, :route => route)
+          end           
+        end
+      end
+      
+      factory :line_with_stop_areas_having_parent do
+        
+        after(:create) do |line|
+          line.routes.each do |route|
+            route.stop_points.each do |stop_point|
+              comm = create(:stop_area, :area_type => "CommercialStopPoint")
+              stop_point.stop_area.update_attributes(:parent_id => comm.id)
+            end
+          end
+        end
+      end
 
-Factory.define :line_with_stop_areas_having_parent, :parent => :line do |line|
-  line.after_build do |line|
-    route = Factory(:route, :line => line)
-    route.stop_points.each do |stop_point|
-      commercial = Factory(:stop_area, :area_type => "CommercialStopPoint")
-      physical = Factory(:stop_area, :area_type => "Quay", :parent_id => commercial.id)
-      stop_point.update_attributes( :stop_area_id => physical.id)
     end
+
   end
+
 end

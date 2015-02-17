@@ -13,22 +13,22 @@ describe Chouette::AccessPoint, :type => :model do
   
   describe ".latitude" do
     it "should accept -90 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.latitude = -90
       expect(subject.valid?).to be_truthy
     end
     it "should reject < -90 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.latitude = -90.0001
       expect(subject.valid?).to be_falsey
     end
     it "should accept 90 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.latitude = 90
       expect(subject.valid?).to be_truthy
     end
     it "should reject > 90 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.latitude = 90.0001
       expect(subject.valid?).to be_falsey
     end
@@ -36,22 +36,22 @@ describe Chouette::AccessPoint, :type => :model do
 
   describe ".longitude" do
     it "should accept -180 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = -180
       expect(subject.valid?).to be_truthy
     end
     it "should reject < -180 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = -180.0001
       expect(subject.valid?).to be_falsey
     end
     it "should accept 180 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = 180
       expect(subject.valid?).to be_truthy
     end
     it "should reject > 180 value" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = 180.0001
       expect(subject.valid?).to be_falsey
     end
@@ -59,25 +59,25 @@ describe Chouette::AccessPoint, :type => :model do
 
   describe ".long_lat" do
     it "should accept longitude and latitude both as nil" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = nil
       subject.latitude = nil
       expect(subject.valid?).to be_truthy
     end
     it "should accept longitude and latitude both numerical" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = 10
       subject.latitude = 10
       expect(subject.valid?).to be_truthy
     end
     it "should reject longitude nil with latitude numerical" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = nil
       subject.latitude = 10
       expect(subject.valid?).to be_falsey
     end
     it "should reject longitude numerical with latitude nil" do
-      subject = Factory :access_point
+      subject = create :access_point
       subject.longitude = 10
       subject.latitude = nil
       expect(subject.valid?).to be_falsey
@@ -133,23 +133,23 @@ describe Chouette::AccessPoint, :type => :model do
 
   describe "#generic_access_link_matrix" do
     it "should have 2 generic_access_links in matrix" do
-      stop_place = Factory :stop_area, :area_type => "StopPlace" 
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
-      subject = Factory :access_point, :stop_area => stop_place
+      stop_place = create :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      subject = create :access_point, :stop_area => stop_place
       expect(subject.generic_access_link_matrix.size).to eq(2)
     end
     
     it "should have new generic_access_links in matrix" do
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-      subject = Factory :access_point, :stop_area => commercial_stop_point
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+      subject = create :access_point, :stop_area => commercial_stop_point
       subject.generic_access_link_matrix.each do |link|
         expect(link.id).to be_nil
       end
     end
     it "should have only last generic_access_links as new in matrix" do
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-      subject = Factory :access_point, :stop_area => commercial_stop_point
-      link = Factory :access_link, :access_point => subject, :stop_area => commercial_stop_point
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+      subject = create :access_point, :stop_area => commercial_stop_point
+      link = create :access_link, :access_point => subject, :stop_area => commercial_stop_point
       subject.generic_access_link_matrix.each do |link|
         if link.link_key.start_with?"A_" 
           expect(link.id).not_to be_nil
@@ -162,27 +162,27 @@ describe Chouette::AccessPoint, :type => :model do
 
   describe "#detail_access_link_matrix" do
     it "should have 4 detail_access_links in matrix" do
-      stop_place = Factory :stop_area, :area_type => "StopPlace" 
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
-      quay1 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      quay2 = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject = Factory :access_point, :stop_area => stop_place
+      stop_place = create :stop_area, :area_type => "StopPlace" 
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" ,:parent => stop_place
+      quay1 = create :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      quay2 = create :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject = create :access_point, :stop_area => stop_place
       expect(subject.detail_access_link_matrix.size).to eq(4)
     end
     
     it "should have new detail_access_links in matrix" do
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-      quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject = Factory :access_point, :stop_area => commercial_stop_point
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+      quay = create :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject = create :access_point, :stop_area => commercial_stop_point
       subject.detail_access_link_matrix.each do |link|
         expect(link.id).to be_nil
       end
     end
     it "should have only last detail_access_links as new in matrix" do
-      commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-      quay = Factory :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
-      subject = Factory :access_point, :stop_area => commercial_stop_point
-      link = Factory :access_link, :access_point => subject, :stop_area => quay
+      commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+      quay = create :stop_area, :parent => commercial_stop_point, :area_type => "Quay"
+      subject = create :access_point, :stop_area => commercial_stop_point
+      link = create :access_link, :access_point => subject, :stop_area => quay
       subject.detail_access_link_matrix.each do |link|
         if link.link_key.start_with?"A_" 
           expect(link.id).not_to be_nil
@@ -195,14 +195,14 @@ describe Chouette::AccessPoint, :type => :model do
 
   describe "#coordinates" do
     it "should convert coordinates into latitude/longitude" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
      expect(subject.longitude).to be_within(0.001).of(120.456)
      expect(subject.latitude).to be_within(0.001).of(45.123)
    end
     it "should set empty coordinates into nil latitude/longitude" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
      expect(subject.longitude).to be_within(0.001).of(120.456)
      expect(subject.latitude).to be_within(0.001).of(45.123)
      subject.coordinates = ""
@@ -211,18 +211,18 @@ describe Chouette::AccessPoint, :type => :model do
      expect(subject.latitude).to be_nil
    end
     it "should convert latitude/longitude into coordinates" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :longitude => 120.456, :latitude => 45.123
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :longitude => 120.456, :latitude => 45.123
      expect(subject.coordinates).to eq("45.123,120.456")
    end
     it "should convert nil latitude/longitude into empty coordinates" do
-    commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :longitude => nil, :latitude => nil
+    commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :longitude => nil, :latitude => nil
      expect(subject.coordinates).to eq("")
    end
     it "should accept valid coordinates" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :coordinates => "45.123,120.456"
      expect(subject.valid?).to be_truthy
      subject.coordinates = "45.123, 120.456"
      expect(subject.valid?).to be_truthy
@@ -240,8 +240,8 @@ describe Chouette::AccessPoint, :type => :model do
      expect(subject.valid?).to be_truthy
     end
     it "should accept valid coordinates on limits" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point, :coordinates => "90,180"
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point, :coordinates => "90,180"
      expect(subject.valid?).to be_truthy
      subject.coordinates = "-90,-180"
      expect(subject.valid?).to be_truthy
@@ -251,8 +251,8 @@ describe Chouette::AccessPoint, :type => :model do
      expect(subject.valid?).to be_truthy
     end
     it "should reject invalid coordinates" do
-     commercial_stop_point = Factory :stop_area, :area_type => "CommercialStopPoint" 
-     subject = Factory :access_point, :stop_area => commercial_stop_point
+     commercial_stop_point = create :stop_area, :area_type => "CommercialStopPoint" 
+     subject = create :access_point, :stop_area => commercial_stop_point
      subject.coordinates = ",12"
      expect(subject.valid?).to be_falsey
      subject.coordinates = "-90"

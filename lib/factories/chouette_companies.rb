@@ -1,5 +1,9 @@
-Factory.define :company, :class => "Chouette::Company" do |company|
-  company.sequence(:name) { |n| "Company #{n}" }
-  company.sequence(:objectid) { |n| "test:Company:#{n}" }
-  company.sequence(:registration_number) { |n| "test-#{n}" }
+FactoryGirl.define do
+
+  factory :company, :class => Chouette::Company do
+    sequence(:name) { |n| "Company #{n}" }
+    sequence(:objectid) { |n| "test:Company:#{n}" }
+    sequence(:registration_number) { |n| "test-#{n}" }
+  end
+
 end

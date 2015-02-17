@@ -1,5 +1,9 @@
-Factory.define :group_of_line, :class => "Chouette::GroupOfLine" do |group_of_line|
-  group_of_line.sequence(:name) { |n| "Group Of Line #{n}" }
-  group_of_line.sequence(:objectid) { |n| "test:GroupOfLine:#{n}" }
-  group_of_line.sequence(:registration_number) { |n| "#{n}" }
+FactoryGirl.define do
+
+  factory  :group_of_line, :class => Chouette::GroupOfLine do
+    sequence(:name) { |n| "Group Of Line #{n}" }
+    sequence(:objectid) { |n| "test:GroupOfLine:#{n}" }
+    sequence(:registration_number) { |n| "#{n}" }
+  end
+
 end

@@ -1,8 +1,12 @@
-Factory.define :stop_area, :class => "Chouette::StopArea" do |stop_area|
-  stop_area.latitude 10 * rand
-  stop_area.longitude 10 * rand
-  stop_area.sequence(:name) { |n| "StopArea #{n}" }
-  stop_area.area_type "CommercialStopPoint"
-  stop_area.sequence(:objectid) { |n| "test:StopArea:#{n}" }
-  stop_area.sequence(:registration_number) { |n| "test-#{n}" }
+FactoryGirl.define do
+
+  factory :stop_area, :class => Chouette::StopArea do
+    sequence(:objectid) { |n| "test:StopArea:#{n}" }
+    sequence(:name) { |n| "stop_area_#{n}" }
+    sequence(:registration_number) { |n| "test-#{n}" }
+    area_type "CommercialStopPoint"
+    latitude {10.0 * rand}
+    longitude {10.0 * rand}
+  end
+
 end

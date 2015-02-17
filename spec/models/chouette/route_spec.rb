@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Chouette::Route, :type => :model do
-  subject { Factory(:route) }
+  subject { create(:route) }
 
   it { is_expected.to validate_uniqueness_of :objectid }
 
@@ -60,15 +60,15 @@ describe Chouette::Route, :type => :model do
   end
 
   describe "#stop_points_attributes=" do
-      let( :journey_pattern) { Factory( :journey_pattern, :route => subject )}
-      let( :vehicle_journey) { Factory( :vehicle_journey, :journey_pattern => journey_pattern)}
+      let( :journey_pattern) { create( :journey_pattern, :route => subject )}
+      let( :vehicle_journey) { create( :vehicle_journey, :journey_pattern => journey_pattern)}
       def subject_stop_points_attributes
           {}.tap do |hash|
               subject.stop_points.each_with_index { |sp,index| hash[ index.to_s ] = sp.attributes }
           end
       end
       context "route having swapped a new stop" do
-          let( :new_stop_point ){Factory.build( :stop_point, :route => subject)}
+          let( :new_stop_point ){build( :stop_point, :route => subject)}
           def added_stop_hash
             subject_stop_points_attributes.tap do |h|
                 h["4"] = new_stop_point.attributes.merge( "position" => "4", "_destroy" => "" )
@@ -145,9 +145,9 @@ describe Chouette::Route, :type => :model do
     end
   end
   describe "#stop_areas" do
-    let(:line){ Factory(:line)}
-    let(:route_1){ Factory(:route, :line => line)}
-    let(:route_2){ Factory(:route, :line => line)}
+    let(:line){ create(:line)}
+    let(:route_1){ create(:route, :line => line)}
+    let(:route_2){ create(:route, :line => line)}
     it "should retreive all stop_area on route" do
       route_1.stop_areas.each do |sa|
         expect(sa.stop_points.map(&:route_id).uniq).to eq([route_1.id])
@@ -156,11 +156,11 @@ describe Chouette::Route, :type => :model do
 
     context "when route is looping: last and first stop area are the same" do
       it "should retreive same stop_area one last and first position" do
-        route_loop = Factory(:route, :line => line)
+        route_loop = create(:route, :line => line)
         first_stop = Chouette::StopPoint.where( :route_id => route_loop.id, :position => 0).first
-        last_stop = Factory(:stop_point, :route => route_loop, :position => 5, :stop_area => first_stop.stop_area)
+        last_stop = create(:stop_point, :route => route_loop, :position => 4, :stop_area => first_stop.stop_area)
 
-        expect(route_loop.stop_areas.size).to eq(6)
+        expect(route_loop.stop_areas.size).to eq(5)
         expect(route_loop.stop_areas.select {|s| s.id == first_stop.stop_area.id}.size).to eq(2)
       end
     end

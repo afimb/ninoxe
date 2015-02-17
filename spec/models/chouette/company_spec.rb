@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Chouette::Company, :type => :model do
 
-  subject { Factory(:company) }
+  subject { create(:company) }
 
   it { is_expected.to validate_presence_of :registration_number }
   it { is_expected.to validate_uniqueness_of :registration_number }

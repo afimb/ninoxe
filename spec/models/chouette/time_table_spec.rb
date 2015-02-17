@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Chouette::TimeTable, :type => :model do
 
-  subject { Factory(:time_table) }
+  subject { create(:time_table) }
 
   it { is_expected.to validate_presence_of :comment }
   it { is_expected.to validate_uniqueness_of :objectid }
@@ -547,7 +547,7 @@ end
     end
   end
   describe "#validity_out_between?" do
-    let(:empty_tm) {Factory.build(:time_table)}
+    let(:empty_tm) {build(:time_table)}
     it "should be false if empty calendar" do
       expect(empty_tm.validity_out_between?( Date.today, Date.today + 7.day)).to be_falsey
     end
@@ -573,7 +573,7 @@ end
     end
   end
   describe "#validity_out_from_on?" do
-    let(:empty_tm) {Factory.build(:time_table)}
+    let(:empty_tm) {build(:time_table)}
     it "should be false if empty calendar" do
       expect(empty_tm.validity_out_from_on?( Date.today)).to be_falsey
     end
@@ -820,7 +820,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,6))
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
         subject.int_day_types = 4|16|32|128
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,5), :period_end => Date.new(2014,8,12))
@@ -860,7 +860,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,16), :in_out => true)
         subject.int_day_types = 4|16|32|128
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -891,7 +891,7 @@ end
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,19), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
         subject.int_day_types = 0
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -917,7 +917,7 @@ end
         subject.dates.clear
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,6))
         subject.int_day_types = 4|8|16
-        another_tt = Factory(:time_table , :int_day_types => (4|8|16) )
+        another_tt = create(:time_table , :int_day_types => (4|8|16) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -946,7 +946,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,6))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
         subject.int_day_types = 4|16|32|128
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -981,7 +981,7 @@ end
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,8,6), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,8,7), :in_out => true)
         subject.int_day_types = 0
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,6), :period_end => Date.new(2014,8,12))
@@ -1010,7 +1010,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,8))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,20))
         subject.int_day_types = 4|16|32|128
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
@@ -1043,7 +1043,7 @@ end
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,19), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,20), :in_out => true)
         subject.int_day_types = 0
-        another_tt = Factory(:time_table , :int_day_types => (4|16|64|128) )
+        another_tt = create(:time_table , :int_day_types => (4|16|64|128) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,7,31), :period_end => Date.new(2014,8,12))
@@ -1074,7 +1074,7 @@ end
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,5), :in_out => true)
         subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,7,6), :in_out => true)
         subject.int_day_types = 512
-        another_tt = Factory(:time_table , :int_day_types => (32|64|512) )
+        another_tt = create(:time_table , :int_day_types => (32|64|512) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,6,30), :period_end => Date.new(2014,7,11))
@@ -1103,7 +1103,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,8))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,10), :period_end => Date.new(2014,8,31))
         subject.int_day_types = 4|8
-        another_tt = Factory(:time_table , :int_day_types => (4|8) )
+        another_tt = create(:time_table , :int_day_types => (4|8) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,4), :period_end => Date.new(2014,8,7))
@@ -1130,7 +1130,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,6))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,10), :period_end => Date.new(2014,8,31))
         subject.int_day_types = 4|8|16
-        another_tt = Factory(:time_table , :int_day_types => (4|8) )
+        another_tt = create(:time_table , :int_day_types => (4|8) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,4), :period_end => Date.new(2014,8,5))
@@ -1158,7 +1158,7 @@ end
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,1), :period_end => Date.new(2014,8,8))
         subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2014,8,10), :period_end => Date.new(2014,8,31))
         subject.int_day_types = 4|8|16
-        another_tt = Factory(:time_table , :int_day_types => (0) )
+        another_tt = create(:time_table , :int_day_types => (0) )
         another_tt.periods.clear
         another_tt.dates.clear
         another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2014,8,4), :in_out => true)

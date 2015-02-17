@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Chouette::StopPoint, :type => :model do
-  let!(:vehicle_journey) { Factory(:vehicle_journey)}
+  let!(:vehicle_journey) { create(:vehicle_journey)}
   subject { Chouette::Route.find( vehicle_journey.route_id).stop_points.first }
 
   it { is_expected.to validate_uniqueness_of :objectid }
@@ -14,7 +14,7 @@ describe Chouette::StopPoint, :type => :model do
 
   describe "#destroy" do
     before(:each) do
-      @vehicle = Factory(:vehicle_journey)
+      @vehicle = create(:vehicle_journey)
       @stop_point = Chouette::Route.find( @vehicle.route_id).stop_points.first
     end
     def vjas_stop_point_ids( vehicle_id)

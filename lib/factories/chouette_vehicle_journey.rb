@@ -1,51 +1,66 @@
-Factory.define :vehicle_journey_common, :class => "Chouette::VehicleJourney" do |v|
-  v.sequence(:objectid) { |n| "test:VehicleJourney:#{n}" }
-end
-
-Factory.define :vehicle_journey, :parent => :vehicle_journey_common do |v|
-  v.association :journey_pattern, :factory => :journey_pattern
-  v.after_build do |vj|
-    vj.route_id = vj.journey_pattern.route_id
-  end
-  v.after_create do |vj|
-    vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
-               :vehicle_journey => vj, 
-               :stop_point => sp, 
-               :arrival_time => (-1 * index).minutes.ago, 
-               :departure_time => (-1 * index).minutes.ago)
-    end
-  end
-end
-Factory.define :vehicle_journey_odd, :parent => :vehicle_journey_common do |v|
-  v.association :journey_pattern, :factory => :journey_pattern_odd
-  v.after_build do |vj|
-    vj.route_id = vj.journey_pattern.route_id
-  end
-  v.after_create do |vj|
-    vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
-               :vehicle_journey => vj, 
-               :stop_point => sp, 
-               :arrival_time => (-1 * index).minutes.ago, 
-               :departure_time => (-1 * index).minutes.ago)
-    end
-  end
-end
-Factory.define :vehicle_journey_even, :parent => :vehicle_journey_common do |v|
-  v.association :journey_pattern, :factory => :journey_pattern_even
-  v.after_build do |vj|
-    vj.route_id = vj.journey_pattern.route_id
-  end
-  v.after_create do |vj|
-    vj.journey_pattern.stop_points.each_with_index do |sp,index|
-      vj.vehicle_journey_at_stops << Factory( :vehicle_journey_at_stop, 
-               :vehicle_journey => vj, 
-               :stop_point => sp, 
-               :arrival_time => (-1 * index).minutes.ago, 
-               :departure_time => (-1 * index).minutes.ago)
+FactoryGirl.define do
+  
+  factory :vehicle_journey_common, :class => Chouette::VehicleJourney do
+    sequence(:objectid) { |n| "test:VehicleJourney:#{n}" }
+    
+    factory :vehicle_journey do
+      association :journey_pattern, :factory => :journey_pattern
+    
+      after(:build) do |vehicle_journey|
+        vehicle_journey.route = vehicle_journey.journey_pattern.route
+      end
+      
+      after(:create) do |vehicle_journey|
+        vehicle_journey.journey_pattern.stop_points.each_with_index do |stop_point, index|
+          vehicle_journey.vehicle_journey_at_stops << create(:vehicle_journey_at_stop, 
+                 :vehicle_journey => vehicle_journey, 
+                 :stop_point => stop_point, 
+                 :arrival_time => (-1 * index).minutes.ago, 
+                 :departure_time => (-1 * index).minutes.ago)
+        end
+      end
+      
+      factory :vehicle_journey_odd do
+        association :journey_pattern, :factory => :journey_pattern_odd
+      end
+      
+      factory :vehicle_journey_even do
+        association :journey_pattern, :factory => :journey_pattern_even
+      end
     end
   end
 end
 
-
+#      after(:build) do |vehicle_journey|
+#        vehicle_journey.route_id = vehicle_journey.journey_pattern.route_id
+#      end
+#      
+#      after(:create) do |vehicle_journey|
+#        vehicle_journey.journey_pattern.stop_points.each_with_index do |stop_point, index|
+#          vehicle_journey.vehicle_journey_at_stops.create(:vehicle_journey_at_stop, 
+#                                                          :vehicle_journey => vehicle_journey, 
+#                                                          :stop_point => stop_point, 
+#                                                          :arrival_time => (-1 * index).minutes.ago, 
+#                                                          :departure_time => (-1 * index).minutes.ago)
+#        end
+#      end
+#    end
+#    
+#      after(:build) do |vehicle_journey|
+#        vehicle_journey.route_id = vehicle_journey.journey_pattern.route_id
+#      end
+#      
+#      after(:create) do |vehicle_journey|
+#        vehicle_journey.journey_pattern.stop_points.each_with_index do |stop_point, index|
+#          vehicle_journey.vehicle_journey_at_stops.create(:vehicle_journey_at_stop, 
+#                                                          :vehicle_journey => vehicle_journey, 
+#                                                          :stop_point => stop_point, 
+#                                                          :arrival_time => (-1 * index).minutes.ago, 
+#                                                          :departure_time => (-1 * index).minutes.ago)
+#        end
+#      end
+#    end
+#    
+#  end
+#end
+#

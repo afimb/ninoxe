@@ -1,11 +1,13 @@
-Factory.define :connection_link, :class => "Chouette::ConnectionLink" do |link|
-  link.sequence(:name) { |n| "Connection link #{n}" }
-  link.sequence(:link_type) { |n| "Mixed" }
-  link.sequence(:objectid) { |n| "test:ConnectionLink:#{n}" }
+FactoryGirl.define do
 
-  link.association :departure, :factory => :stop_area
-  link.association :arrival, :factory => :stop_area
+  factory :connection_link, :class => Chouette::ConnectionLink do
+    sequence(:name) { |n| "Connection link #{n}" }
+    sequence(:link_type) { |n| "Mixed" }
+    sequence(:objectid) { |n| "test:ConnectionLink:#{n}" }
 
+    association :departure, :factory => :stop_area
+    association :arrival, :factory => :stop_area
+  end
   
 end
 

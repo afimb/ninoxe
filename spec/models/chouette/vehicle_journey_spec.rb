@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Chouette::VehicleJourney, :type => :model do
-  subject { Factory(:vehicle_journey_odd) }
+  subject { create(:vehicle_journey_odd) }
 
   describe "in_relation_to_a_journey_pattern methods" do
-    let!(:route) { Factory(:route)}
-    let!(:journey_pattern) { Factory(:journey_pattern, :route => route)}
-    let!(:journey_pattern_odd) { Factory(:journey_pattern_odd, :route => route)}
-    let!(:journey_pattern_even) { Factory(:journey_pattern_even, :route => route)}
+    let!(:route) { create(:route)}
+    let!(:journey_pattern) { create(:journey_pattern, :route => route)}
+    let!(:journey_pattern_odd) { create(:journey_pattern_odd, :route => route)}
+    let!(:journey_pattern_even) { create(:journey_pattern_even, :route => route)}
 
     context "when vehicle_journey is on odd stop whereas selected journey_pattern is on all stops" do
-      subject { Factory(:vehicle_journey, :route => route, :journey_pattern => journey_pattern_odd)}
+      subject { create(:vehicle_journey, :route => route, :journey_pattern => journey_pattern_odd)}
       describe "#extra_stops_in_relation_to_a_journey_pattern" do
         it "should be empty" do
           expect(subject.extra_stops_in_relation_to_a_journey_pattern( journey_pattern)).to be_empty
@@ -48,7 +48,7 @@ describe Chouette::VehicleJourney, :type => :model do
       end
     end
     context "when vehicle_journey is on all stops whereas selected journey_pattern is on odd stops" do
-      subject { Factory(:vehicle_journey, :route => route, :journey_pattern => journey_pattern)}
+      subject { create(:vehicle_journey, :route => route, :journey_pattern => journey_pattern)}
       describe "#missing_stops_in_relation_to_a_journey_pattern" do
         it "should be empty" do
           expect(subject.missing_stops_in_relation_to_a_journey_pattern( journey_pattern_odd)).to be_empty
@@ -118,8 +118,8 @@ describe Chouette::VehicleJourney, :type => :model do
   end
 
   context "#time_table_tokens=" do
-    let!(:tm1){Factory(:time_table, :comment => "TM1")}
-    let!(:tm2){Factory(:time_table, :comment => "TM2")}
+    let!(:tm1){create(:time_table, :comment => "TM1")}
+    let!(:tm2){create(:time_table, :comment => "TM2")}
 
     it "should return associated time table ids" do
       subject.update_attributes :time_table_tokens => [tm1.id, tm2.id].join(',')
@@ -129,12 +129,12 @@ describe Chouette::VehicleJourney, :type => :model do
   end
   describe "#bounding_dates" do
     before(:each) do
-      tm1 = Factory.build(:time_table, :dates =>
-        [ Factory.build(:time_table_date, :date => 1.days.ago.to_date, :in_out => true),
-          Factory.build(:time_table_date, :date => 2.days.ago.to_date, :in_out => true)])
-      tm2 = Factory.build(:time_table, :periods =>
-        [ Factory.build(:time_table_period, :period_start => 4.days.ago.to_date, :period_end => 3.days.ago.to_date)])
-      tm3 = Factory.build(:time_table)
+      tm1 = build(:time_table, :dates =>
+                               [ build(:time_table_date, :date => 1.days.ago.to_date, :in_out => true),
+                                 build(:time_table_date, :date => 2.days.ago.to_date, :in_out => true) ])
+      tm2 = build(:time_table, :periods =>
+                                [ build(:time_table_period, :period_start => 4.days.ago.to_date, :period_end => 3.days.ago.to_date)])
+      tm3 = build(:time_table)
       subject.time_tables = [ tm1, tm2, tm3]
     end
     it "should return min date from associated calendars" do
