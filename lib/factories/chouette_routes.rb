@@ -13,7 +13,7 @@ FactoryGirl.define do
     factory :route do
 
       transient do
-        stop_points_count 4
+        stop_points_count 5
       end
       
       after(:create) do |route, evaluator|

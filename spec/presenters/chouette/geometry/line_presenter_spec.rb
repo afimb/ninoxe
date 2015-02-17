@@ -6,7 +6,7 @@ describe Chouette::Geometry::LinePresenter do
 
   describe "#routes_localized_commercials" do
     it "should return 3 stop_areas" do
-      expect(subject.routes_localized_commercials(line.routes.first).size).to eq(9)
+      expect(subject.routes_localized_commercials(line.routes.first).size).to eq(10)
     end
   end
 end
