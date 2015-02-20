@@ -11,5 +11,9 @@ module Ninoxe
 
       ::Chouette::ActiveRecord.logger = Rails.logger
     end
+
+    initializer "ninoxe.factories", :after => "factory_girl.set_factory_paths" do
+      FactoryGirl.definition_file_paths << File.expand_path('../../../spec/factories', __FILE__) if defined?(FactoryGirl)
+    end
   end
 end
