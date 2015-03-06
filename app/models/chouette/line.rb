@@ -16,6 +16,13 @@ class Chouette::Line < Chouette::TridentActiveRecord
   has_many :vehicle_journeys, :through => :journey_patterns
 
   has_and_belongs_to_many :group_of_lines, :class_name => 'Chouette::GroupOfLine', :order => 'group_of_lines.name'
+
+  has_many :footnotes, :dependent => :destroy
+  accepts_nested_attributes_for :footnotes, :reject_if => :all_blank, :allow_destroy => true
+  #attr_accessible :footnotes_attributes
+
+  #attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
+  #attr_accessible :url, :color, :text_color
   attr_reader :group_of_line_tokens
   attr_accessor :transport_mode
 
@@ -30,7 +37,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_format_of :text_color, :with => %r{\A[0-9a-fA-F]{6}\Z}, :allow_nil => true, :allow_blank => true
 
   validates_presence_of :name
-  
+
   def self.nullable_attributes
     [:published_name, :number, :comment, :url, :color, :text_color]
   end
