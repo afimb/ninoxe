@@ -246,7 +246,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
   def self.default_geometry!
     count = 0
-    scoped.find_each do |stop_area|
+    where(nil).find_each do |stop_area|
       Chouette::StopArea.unscoped do
         count += 1 if stop_area.default_geometry!
       end
