@@ -10,10 +10,10 @@ describe Chouette::Route, :type => :model do
     it { is_expected.to be_kind_of(Chouette::ObjectId) }
   end
 
-  it { is_expected.to validate_presence_of :name }
+  #it { is_expected.to validate_presence_of :name }
   it { is_expected.to validate_presence_of :line }
-  it { is_expected.to validate_presence_of :wayback_code }
-  it { is_expected.to validate_presence_of :direction_code }
+  #it { is_expected.to validate_presence_of :wayback_code }
+  #it { is_expected.to validate_presence_of :direction_code }
 
   context "reordering methods" do
     let( :bad_stop_point_ids){subject.stop_points.map { |sp| sp.id + 1}}

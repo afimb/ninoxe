@@ -9,7 +9,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   # attr_accessible :comment, :opposite_route_id, :published_name, :number, :direction, :wayback, :stop_points_attributes
 
   def self.nullable_attributes
-    [:published_name, :comment, :number]
+    [:published_name, :comment, :number, :name]
   end
 
   belongs_to :line
@@ -54,10 +54,10 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
   accepts_nested_attributes_for :stop_points, :allow_destroy => :true
 
-  validates_presence_of :name
+  # validates_presence_of :name
   validates_presence_of :line
-  validates_presence_of :direction_code
-  validates_presence_of :wayback_code
+  # validates_presence_of :direction_code
+  # validates_presence_of :wayback_code
 
   before_destroy :dereference_opposite_route
 
