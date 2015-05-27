@@ -83,7 +83,7 @@ class Chouette::Route < Chouette::TridentActiveRecord
   end
 
   def sorted_vehicle_journeys
-    vehicle_journeys.includes( :vehicle_journey_at_stops, :journey_pattern).where( "vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id").order( "vehicle_journey_at_stops.departure_time")
+    vehicle_journeys.joins(:journey_pattern, :vehicle_journey_at_stops).where("vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id").order( "vehicle_journey_at_stops.departure_time")
   end
 
   def self.direction_binding
@@ -160,4 +160,3 @@ class Chouette::Route < Chouette::TridentActiveRecord
     return true
   end
 end
-
