@@ -17,9 +17,11 @@ notifications:
     - mflorisson@gmail.com
     - ldonnet@cityway.fr
     - metienne@cityway.fr
-    - zbouziane@cityway.fr      
+    - zbouziane@cityway.fr
+    - alban.peignier@af83.com
 before_script:
+  - "sudo apt-get install -qq postgresql-contrib-9.3 postgresql-9.3-postgis-2.1-scripts"
   - "bundle exec rake ci:db_travis_config"
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
-script: "bundle exec rake spec"  
+script: "bundle exec rake spec"
