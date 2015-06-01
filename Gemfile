@@ -12,9 +12,11 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  gem 'pg', '>= 0.11.0' 
+  gem 'pg', '>= 0.11.0'
   gem 'sqlite3'
 end
+
+gem 'activerecord-postgis-adapter'
 
 group :assets do
   gem 'uglifier'
@@ -25,6 +27,6 @@ end
 group :development do
   group :linux do
     gem 'rb-inotify', :require => RUBY_PLATFORM.include?('linux') && 'rb-inotify'
-    gem 'rb-fsevent', :require => RUBY_PLATFORM.include?('darwin') && 'rb-fsevent'        
+    gem 'rb-fsevent', :require => RUBY_PLATFORM.include?('darwin') && 'rb-fsevent'
   end
 end

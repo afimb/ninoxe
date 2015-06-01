@@ -1,7 +1,6 @@
 default: &default
-  adapter: postgresql
+  adapter: postgis
   encoding: unicode
-  pool: 5
   port: 5432
   host: localhost
   username: chouette
