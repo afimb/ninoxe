@@ -868,17 +868,17 @@ end
         subject.intersect! another_tt
         subject.reload
       end
-      it "should have 1 common period" do
-        expect(subject.periods.size).to eq(1)
-        expect(subject.periods[0].period_start).to eq(Date.new(2014, 7, 15))
-        expect(subject.periods[0].period_end).to eq(Date.new(2014, 7, 20))
+      it "should have no period" do
+        expect(subject.periods.size).to eq(0)
+       end
+      it "should have no day_types" do
+        expect(subject.int_day_types).to eq(0)
       end
-      it "should have common day_types" do
-        expect(subject.int_day_types).to eq(4|16|128)
-      end
-      it "should have date for period reduced to one day" do
-        expect(subject.dates.size).to eq(1)
-        expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
+      it "should have date all common days" do
+        expect(subject.dates.size).to eq(3)
+        expect(subject.dates[0].date).to eq(Date.new(2014,7,16))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,19))
+        expect(subject.dates[2].date).to eq(Date.new(2014,8,6))
       end
     end
     context "timetables have periods or dates " do
@@ -902,7 +902,7 @@ end
       it "should have 0 period" do
         expect(subject.periods.size).to eq(0)
       end
-      it "should have merges special flags" do
+      it "should have no day_types" do
         expect(subject.int_day_types).to eq(0)
       end
       it "should have date reduced for period" do
@@ -954,19 +954,25 @@ end
         subject.disjoin! another_tt
         subject.reload
       end
-      it "should have 2 result periods" do
-        expect(subject.periods.size).to eq(2)
-        expect(subject.periods[0].period_start).to eq(Date.new(2014, 6, 30))
-        expect(subject.periods[0].period_end).to eq(Date.new(2014, 7, 14))
-        expect(subject.periods[1].period_start).to eq(Date.new(2014, 8, 3))
-        expect(subject.periods[1].period_end).to eq(Date.new(2014, 8, 5))
+      it "should have 0 periods" do
+        expect(subject.periods.size).to eq(0)
+       end
+      it "should have 0 day_types" do
+        expect(subject.int_day_types).to eq(0)
       end
-      it "should have remained day_types" do
-        expect(subject.int_day_types).to eq(4|16|32|128)
-      end
-      it "should have dates for period reduced" do
-        expect(subject.dates.size).to eq(1)
-        expect(subject.dates[0].date).to eq(Date.new(2014,7,17))
+      it "should have only dates " do
+        expect(subject.dates.size).to eq(11)
+        expect(subject.dates[0].date).to eq(Date.new(2014,6,30))
+        expect(subject.dates[1].date).to eq(Date.new(2014,7,2))
+        expect(subject.dates[2].date).to eq(Date.new(2014,7,3))
+        expect(subject.dates[3].date).to eq(Date.new(2014,7,5))
+        expect(subject.dates[4].date).to eq(Date.new(2014,7,7))
+        expect(subject.dates[5].date).to eq(Date.new(2014,7,9))
+        expect(subject.dates[6].date).to eq(Date.new(2014,7,10))
+        expect(subject.dates[7].date).to eq(Date.new(2014,7,12))
+        expect(subject.dates[8].date).to eq(Date.new(2014,7,14))
+        expect(subject.dates[9].date).to eq(Date.new(2014,7,17))
+        expect(subject.dates[10].date).to eq(Date.new(2014,8,4))
       end
     end
     context "timetables have periods or dates " do
@@ -1110,16 +1116,20 @@ end
         subject.disjoin! another_tt
         subject.reload
       end
-      it "should have 1 result periods" do
-        expect(subject.periods.size).to eq(1)
-        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,10))
-        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,31))
+      it "should have 0 result periods" do
+        expect(subject.periods.size).to eq(0)
       end
-      it "should have same day_types" do
-        expect(subject.int_day_types).to eq(4|8)
+      it "should have 0 day_types" do
+        expect(subject.int_day_types).to eq(0)
       end
-      it "should have no dates " do
-        expect(subject.dates.size).to eq(0)
+      it "should have 6 dates " do
+        expect(subject.dates.size).to eq(6)
+        expect(subject.dates[0].date).to eq(Date.new(2014,8,11))
+        expect(subject.dates[1].date).to eq(Date.new(2014,8,12))
+        expect(subject.dates[2].date).to eq(Date.new(2014,8,18))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,19))
+        expect(subject.dates[4].date).to eq(Date.new(2014,8,25))
+        expect(subject.dates[5].date).to eq(Date.new(2014,8,26))
       end
     end
 
@@ -1137,17 +1147,24 @@ end
         subject.disjoin! another_tt
         subject.reload
       end
-      it "should have 1 result periods" do
-        expect(subject.periods.size).to eq(1)
-        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,10))
-        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,31))
+      it "should have 0 result periods" do
+        expect(subject.periods.size).to eq(0)
+     end
+      it "should have 0 day_types" do
+        expect(subject.int_day_types).to eq(0)
       end
-      it "should have same day_types" do
-        expect(subject.int_day_types).to eq(4|8|16)
-      end
-      it "should have 1 date " do
-        expect(subject.dates.size).to eq(1)
+      it "should have 10 dates " do
+        expect(subject.dates.size).to eq(10)
         expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
+        expect(subject.dates[1].date).to eq(Date.new(2014,8,11))
+        expect(subject.dates[2].date).to eq(Date.new(2014,8,12))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,13))
+        expect(subject.dates[4].date).to eq(Date.new(2014,8,18))
+        expect(subject.dates[5].date).to eq(Date.new(2014,8,19))
+        expect(subject.dates[6].date).to eq(Date.new(2014,8,20))
+        expect(subject.dates[7].date).to eq(Date.new(2014,8,25))
+        expect(subject.dates[8].date).to eq(Date.new(2014,8,26))
+        expect(subject.dates[9].date).to eq(Date.new(2014,8,27))
       end
     end
 
@@ -1167,26 +1184,28 @@ end
         subject.disjoin! another_tt
         subject.reload
       end
-      it "should have same 2 result periods" do
-        expect(subject.periods.size).to eq(2)
-        expect(subject.periods[0].period_start).to eq(Date.new(2014,8,1))
-        expect(subject.periods[0].period_end).to eq(Date.new(2014,8,8))
-        expect(subject.periods[1].period_start).to eq(Date.new(2014,8,10))
-        expect(subject.periods[1].period_end).to eq(Date.new(2014,8,31))
+      it "should have same 0 result periods" do
+        expect(subject.periods.size).to eq(0)
       end
-      it "should have same day_types" do
-        expect(subject.int_day_types).to eq(4|8|16)
+      it "should have 0 day_types" do
+        expect(subject.int_day_types).to eq(0)
       end
-      it "should have only 2 excluded dates " do
-        expect(subject.included_days.size).to eq(0)
-        expect(subject.excluded_days.size).to eq(2)
-        expect(subject.excluded_days[0]).to eq(Date.new(2014,8,4))
-        expect(subject.excluded_days[1]).to eq(Date.new(2014,8,5))
+      it "should have only 10 dates " do
+        expect(subject.dates.size).to eq(10)
+        expect(subject.dates[0].date).to eq(Date.new(2014,8,6))
+        expect(subject.dates[1].date).to eq(Date.new(2014,8,11))
+        expect(subject.dates[2].date).to eq(Date.new(2014,8,12))
+        expect(subject.dates[3].date).to eq(Date.new(2014,8,13))
+        expect(subject.dates[4].date).to eq(Date.new(2014,8,18))
+        expect(subject.dates[5].date).to eq(Date.new(2014,8,19))
+        expect(subject.dates[6].date).to eq(Date.new(2014,8,20))
+        expect(subject.dates[7].date).to eq(Date.new(2014,8,25))
+        expect(subject.dates[8].date).to eq(Date.new(2014,8,26))
+        expect(subject.dates[9].date).to eq(Date.new(2014,8,27))
       end
     end
-
-
   end
+  
   describe "#duplicate" do
       it "should be a copy of" do
         target=subject.duplicate

@@ -415,131 +415,33 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   # remove dates form tt which aren't in another_tt
   def intersect!(another_tt)
     transaction do
-    common_day_types = self.int_day_types & another_tt.int_day_types & 508
-    # if both tt have periods with common day_types, intersect them
-    if !self.periods.empty? && !another_tt.periods.empty?
-      if common_day_types != 0
-        periods = []
-        days = []
-        valid_days = self.class.valid_days(common_day_types)
-        self.optimize_periods.each do |p1|
-          another_tt.optimize_periods.each do |p2|
-            if p1.overlap? p2
-              # create period for intersection
-              pi = Chouette::TimeTablePeriod.new(:period_start => [p1.period_start,p2.period_start].max,
-                                                 :period_end => [p1.period_end,p2.period_end].min)
-              if !self.effective_days_of_period(pi,valid_days).empty? && !another_tt.effective_days_of_period(pi,valid_days).empty?
-                if pi.period_start == pi.period_end
-                  days << pi.period_start
-                else
-                  periods << pi
-                end
-              end
-            end
-          end
-        end
-        # intersect dates
-        days |= another_tt.intersects(self.included_days) & self.intersects(another_tt.included_days)
-        excluded_days = self.excluded_days | another_tt.excluded_days
-        self.dates.clear
-        days.each {|day| self.dates << Chouette::TimeTableDate.new( :date =>day, :in_out => true)}
-        self.periods = periods
-        common_day_types = 0 if periods.empty?
-        self.int_day_types = common_day_types
-        days_of_periods = self.effective_days_of_periods
-        excluded_days.each do |day|
-          self.dates << Chouette::TimeTableDate.new( :date =>day, :in_out => false) if days_of_periods.include?(day)
-        end
-      end
-    else
+      
       # transform tt as effective dates and get common ones
       days = another_tt.intersects(self.effective_days) & self.intersects(another_tt.effective_days)
       self.dates.clear
       days.each {|d| self.dates << Chouette::TimeTableDate.new( :date =>d, :in_out => true)}
       self.periods.clear
       self.int_day_types = 0
-    end
-    self.dates.to_a.sort! { |a,b| a.date <=> b.date}
-    self.save!
+      self.dates.to_a.sort! { |a,b| a.date <=> b.date}
+      self.save!
     end
   end
 
 
   def disjoin!(another_tt)
     transaction do
-    common_day_types = self.int_day_types & another_tt.int_day_types & 508
-    # if both tt have periods with common day_types, reduce first ones to exclude second
-    if !self.periods.blank? && !another_tt.periods.blank?
-      if common_day_types != 0
-        periods = []
-        days = []
-        valid_days = self.class.valid_days(self.int_day_types)
-        remain_days = self.class.valid_days(self.int_day_types & ~another_tt.int_day_types)
-        self.optimize_periods.each do |p1|
-          deleted = false
-          another_tt.optimize_periods.each do |p2|
-            if  p2.contains? p1
-              # p1 is removed, keep remaining dates as included
-              days |= self.effective_days_of_period(p1,remain_days)
-              deleted = true
-              break
-            elsif  p1.contains? p2
-              # p1 is broken in 2; keep remaining dates covered by p2 as included days
-              days |= self.effective_days_of_period(p2,remain_days)
-              if  p1.period_start != p2.period_start
-                pi = Chouette::TimeTablePeriod.new(:period_start => p1.period_start,
-                                                   :period_end => p2.period_start - 1)
-                if !self.effective_days_of_period(pi,valid_days).empty?
-                  if pi.period_start == pi.period_end
-                    days << pi.period_start
-                  else
-                    periods << pi
-                  end
-                end
-              end
-              if p1.period_end != p2.period_end
-                 p1.period_start = p2.period_end + 1
-              else
-                 deleted = true
-                 break
-              end
-            elsif  p1.overlap? p2
-              if p2.period_start <= p1.period_start
-                p2.period_start = p1.period_start
-                p1.period_start = p2.period_end + 1
-              else
-                p2.period_end = p1.period_end
-                p1.period_end = p2.period_start - 1
-              end
-              days |= self.effective_days_of_period(p2,remain_days)
-            end
-          end
-          unless deleted || self.effective_days_of_period(p1,valid_days).blank?
-            if p1.period_start != p1.period_end
-              periods << p1
-            else
-              days << p1.period_start
-            end
-          end
-        end
-        # rebuild periods and dates
-        self.periods = periods
-        self.int_day_types = 0 if periods.blank?
-        days.each { |d| self.dates |= [Chouette::TimeTableDate.new( :date =>d, :in_out => true)] }
-      end
-    else
-      # otherwise remove or exclude dates and delete empty periods
-      # first remove peculiar dates
-      days = self.intersects(another_tt.effective_days)
-      self.dates -= self.dates.select{|date| days.include?(date.date)}
-      # then add excluded dates
-      self.intersects(another_tt.effective_days).each do |d|
-        self.dates |= [Chouette::TimeTableDate.new( :date =>d, :in_out => false)]
-      end
-    end
-    self.dates.to_a.sort! { |a,b| a.date <=> b.date}
-    self.periods.to_a.sort! { |a,b| a.period_start <=> b.period_start}
-    self.save!
+      # remove days from another calendar
+      days_to_exclude = self.intersects(another_tt.effective_days)
+      days = self.effective_days - days_to_exclude
+      self.dates.clear
+      self.periods.clear
+      self.int_day_types = 0
+
+      days.each {|d| self.dates << Chouette::TimeTableDate.new( :date =>d, :in_out => true)}
+
+      self.dates.to_a.sort! { |a,b| a.date <=> b.date}
+      self.periods.to_a.sort! { |a,b| a.period_start <=> b.period_start}
+      self.save!
     end
   end
 
