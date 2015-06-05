@@ -253,9 +253,13 @@ ActiveRecord::Schema.define(version: 20150529132301) do
   add_index "pt_links", ["objectid"], :name => "pt_links_objectid_key", :unique => true
 
   create_table "route_sections", force: true do |t|
-    t.integer "departure_id"
-    t.integer "arrival_id"
-    t.spatial "geometry",     limit: {:srid=>0, :type=>"line_string"}
+    t.integer  "departure_id"
+    t.integer  "arrival_id"
+    t.string   "objectid",                                                null: false
+    t.integer  "object_version"
+    t.datetime "creation_time"
+    t.string   "creator_id"
+    t.spatial  "geometry",       limit: {:srid=>0, :type=>"line_string"}
   end
 
   create_table "routes", force: true do |t|

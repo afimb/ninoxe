@@ -19,8 +19,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('georuby-ext', '0.0.5' )
-
   # some client use ninoxe with rails 3.1.3 or rails 3.2.6
   # but gem not yet compliant with rails 4.x
   #
@@ -33,6 +31,8 @@ Gem::Specification.new do |s|
   s.add_dependency("deep_cloneable", "~> 2.0.0")
   s.add_dependency("acts-as-taggable-on", ">= 3")
   s.add_dependency("enumerize", "~> 0.10.0")
+  s.add_dependency('georuby-ext', '0.0.5')
+  s.add_dependency('georuby', '2.3.0')
 
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('jquery-rails')
@@ -44,4 +44,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('shoulda-matchers', '>= 1.5.6')
   s.add_development_dependency('factory_girl_rails', '>= 4.2.1')
   s.add_development_dependency("rails", "~> 4.1.1")
+  s.add_development_dependency("pry")
 end
