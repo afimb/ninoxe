@@ -1204,8 +1204,37 @@ end
         expect(subject.dates[9].date).to eq(Date.new(2014,8,27))
       end
     end
-  end
   
+  
+    context "with same definition : dsjointed timetable should be empty" do
+      before do
+        subject.periods.clear
+        subject.dates.clear
+        subject.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2015,6,1), :period_end => Date.new(2015,6,30))
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2015,6,16), :in_out => true)
+        subject.dates << Chouette::TimeTableDate.new( :date => Date.new(2015,6,22), :in_out => false)
+        subject.int_day_types = 4|8|16|32|64|128|256
+        another_tt = create(:time_table , :int_day_types => ( 4|8|16|32|64|128|256) )
+        another_tt.periods.clear
+        another_tt.dates.clear
+        another_tt.periods << Chouette::TimeTablePeriod.new(:period_start => Date.new(2015,6,1), :period_end => Date.new(2015,6,30))
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2015,6,16), :in_out => true)
+        another_tt.dates << Chouette::TimeTableDate.new( :date => Date.new(2015,6,22), :in_out => false)
+        subject.disjoin! another_tt
+        subject.reload
+      end
+      it "should have same 0 result periods" do
+        expect(subject.periods.size).to eq(0)
+      end
+      it "should have 0 day_types" do
+        expect(subject.int_day_types).to eq(0)
+      end
+      it "should have 0 dates " do
+        expect(subject.dates.size).to eq(0)
+      end
+    end
+  end
+
   describe "#duplicate" do
       it "should be a copy of" do
         target=subject.duplicate
