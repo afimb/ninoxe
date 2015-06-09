@@ -3,22 +3,22 @@ module Chouette
     #
     # FIXME http://jira.codehaus.org/browse/JRUBY-6358
     self.primary_key = "id"
-    
+
     # attr_accessible :route_id, :journey_pattern_id, :time_slot_id, :company_id, :objectid, :object_version, :creation_time, :creator_id, :comment, :status_value
     #  attr_accessible :route, :transport_mode,:transport_mode_name, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
     #  attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables, :mobility_restricted_suitability, :flexible_service
-    
+
     attr_accessor :transport_mode_name
     attr_reader :time_table_tokens
-    
+
     def self.nullable_attributes
       [:transport_mode, :published_journey_name, :vehicle_type_identifier, :published_journey_identifier, :comment, :status_value]
     end
-    
+
     belongs_to :company
     belongs_to :route
     belongs_to :journey_pattern
-    
+
     has_and_belongs_to_many :footnotes, :class_name => 'Chouette::Footnote'
     # attr_accessible :footnote_ids
 
@@ -28,44 +28,46 @@ module Chouette
     has_many :vehicle_journey_at_stops, -> { includes(:stop_point).order("stop_points.position") }, :dependent => :destroy
     has_and_belongs_to_many :time_tables, :class_name => 'Chouette::TimeTable', :foreign_key => "vehicle_journey_id", :association_foreign_key => "time_table_id"
     has_many :stop_points, -> { order("stop_points.position") }, :through => :vehicle_journey_at_stops
-    
+
     validate :increasing_times
     validates_presence_of :number
-    
+
     before_validation :set_default_values
     def set_default_values
       if number.nil?
         self.number = 0
       end
     end
-    
-    
+
+    scope :without_any_time_table, -> { joins('LEFT JOIN "time_tables_vehicle_journeys" ON "time_tables_vehicle_journeys"."vehicle_journey_id" = "vehicle_journeys"."id" LEFT JOIN "time_tables" ON "time_tables"."id" = "time_tables_vehicle_journeys"."time_table_id"').where(:time_tables => { :id => nil}) }
+    scope :without_any_passing_time, -> { joins('LEFT JOIN "vehicle_journey_at_stops" ON "vehicle_journey_at_stops"."vehicle_journey_id" = "vehicle_journeys"."id"').where(vehicle_journey_at_stops: { id: nil }) }
+
     accepts_nested_attributes_for :vehicle_journey_at_stops, :allow_destroy => true
-    
+
     def transport_mode_name
       # return nil if transport_mode is nil
       transport_mode && Chouette::TransportMode.new( transport_mode.underscore)
     end
-    
+
     def transport_mode_name=(transport_mode_name)
       self.transport_mode = (transport_mode_name ? transport_mode_name.camelcase : nil)
     end
-    
+
     @@transport_mode_names = nil
     def self.transport_mode_names
       @@transport_mode_names ||= Chouette::TransportMode.all.select do |transport_mode_name|
         transport_mode_name.to_i > 0
       end
     end
-    
+
     def increasing_times
       previous = nil
       vehicle_journey_at_stops.select{|vjas| vjas.departure_time && vjas.arrival_time}.each do |vjas|
-        errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous) 
+        errors.add( :vehicle_journey_at_stops, 'time gap overflow') unless vjas.increasing_times_validate( previous)
         previous = vjas
       end
     end
-    
+
     def missing_stops_in_relation_to_a_journey_pattern(selected_journey_pattern)
       selected_journey_pattern.stop_points - self.stop_points
     end
