@@ -3,7 +3,7 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
   belongs_to :arrival, class_name: 'Chouette::StopArea'
 
   validates :departure, :arrival, presence: true
-  validates :geometry, presence: true
+  validates :processed_geometry, presence: true
 
   def stop_areas
     [departure, arrival].compact
@@ -14,10 +14,27 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
     GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
   end
 
-  before_validation :set_default_geometry
+  before_validation :process_geometry
 
-  def set_default_geometry
-    self.geometry = default_geometry.try :to_rgeo
+  def process_geometry
+    self.processed_geometry = (input_geometry or default_geometry.try :to_rgeo)
+  end
+
+  def editable_geometry=(geometry)
+    self.input_geometry = geometry
+  end
+
+  def editable_geometry
+    input_geometry.try(:to_georuby) or default_geometry
+  end
+
+  def editable_geometry_before_type_cast
+    editable_geometry.to_ewkt
+  end
+
+  def geometry(mode = nil)
+    mode ||= :processed
+    mode == :editable ? editable_geometry : processed_geometry.to_georuby
   end
 
 end
