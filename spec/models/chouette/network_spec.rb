@@ -5,7 +5,6 @@ describe Chouette::Network, :type => :model do
   subject { create(:network) }
 
   it { is_expected.to validate_presence_of :registration_number }
-  it { is_expected.to validate_uniqueness_of :registration_number }
 
   it { is_expected.to validate_presence_of :name }
 

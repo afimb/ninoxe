@@ -16,7 +16,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessor :stop_area_type
   attr_accessor :children_ids
   attr_writer :coordinates
-  
+
   # attr_accessible :routing_stop_ids, :routing_line_ids, :children_ids, :stop_area_type, :parent_id, :objectid
   # attr_accessible :object_version, :creation_time, :creator_id, :name, :comment, :area_type, :registration_number
   # attr_accessible :nearest_topic_name, :fare_code, :longitude, :latitude, :long_lat_type
@@ -24,8 +24,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   # attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability, :int_user_needs
   # attr_accessible :coordinates
   # attr_accessible :url, :time_zone
-  
-  validates_uniqueness_of :registration_number, :allow_nil => true, :allow_blank => true
+
   validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
@@ -39,26 +38,26 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   validates_format_of :url, :with => %r{\Ahttps?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?\Z}, :allow_nil => true, :allow_blank => true
 
   def self.nullable_attributes
-    [:registration_number, :street_name, :country_code, :fare_code, 
+    [:registration_number, :street_name, :country_code, :fare_code,
      :nearest_topic_name, :comment, :long_lat_type, :zip_code, :city_name, :url, :time_zone]
   end
 
   after_update :clean_invalid_access_links
-  
+
   before_save :coordinates_to_lat_lng
 
   def combine_lat_lng
     if self.latitude.nil? || self.longitude.nil?
       ""
     else
-      self.latitude.to_s+","+self.longitude.to_s 
+      self.latitude.to_s+","+self.longitude.to_s
     end
   end
-  
+
   def coordinates
       @coordinates || combine_lat_lng
   end
-  
+
   def coordinates_to_lat_lng
     if ! @coordinates.nil?
       if @coordinates.empty?
@@ -68,9 +67,9 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
         self.latitude = BigDecimal.new(@coordinates.split(",").first)
         self.longitude = BigDecimal.new(@coordinates.split(",").last)
       end
-      @coordinates = nil 
+      @coordinates = nil
     end
-  end  
+  end
 
   def children_in_depth
     return [] if self.children.empty?
@@ -88,7 +87,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
       when "StopPlace" then Chouette::StopArea.where(:area_type => ['StopPlace', 'CommercialStopPoint']) - [self]
       when "ITL" then Chouette::StopArea.where(:area_type => ['Quay', 'BoardingPosition', 'StopPlace', 'CommercialStopPoint'])
     end
-      
+
   end
 
   def possible_parents
@@ -123,7 +122,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   def self.stop_place
     where :area_type => "StopPlace"
   end
- 
+
   def self.physical
     where :area_type => [ "BoardingPosition", "Quay" ]
   end
@@ -145,7 +144,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     self.latitude, self.longitude, self.long_lat_type = geometry.lat, geometry.lng, "WGS84"
   end
 
-  def position 
+  def position
     geometry
   end
 
@@ -156,7 +155,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     self.longitude = position.lng
   end
 
-  def default_position 
+  def default_position
     # for first StopArea ... the bounds is nil :(
     Chouette::StopArea.bounds and Chouette::StopArea.bounds.center
   end
@@ -166,7 +165,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
 
     lat_degree_units = units_per_latitude_degree(:kms)
     lng_degree_units = units_per_longitude_degree(origin.lat, :kms)
-    
+
     where "SQRT(POW(#{lat_degree_units}*(#{origin.lat}-latitude),2)+POW(#{lng_degree_units}*(#{origin.lng}-longitude),2)) <= #{distance}"
   end
 
@@ -192,7 +191,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     area_type && Chouette::AreaType.new(area_type.underscore)
   end
 
-  def stop_area_type=(stop_area_type)   
+  def stop_area_type=(stop_area_type)
     self.area_type = (stop_area_type ? stop_area_type.camelcase : nil)
     if self.area_type == 'Itl'
       self.area_type = 'ITL'
@@ -219,7 +218,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
        child.update_attribute :parent_id, self.id
     end
   end
-  
+
   def routing_stop_ids=(routing_stop_ids)
     stops = routing_stop_ids.split(',').uniq
     self.routing_stops.clear
@@ -263,7 +262,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     children_geometries = children.with_geometry.map(&:geometry).uniq
     GeoRuby::SimpleFeatures::Point.centroid children_geometries if children_geometries.present?
   end
-  
+
   def generic_access_link_matrix
      matrix = Array.new
      access_points.each do |access_point|
@@ -279,17 +278,17 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
      end
      matrix
   end
-  
+
   def children_at_base
     list = Array.new
     children_in_depth.each do |child|
       if child.area_type == 'Quay' || child.area_type == 'BoardingPosition'
         list << child
-      end 
+      end
     end
     list
   end
-  
+
   def parents
     list = Array.new
     if !parent.nil?
@@ -298,7 +297,7 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     end
     list
   end
-  
+
   def clean_invalid_access_links
     stop_parents = parents
     access_links.each do |link|
@@ -310,13 +309,13 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
       child.clean_invalid_access_links
     end
   end
-  
+
   def duplicate
-    sa = self.deep_clone :except => [:object_version, :parent_id, :registration_number] 
+    sa = self.deep_clone :except => [:object_version, :parent_id, :registration_number]
     sa.uniq_objectid
     sa.name = I18n.t("activerecord.copy", :name => self.name)
     sa
   end
-  
-  
+
+
 end

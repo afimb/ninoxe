@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150526075108) do
+ActiveRecord::Schema.define(version: 20150630135517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 20150526075108) do
   end
 
   add_index "companies", ["objectid"], name: "companies_objectid_key", unique: true, using: :btree
-  add_index "companies", ["registration_number"], name: "companies_registration_number_key", unique: true, using: :btree
+  add_index "companies", ["registration_number"], name: "companies_registration_number_key", using: :btree
 
   create_table "connection_links", force: true do |t|
     t.integer  "departure_id",                           limit: 8
@@ -145,8 +145,8 @@ ActiveRecord::Schema.define(version: 20150526075108) do
     t.integer  "line_id",    limit: 8
     t.string   "code"
     t.string   "label"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "footnotes_vehicle_journeys", id: false, force: true do |t|
@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 20150526075108) do
   end
 
   add_index "lines", ["objectid"], name: "lines_objectid_key", unique: true, using: :btree
-  add_index "lines", ["registration_number"], name: "lines_registration_number_key", unique: true, using: :btree
+  add_index "lines", ["registration_number"], name: "lines_registration_number_key", using: :btree
 
   create_table "networks", force: true do |t|
     t.string   "objectid",            null: false
@@ -234,7 +234,7 @@ ActiveRecord::Schema.define(version: 20150526075108) do
   end
 
   add_index "networks", ["objectid"], name: "networks_objectid_key", unique: true, using: :btree
-  add_index "networks", ["registration_number"], name: "networks_registration_number_key", unique: true, using: :btree
+  add_index "networks", ["registration_number"], name: "networks_registration_number_key", using: :btree
 
   create_table "pt_links", force: true do |t|
     t.integer  "start_of_link_id", limit: 8

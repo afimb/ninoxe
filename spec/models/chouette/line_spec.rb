@@ -8,10 +8,9 @@ describe Chouette::Line, :type => :model do
   it { is_expected.to validate_presence_of :company }
 
   it { is_expected.to validate_presence_of :registration_number }
-  it { is_expected.to validate_uniqueness_of :registration_number }
 
   it { is_expected.to validate_presence_of :name }
-  
+
   # it { should validate_presence_of :objectid }
   it { is_expected.to validate_uniqueness_of :objectid }
 
@@ -36,7 +35,7 @@ describe Chouette::Line, :type => :model do
       stop_areas = [ create(:stop_area),  create(:stop_area), create(:stop_area, :parent_id => parent.id) ]
       stop_areas.each do |stop_area|
         create(:stop_point, :stop_area => stop_area, :route => route)
-      end   
+      end
 
       expect(line.stop_areas_last_parents).to match(line.stop_areas[0..(line.stop_areas.size - 2)].push(parent))
     end
