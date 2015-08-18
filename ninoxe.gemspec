@@ -50,4 +50,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('factory_girl_rails', '>= 4.2.1')
   s.add_development_dependency("rails", "~> 4.1.1")
   s.add_development_dependency("pry")
+  s.add_development_dependency 'activerecord-postgis-adapter'
+
 end
