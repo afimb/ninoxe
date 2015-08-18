@@ -24,6 +24,7 @@ notifications:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -qq libproj-dev libgeos-dev libffi-dev
+  - gem update bundler
 before_script:
   - "bundle exec rake ci:db_travis_config"
   - "bundle exec rake db:create"
