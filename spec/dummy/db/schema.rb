@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150529132301) do
+ActiveRecord::Schema.define(version: 20150625084758) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -184,9 +184,11 @@ ActiveRecord::Schema.define(version: 20150529132301) do
     t.string   "published_name"
     t.integer  "departure_stop_point_id", limit: 8
     t.integer  "arrival_stop_point_id",   limit: 8
+    t.integer  "route_section_ids",                              array: true
   end
 
   add_index "journey_patterns", ["objectid"], :name => "journey_patterns_objectid_key", :unique => true
+  add_index "journey_patterns", ["route_section_ids"], :name => "index_journey_patterns_on_route_section_ids"
 
   create_table "journey_patterns_stop_points", id: false, force: true do |t|
     t.integer "journey_pattern_id", limit: 8

@@ -14,6 +14,12 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
     GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
   end
 
+  def name
+    stop_areas.map do |stop_area|
+      stop_area.try(:name) or '-'
+    end.join(' - ')
+  end
+
   before_validation :process_geometry
 
   def process_geometry

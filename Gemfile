@@ -16,7 +16,8 @@ platforms :ruby do
   gem 'sqlite3'
 end
 
-gem 'activerecord-postgis-adapter'
+# Not released
+gem 'has_array_of', github: 'marshall-lee/has_array_of'
 
 group :assets do
   gem 'uglifier'

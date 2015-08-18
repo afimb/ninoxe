@@ -34,6 +34,11 @@ Gem::Specification.new do |s|
   s.add_dependency('georuby-ext', '0.0.5')
   s.add_dependency('georuby', '2.3.0')
 
+  s.add_dependency 'activerecord-postgis-adapter'
+
+  # not released
+  # s.add_dependency 'has_array_of'
+
   s.add_development_dependency('rake', '>= 0.9')
   s.add_development_dependency('jquery-rails')
   s.add_development_dependency "guard"
