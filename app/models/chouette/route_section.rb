@@ -1,3 +1,4 @@
+require 'open-uri'
 class Chouette::RouteSection < Chouette::TridentActiveRecord
   belongs_to :departure, class_name: 'Chouette::StopArea'
   belongs_to :arrival, class_name: 'Chouette::StopArea'
@@ -11,7 +12,24 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   def default_geometry
     points = stop_areas.collect(&:geometry).compact
-    GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
+    bounds = stop_areas.map do |point|
+      {
+        lat: point.latitude.to_f,
+        lng:point.longitude.to_f
+      }
+    end
+
+    begin
+      response = open "http://router.project-osrm.org/viaroute?loc=#{bounds[0][:lat]},#{bounds[0][:lng]}&loc=#{bounds[1][:lat]},#{bounds[1][:lng]}&instructions=false"
+      response = JSON.parse(response.read.to_s)
+      geometry = response['route_geometry']
+      decoded_geometry = Polylines::Decoder.decode_polyline(geometry, 1e6).map{|point| GeoRuby::SimpleFeatures::Point.from_x_y(point[1], point[0], 4326)}
+      GeoRuby::SimpleFeatures::LineString.from_points(decoded_geometry) if decoded_geometry.many?
+    rescue
+      logger.info("Failed to add a route for route_section_#{self.id}")
+      GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
+    end
+
   end
 
   def name
