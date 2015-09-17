@@ -35,4 +35,37 @@ RSpec.describe Chouette::RouteSection, :type => :model do
 
   end
 
+  describe "#process_geometry" do
+
+    let(:sample_geometry) { line_string("0 0,1 1").to_rgeo }
+
+    context "without processor" do
+
+      it "should use the input geometry" do
+        subject.input_geometry = sample_geometry
+        subject.process_geometry
+        expect(subject.processed_geometry).to eq(subject.input_geometry)
+      end
+
+      it "should use the default geometry when no input is defined" do
+        subject.input_geometry = nil
+        subject.process_geometry
+        expect(subject.processed_geometry).to eq(subject.default_geometry.to_rgeo)
+      end
+
+    end
+
+    context "with a processor" do
+
+      it "should use the processor result" do
+        subject.processor = Proc.new { |s| sample_geometry }
+        subject.process_geometry
+        expect(subject.processed_geometry).to eq(sample_geometry)
+      end
+
+    end
+
+
+  end
+
 end
