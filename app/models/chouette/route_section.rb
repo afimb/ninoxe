@@ -5,7 +5,7 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   validates :departure, :arrival, presence: true
   validates :processed_geometry, presence: true
-
+  DEFAULT_PROCESSOR = proc {|section| section.input_geometry or section.default_geometry.try :to_rgeo}
   def stop_areas
     [departure, arrival].compact
   end
@@ -18,17 +18,7 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
         lng:point.longitude.to_f
       }
     end
-
-    begin
-      response = open "http://router.project-osrm.org/viaroute?loc=#{bounds[0][:lat]},#{bounds[0][:lng]}&loc=#{bounds[1][:lat]},#{bounds[1][:lng]}&instructions=false"
-      response = JSON.parse(response.read.to_s)
-      geometry = response['route_geometry']
-      decoded_geometry = Polylines::Decoder.decode_polyline(geometry, 1e6).map{|point| GeoRuby::SimpleFeatures::Point.from_x_y(point[1], point[0], 4326)}
-      GeoRuby::SimpleFeatures::LineString.from_points(decoded_geometry) if decoded_geometry.many?
-    rescue
-      logger.info("Failed to add a route for route_section_#{self.id}")
-      GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
-    end
+    smart_route(bounds, points)
 
   end
 
@@ -42,6 +32,18 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   def process_geometry
     self.processed_geometry = (input_geometry or default_geometry.try :to_rgeo)
+  end
+
+  def smart_route(bounds, points)
+    begin
+      response = open "http://router.project-osrm.org/viaroute?loc=#{bounds[0][:lat]},#{bounds[0][:lng]}&loc=#{bounds[1][:lat]},#{bounds[1][:lng]}&instructions=false"
+      geometry = JSON.parse(response.read.to_s)['route_geometry']
+      decoded_geometry = Polylines::Decoder.decode_polyline(geometry, 1e6).map{|point| GeoRuby::SimpleFeatures::Point.from_x_y(point[1], point[0], 4326)}
+      GeoRuby::SimpleFeatures::LineString.from_points(decoded_geometry) if decoded_geometry.many?
+    rescue
+      logger.info("Failed to add a route for route_section_#{self.id}")
+      GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
+    end
   end
 
   def editable_geometry=(geometry)
