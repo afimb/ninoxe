@@ -28,11 +28,15 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
     end.join(' - ')
   end
 
-  before_validation :process_geometry
+  DEFAULT_PROCESSOR = Proc.new { |section| section.input_geometry || section.default_geometry.try(:to_rgeo) }
+
+  @@processor = DEFAULT_PROCESSOR
+  cattr_accessor :processor
 
   def process_geometry
-    self.processed_geometry = (input_geometry or default_geometry.try :to_rgeo)
+    self.processed_geometry = (processor || DEFAULT_PROCESSOR).call(self)
   end
+  before_validation :process_geometry
 
   def smart_route(bounds, points)
     begin
