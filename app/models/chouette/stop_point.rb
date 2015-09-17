@@ -10,8 +10,8 @@ module Chouette
     belongs_to :route, inverse_of: :stop_points
     has_many :vehicle_journey_at_stops, :dependent => :destroy
     has_many :vehicle_journeys, -> {uniq}, :through => :vehicle_journey_at_stops
-    
-    acts_as_list :scope => 'route_id = \'#{route.id}\'',:top_of_list => 0
+
+    acts_as_list :scope => :route, top_of_list: 0
 
     #attr_accessible :route_id, :stop_area_id, :objectid, :object_version, :creation_time, :creator_id, :position, :for_boarding, :for_alighting
 
