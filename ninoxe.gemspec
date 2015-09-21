@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency("enumerize", "~> 0.10.0")
   s.add_dependency('georuby-ext', '0.0.5')
   s.add_dependency('georuby', '2.3.0')
-
   s.add_dependency 'activerecord-postgis-adapter'
 
   # not released
@@ -50,6 +49,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('factory_girl_rails', '>= 4.2.1')
   s.add_development_dependency("rails", "~> 4.1.1")
   s.add_development_dependency("pry")
-  s.add_development_dependency 'activerecord-postgis-adapter'
-
+  s.add_dependency 'activerecord-postgis-adapter'
 end

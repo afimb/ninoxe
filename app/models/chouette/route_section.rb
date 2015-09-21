@@ -5,21 +5,14 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   validates :departure, :arrival, presence: true
   validates :processed_geometry, presence: true
-  DEFAULT_PROCESSOR = proc {|section| section.input_geometry or section.default_geometry.try :to_rgeo}
+
   def stop_areas
     [departure, arrival].compact
   end
 
   def default_geometry
     points = stop_areas.collect(&:geometry).compact
-    bounds = stop_areas.map do |point|
-      {
-        lat: point.latitude.to_f,
-        lng:point.longitude.to_f
-      }
-    end
-    smart_route(bounds, points)
-
+    GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
   end
 
   def name
@@ -38,17 +31,10 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
   end
   before_validation :process_geometry
 
-  def smart_route(bounds, points)
-    begin
-      response = open "http://router.project-osrm.org/viaroute?loc=#{bounds[0][:lat]},#{bounds[0][:lng]}&loc=#{bounds[1][:lat]},#{bounds[1][:lng]}&instructions=false"
-      geometry = JSON.parse(response.read.to_s)['route_geometry']
-      decoded_geometry = Polylines::Decoder.decode_polyline(geometry, 1e6).map{|point| GeoRuby::SimpleFeatures::Point.from_x_y(point[1], point[0], 4326)}
-      GeoRuby::SimpleFeatures::LineString.from_points(decoded_geometry) if decoded_geometry.many?
-    rescue
-      logger.info("Failed to add a route for route_section_#{self.id}")
-      GeoRuby::SimpleFeatures::LineString.from_points(points) if points.many?
-    end
+  def process_distance
+    self.distance = self.process_geometry.to_georuby.to_wgs84.spherical_distance
   end
+  after_validation :process_distance
 
   def editable_geometry=(geometry)
     self.input_geometry = geometry
