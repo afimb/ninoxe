@@ -42,7 +42,9 @@ RSpec.describe Chouette::RouteSection, :type => :model do
     context "without processor" do
 
       it "should use the input geometry" do
+        p sample_geometry
         subject.input_geometry = sample_geometry
+        p subject.input_geometry
         subject.process_geometry
         expect(subject.processed_geometry).to eq(subject.input_geometry)
       end
