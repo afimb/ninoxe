@@ -12,7 +12,11 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
   belongs_to :arrival, :class_name => 'Chouette::StopArea'
 
   validates_presence_of :name
-  validates_presence_of :link_type
+
+  def self.nullable_attributes
+    [:link_distance, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration,
+      :mobility_restricted_traveller_duration]
+  end
 
   def connection_link_type
     link_type && Chouette::ConnectionLinkType.new( link_type.underscore)

@@ -84,11 +84,10 @@ class Chouette::TridentActiveRecord < Chouette::ActiveRecord
     if !self.objectid.valid?
       #errors.add(:objectid, "is not a valid ObjectId object")
       errors.add(:objectid,I18n.t("activerecord.errors.models.trident.invalid_object_id",:type => self.class.object_id_key))
-    else
-      unless self.objectid.object_type==self.class.object_id_key
-        #errors.add(:objectid, "doesn't have expected object_type: #{self.class.object_id_key}")
-        errors.add(:objectid,I18n.t("activerecord.errors.models.trident.invalid_object_id_type",:type => self.class.object_id_key))
-      end
+#    else
+#      unless self.objectid.object_type==self.class.object_id_key
+#        errors.add(:objectid,I18n.t("activerecord.errors.models.trident.invalid_object_id_type",:type => self.class.object_id_key))
+#      end
     end
   end
   

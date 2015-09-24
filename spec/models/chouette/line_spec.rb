@@ -7,8 +7,6 @@ describe Chouette::Line, :type => :model do
   it { is_expected.to validate_presence_of :network }
   it { is_expected.to validate_presence_of :company }
 
-  it { is_expected.to validate_presence_of :registration_number }
-
   it { is_expected.to validate_presence_of :name }
 
   # it { should validate_presence_of :objectid }
@@ -113,7 +111,7 @@ describe Chouette::Line, :type => :model do
         subject.update_attributes :footnotes_attributes =>
           { Time.now.to_i => footnote_first.attributes,
             (Time.now.to_i-5) => footnote_second.attributes}
-        Chouette::Line.find( subject.id ).footnotes.size.should == 2
+        expect(Chouette::Line.find( subject.id ).footnotes.size).to eq(2)
       end
     end
   end
