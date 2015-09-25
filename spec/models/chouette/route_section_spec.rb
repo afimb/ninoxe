@@ -42,9 +42,7 @@ RSpec.describe Chouette::RouteSection, :type => :model do
     context "without processor" do
 
       it "should use the input geometry" do
-        p sample_geometry
         subject.input_geometry = sample_geometry
-        p subject.input_geometry
         subject.process_geometry
         expect(subject.processed_geometry).to eq(subject.input_geometry)
       end
@@ -76,7 +74,8 @@ RSpec.describe Chouette::RouteSection, :type => :model do
         subject.input_geometry = sample_geometry
         subject.process_geometry
         subject.process_distance
-        expect(subject.distance).to eq(sample_geometry.to_wgs84.spherical_distance)
+
+        expect(subject.distance).to eq(sample_geometry.to_georuby.spherical_distance)
       end
     end
 
@@ -86,7 +85,7 @@ RSpec.describe Chouette::RouteSection, :type => :model do
         subject.input_geometry = sample_geometry
         subject.process_geometry
         subject.process_distance
-        expect(subject.distance).to eq(sample_geometry.to_wgs84.spherical_distance)
+        expect(subject.distance).to eq(sample_geometry.to_georuby.spherical_distance)
       end
     end
 
