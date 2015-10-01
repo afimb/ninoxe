@@ -5,7 +5,7 @@ module Chouette
 
     # FIXME http://jira.codehaus.org/browse/JRUBY-6358
     self.primary_key = "id"
-    
+
     belongs_to :stop_point
     belongs_to :vehicle_journey
 
@@ -17,11 +17,11 @@ module Chouette
       # security against nil values
       return unless arrival_time && departure_time
 
-      if exceeds_gap?( arrival_time, departure_time) 
+      if exceeds_gap?( arrival_time, departure_time)
         errors.add(:arrival_time,I18n.t("activerecord.errors.models.vehicle_journey_at_stop.arrival_must_be_before_departure"))
       end
     end
-    
+
     after_initialize :set_virtual_attributes
     def set_virtual_attributes
       @_destroy = false
@@ -42,8 +42,8 @@ module Chouette
       result
     end
     def exceeds_gap?( first, second)
-      3600 < ( ( second-first)%( 3600 * 24))
-    end  
+      ( 2 * 3600 ) < ( ( second-first)%( 3600 * 24))
+    end
 
   end
 end
