@@ -29,8 +29,8 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_presence_of :network
   validates_presence_of :company
 
-  validates_presence_of :registration_number
-  validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}
+  validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}, :allow_nil => true, :allow_blank => true
+  validates_format_of :stable_id, :with => %r{\A[\d\w_\-]+\Z}, :allow_nil => true, :allow_blank => true
   validates_format_of :url, :with => %r{\Ahttps?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?\Z}, :allow_nil => true, :allow_blank => true
   validates_format_of :color, :with => %r{\A[0-9a-fA-F]{6}\Z}, :allow_nil => true, :allow_blank => true
   validates_format_of :text_color, :with => %r{\A[0-9a-fA-F]{6}\Z}, :allow_nil => true, :allow_blank => true
@@ -38,7 +38,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
   validates_presence_of :name
 
   def self.nullable_attributes
-    [:published_name, :number, :comment, :url, :color, :text_color]
+    [:published_name, :number, :comment, :url, :color, :text_color, :stable_id]
   end
 
   def geometry_presenter

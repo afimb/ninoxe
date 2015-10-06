@@ -209,10 +209,10 @@ describe Chouette::VehicleJourney, :type => :model do
 
 
       it "should update vehicle's footnotes" do
-        Chouette::VehicleJourney.find(subject.id).footnotes.should be_empty
+        expect(Chouette::VehicleJourney.find(subject.id).footnotes).to be_empty
         subject.footnote_ids = [ footnote_first.id ]
         subject.save
-        Chouette::VehicleJourney.find(subject.id).footnotes.count.should == 1
+        expect(Chouette::VehicleJourney.find(subject.id).footnotes.count).to eq(1)
       end
 
     end

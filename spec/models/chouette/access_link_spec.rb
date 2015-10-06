@@ -11,7 +11,7 @@ describe Chouette::AccessLink, :type => :model do
   end
 
   it { is_expected.to validate_presence_of :name }
-  it { is_expected.to validate_presence_of :link_type }
+  #it { is_expected.to validate_presence_of :link_type }
   it { is_expected.to validate_presence_of :link_orientation }
 
   describe "#access_link_type" do

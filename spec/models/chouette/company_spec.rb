@@ -4,8 +4,6 @@ describe Chouette::Company, :type => :model do
 
   subject { create(:company) }
 
-  it { is_expected.to validate_presence_of :registration_number }
-
   it { is_expected.to validate_presence_of :name }
 
   # it { should validate_presence_of :objectid }
