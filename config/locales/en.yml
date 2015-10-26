@@ -14,3 +14,5 @@ en:
               taken: dupplicate date for this timetable
         vehicle_journey_at_stop:
           arrival_must_be_before_departure: arrival time must be before departure time
+        timeband:
+          start_must_be_before_end: end date must be after start date
