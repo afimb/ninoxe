@@ -8,6 +8,8 @@ module Chouette
     #  attr_accessible :route, :transport_mode,:transport_mode_name, :published_journey_name, :published_journey_identifier, :facility, :vehicle_type_identifier, :number
     #  attr_accessible :vehicle_journey_at_stops_attributes, :time_table_tokens, :time_tables, :mobility_restricted_suitability, :flexible_service
 
+    enum journey_category: { timed: 0, frequency: 1 }
+
     attr_accessor :transport_mode_name
     attr_reader :time_table_tokens
 
