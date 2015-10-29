@@ -31,10 +31,6 @@ module Chouette
     has_and_belongs_to_many :time_tables, :class_name => 'Chouette::TimeTable', :foreign_key => "vehicle_journey_id", :association_foreign_key => "time_table_id"
     has_many :stop_points, -> { order("stop_points.position") }, :through => :vehicle_journey_at_stops
 
-    # TODO : Move this has_many inside the vehicle_journey_frequency.rb file
-    has_many :journey_frequencies, dependent: :destroy
-    accepts_nested_attributes_for :journey_frequencies, allow_destroy: true
-
     validate :increasing_times
     validates_presence_of :number
 

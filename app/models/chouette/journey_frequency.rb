@@ -15,7 +15,7 @@ module Chouette
   end
 
   class JourneyFrequency < ActiveRecord
-    belongs_to :vehicle_journey
+    belongs_to :vehicle_journey_frequency, foreign_key: 'vehicle_journey_id'
     belongs_to :timeband
     validates :vehicle_journey_id,   presence: true
     validates :first_departure_time, presence: true
