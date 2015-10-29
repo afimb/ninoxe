@@ -4,10 +4,10 @@ module Chouette
     def validate(record)
       timeband = record.timeband
       if timeband
-        if record.first_departure_time < timeband.start_time
+        if record.first_departure_time.utc.strftime( "%H%M%S%N" ) < timeband.start_time.utc.strftime( "%H%M%S%N" )
           record.errors[:first_departure_time] << I18n.t('activerecord.errors.models.journey_frequency.start_must_be_after_timeband')
         end
-        if record.last_departure_time > timeband.end_time
+        if record.last_departure_time.utc.strftime( "%H%M%S%N" ) > timeband.end_time.utc.strftime( "%H%M%S%N" )
           record.errors[:last_departure_time] << I18n.t('activerecord.errors.models.journey_frequency.end_must_be_before_timeband')
         end
       end
