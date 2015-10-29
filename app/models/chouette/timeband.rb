@@ -19,6 +19,12 @@ module Chouette
     def self.object_id_key
       "Timeband"
     end
+
+    def fullname
+      fullname = "#{I18n.l(self.start_time, format: :hour)}-#{I18n.l(self.end_time, format: :hour)}"
+      "#{self.name} (#{fullname})" if self.name
+    end
+
   end
 
 end

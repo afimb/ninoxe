@@ -3,9 +3,7 @@ module Chouette
 
     after_initialize :fill_journey_category
 
-    has_many :journey_frequencies, dependent: :destroy
-
-    accepts_nested_attributes_for :journey_frequencies, allow_destroy: true
+    default_scope { where(journey_category: journey_categories[:frequency]) }
 
     private
 

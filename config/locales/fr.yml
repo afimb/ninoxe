@@ -16,3 +16,6 @@ fr:
           arrival_must_be_before_departure: "l'heure d'arrivée doit être antérieure à l'heure de départ"
         timeband:
           start_must_be_before_end: la date de fin doit être postérieure à la date de début
+        journey_frequency:
+          start_must_be_after_timeband: la date de départ doit être supérieure ou égal à la plage horaire
+          end_must_be_before_timeband: la date de fin doit être inférieur ou égal à la plage horaire
