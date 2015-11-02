@@ -10,6 +10,8 @@ module Chouette
 
     enum journey_category: { timed: 0, frequency: 1 }
 
+    default_scope { where(journey_category: journey_categories[:timed]) }
+
     attr_accessor :transport_mode_name
     attr_reader :time_table_tokens
 
@@ -104,5 +106,14 @@ module Chouette
         vjas._destroy = true
       end
     end
+
+    def self.matrix(vehicle_journeys)
+      {}.tap do |hash|
+        vehicle_journeys.map{ |vj|
+          vj.vehicle_journey_at_stops.map{ |vjas |hash[ "#{vj.id}-#{vjas.stop_point_id}"] = vjas }
+        }
+      end
+    end
+
   end
 end

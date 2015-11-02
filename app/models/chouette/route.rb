@@ -88,8 +88,11 @@ class Chouette::Route < Chouette::TridentActiveRecord
     self.vehicle_journeys.joins(:time_tables).map(&:"time_tables").flatten.uniq
   end
 
-  def sorted_vehicle_journeys
-    vehicle_journeys.joins(:journey_pattern, :vehicle_journey_at_stops).where("vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id").order( "vehicle_journey_at_stops.departure_time")
+  def sorted_vehicle_journeys(journey_category_model)
+    send(journey_category_model)
+        .joins(:journey_pattern, :vehicle_journey_at_stops)
+        .where("vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id")
+        .order( "vehicle_journey_at_stops.departure_time")
   end
 
   def self.direction_binding
