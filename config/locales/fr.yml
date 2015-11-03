@@ -19,3 +19,5 @@ fr:
         journey_frequency:
           start_must_be_after_timeband: la date de départ doit être supérieure ou égal à la plage horaire
           end_must_be_before_timeband: la date de fin doit être inférieur ou égal à la plage horaire
+          end_must_be_different_from_first: la date de fin doit être différent de la date de départ
+          scheduled_headway_interval_greater_than_zero: l'intervalle doit être supérieur à 0

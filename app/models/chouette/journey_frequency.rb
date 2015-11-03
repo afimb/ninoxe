@@ -1,6 +1,6 @@
 module Chouette
 
-  class TimebandConstraintValidator < ActiveModel::Validator
+  class JourneyFrequencyValidator < ActiveModel::Validator
     def validate(record)
       timeband = record.timeband
       if timeband
@@ -11,6 +11,12 @@ module Chouette
           record.errors[:last_departure_time] << I18n.t('activerecord.errors.models.journey_frequency.end_must_be_before_timeband')
         end
       end
+      if record.first_departure_time == record.last_departure_time
+        record.errors[:last_departure_time] << I18n.t('activerecord.errors.models.journey_frequency.end_must_be_different_from_first')
+      end
+      if record.scheduled_headway_interval.strftime( "%H%M%S%N" ) == Time.current.midnight.strftime( "%H%M%S%N" )
+        record.errors[:scheduled_headway_interval] << I18n.t('activerecord.errors.models.journey_frequency.scheduled_headway_interval_greater_than_zero')
+      end
     end
   end
 
@@ -20,6 +26,7 @@ module Chouette
     validates :vehicle_journey_id,   presence: true
     validates :first_departure_time, presence: true
     validates :last_departure_time,  presence: true
-    validates_with TimebandConstraintValidator
+    validates :scheduled_headway_interval, presence: true
+    validates_with JourneyFrequencyValidator
   end
 end
