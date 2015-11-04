@@ -29,16 +29,15 @@ module Chouette
       matrix.each do |departure_time, vj|
         @base_departure_time = departure_time
         vj.vehicle_journey_at_stops.each_cons(2) { |vjas, vjas_next|
-          stop_point_id = vjas.stop_point_id
           vjas_dup = vjas.dup
           vjas_dup.departure_time = @base_departure_time
-          hash[stop_point_id][departure_time.to_i] = vjas_dup
+          hash[vjas.stop_point.stop_area.name][departure_time.to_i] = vjas_dup
           @base_departure_time = vjas_dup.departure_time + (vjas_next.departure_time - vjas.departure_time)
           @last_vjas_next = vjas_next.dup
         }
         # Add last stop_point
         @last_vjas_next.departure_time = @base_departure_time
-        hash[@last_vjas_next.stop_point_id][departure_time.to_i] = @last_vjas_next
+        hash[@last_vjas_next.stop_point.stop_area.name][departure_time.to_i] = @last_vjas_next
       end
       hash
     end
@@ -50,7 +49,7 @@ module Chouette
         Hash[
           vj.vehicle_journey_at_stops.map{ |sp|
             [
-              sp.stop_point_id, Hash[matrix.map{ |departure_time2, vj2| [departure_time2.to_i, nil] }]
+              sp.stop_point.stop_area.name, Hash[matrix.map{ |departure_time2, vj2| [departure_time2.to_i, nil] }]
             ]
           }
         ]
