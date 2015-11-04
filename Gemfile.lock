@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ninoxe (1.2.2)
+    ninoxe (1.2.4)
       activerecord (~> 4.1.1)
       acts-as-taggable-on (>= 3)
       acts_as_list (>= 0.1.6)
