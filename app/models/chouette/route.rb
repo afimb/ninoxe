@@ -17,7 +17,13 @@ class Chouette::Route < Chouette::TridentActiveRecord
   has_many :journey_patterns, :dependent => :destroy
   has_many :vehicle_journeys, :dependent => :destroy do
     def timeless
-      all( :conditions => ['vehicle_journeys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where( :stop_point_id => proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id)).pluck(:vehicle_journey_id)] )
+      Chouette::Route.vehicle_journeys_timeless(proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id))
+    end
+  end
+  has_many :vehicle_journey_frequencies, :dependent => :destroy do
+    # Todo : I think there is a better way to do this.
+    def timeless
+      Chouette::Route.vehicle_journeys_timeless(proxy_association.owner.journey_patterns.pluck( :departure_stop_point_id))
     end
   end
   belongs_to :opposite_route, :class_name => 'Chouette::Route', :foreign_key => :opposite_route_id
@@ -82,8 +88,11 @@ class Chouette::Route < Chouette::TridentActiveRecord
     self.vehicle_journeys.joins(:time_tables).map(&:"time_tables").flatten.uniq
   end
 
-  def sorted_vehicle_journeys
-    vehicle_journeys.joins(:journey_pattern, :vehicle_journey_at_stops).where("vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id").order( "vehicle_journey_at_stops.departure_time")
+  def sorted_vehicle_journeys(journey_category_model)
+    send(journey_category_model)
+        .joins(:journey_pattern, :vehicle_journey_at_stops)
+        .where("vehicle_journey_at_stops.stop_point_id=journey_patterns.departure_stop_point_id")
+        .order( "vehicle_journey_at_stops.departure_time")
   end
 
   def self.direction_binding
@@ -159,4 +168,11 @@ class Chouette::Route < Chouette::TridentActiveRecord
 
     return true
   end
+
+  protected
+
+  def self.vehicle_journeys_timeless(stop_point_id)
+    all( :conditions => ['vehicle_journeys.id NOT IN (?)', Chouette::VehicleJourneyAtStop.where(stop_point_id: stop_point_id).pluck(:vehicle_journey_id)] )
+  end
+
 end

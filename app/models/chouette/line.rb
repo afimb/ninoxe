@@ -77,5 +77,8 @@ class Chouette::Line < Chouette::TridentActiveRecord
     self.group_of_line_ids = ids.split(",")
   end
 
+  def vehicle_journey_frequencies?
+    self.vehicle_journeys.unscoped.where(journey_category: 1).count > 0
+  end
 
 end
