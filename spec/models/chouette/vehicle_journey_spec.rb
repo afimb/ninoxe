@@ -84,7 +84,7 @@ describe Chouette::VehicleJourney, :type => :model do
   context "when following departure times exceeds gap" do
     describe "#increasing_times" do
       before(:each) do
-        subject.vehicle_journey_at_stops[0].departure_time = subject.vehicle_journey_at_stops[1].departure_time - 2.hour
+        subject.vehicle_journey_at_stops[0].departure_time = subject.vehicle_journey_at_stops[1].departure_time - 3.hour
         subject.vehicle_journey_at_stops[0].arrival_time = subject.vehicle_journey_at_stops[0].departure_time
         subject.vehicle_journey_at_stops[1].arrival_time = subject.vehicle_journey_at_stops[1].departure_time
       end
@@ -97,7 +97,7 @@ describe Chouette::VehicleJourney, :type => :model do
     describe "#update_attributes" do
       let!(:params){ {"vehicle_journey_at_stops_attributes" => {
             "0"=>{"id" => subject.vehicle_journey_at_stops[0].id ,"arrival_time" => 1.minutes.ago,"departure_time" => 1.minutes.ago},
-            "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "arrival_time" => (1.minutes.ago + 2.hour),"departure_time" => (1.minutes.ago + 2.hour)}
+            "1"=>{"id" => subject.vehicle_journey_at_stops[1].id, "arrival_time" => (1.minutes.ago + 3.hour),"departure_time" => (1.minutes.ago + 3.hour)}
          }}}
       it "should return false" do
         expect(subject.update_attributes(params)).to be_falsey
