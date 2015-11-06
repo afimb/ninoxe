@@ -4,7 +4,8 @@ rvm:
   - 1.9.3
   - 2.1.7
   - 2.2.3
-  - jruby-1.7.22
+  - jruby-19mode
+  - jruby-head
 jdk:
   - oraclejdk7
   - openjdk7
@@ -16,12 +17,18 @@ matrix:
       jdk: openjdk7
     - rvm: 2.2.3
       jdk: openjdk7
+  allow_failures:
+    - rvm: jruby-head
+      jdk: oraclejdk7
+    - rvm: jruby-head
+      jdk: openjdk7
 notifications:
   email:
     - mflorisson@gmail.com
     - bruno@atnos.com
     - metienne@cityway.fr
-    - zbouziane@cityway.fr      
+    - zbouziane@cityway.fr
+before_install: "rm Gemfile.lock"
 before_script:
   - "bundle exec rake ci:db_travis_config"
   - "bundle exec rake db:create"

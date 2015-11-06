@@ -208,8 +208,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord-jdbcpostgresql-adapter (>= 1.2.9)
-  activerecord-jdbcsqlite3-adapter (>= 1.2.9)
+  activerecord-jdbcpostgresql-adapter (~> 1.3.19)
+  activerecord-jdbcsqlite3-adapter (~> 1.3.19)
   coffee-rails
   factory_girl_rails (>= 4.2.1)
   guard
@@ -219,7 +219,7 @@ DEPENDENCIES
   jquery-rails
   jruby-openssl
   ninoxe!
-  pg (>= 0.11.0)
+  pg
   rails (~> 4.1.10)
   rake (>= 0.9)
   rb-fsevent
