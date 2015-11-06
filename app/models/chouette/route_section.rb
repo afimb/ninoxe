@@ -28,13 +28,11 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   def process_geometry
     self.processed_geometry = (processor || DEFAULT_PROCESSOR).call(self)
+    self.distance = processed_geometry.to_georuby.to_wgs84.spherical_distance if processed_geometry
+
+    true
   end
   before_validation :process_geometry
-
-  def process_distance
-    self.distance = self.process_geometry.to_georuby.to_wgs84.spherical_distance
-  end
-  after_validation :process_distance
 
   def editable_geometry=(geometry)
     self.input_geometry = geometry
