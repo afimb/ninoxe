@@ -1,4 +1,3 @@
-require 'open-uri'
 class Chouette::RouteSection < Chouette::TridentActiveRecord
   belongs_to :departure, class_name: 'Chouette::StopArea'
   belongs_to :arrival, class_name: 'Chouette::StopArea'
@@ -17,8 +16,19 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
 
   def name
     stop_areas.map do |stop_area|
-      stop_area.try(:name) or '-'
-    end.join(' - ')
+      stop_area.try(:name) or '?'
+    end.join(' - ') + " (#{geometry_description})"
+  end
+
+  def geometry_description
+    if input_geometry || processed_geometry
+      [ "#{distance.to_i}m" ].tap do |parts|
+        via_count = input_geometry ? [ input_geometry.points.count - 2, 0 ].max : 0
+        parts << "#{via_count} #{'via'.pluralize(via_count)}" if via_count > 0
+      end.join(' - ')
+    else
+      "-"
+    end
   end
 
   DEFAULT_PROCESSOR = Proc.new { |section| section.input_geometry || section.default_geometry.try(:to_rgeo) }
