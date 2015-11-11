@@ -5,6 +5,13 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
   validates :departure, :arrival, presence: true
   validates :processed_geometry, presence: true
 
+  scope :by_endpoint_name, ->(endpoint, name) do
+    joins("INNER JOIN stop_areas #{endpoint} ON #{endpoint}.id = route_sections.#{endpoint}_id").where(["#{endpoint}.name ilike ?", "%#{name}%"])
+  end
+  scope :by_line_id, ->(line_id) do
+    where [ "route_sections.id in (SELECT unnest(journey_patterns.route_section_ids) FROM journey_patterns INNER JOIN routes ON journey_patterns.route_id = routes.id WHERE routes.line_id = ?)", line_id ]
+  end
+
   def stop_areas
     [departure, arrival].compact
   end
@@ -20,10 +27,13 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
     end.join(' - ') + " (#{geometry_description})"
   end
 
+  def via_count
+    input_geometry ? [ input_geometry.points.count - 2, 0 ].max : 0
+  end
+
   def geometry_description
     if input_geometry || processed_geometry
       [ "#{distance.to_i}m" ].tap do |parts|
-        via_count = input_geometry ? [ input_geometry.points.count - 2, 0 ].max : 0
         parts << "#{via_count} #{'via'.pluralize(via_count)}" if via_count > 0
       end.join(' - ')
     else
@@ -36,8 +46,12 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
   @@processor = DEFAULT_PROCESSOR
   cattr_accessor :processor
 
+  def instance_processor
+    no_processing || processor.nil? ? DEFAULT_PROCESSOR : processor
+  end
+
   def process_geometry
-    self.processed_geometry = (processor || DEFAULT_PROCESSOR).call(self)
+    self.processed_geometry = instance_processor.call(self)
     self.distance = processed_geometry.to_georuby.to_wgs84.spherical_distance if processed_geometry
 
     true
