@@ -51,8 +51,10 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
   end
 
   def process_geometry
-    self.processed_geometry = instance_processor.call(self)
-    self.distance = processed_geometry.to_georuby.to_wgs84.spherical_distance if processed_geometry
+    if input_geometry_changed? || processed_geometry.nil?
+      self.processed_geometry = instance_processor.call(self)
+      self.distance = processed_geometry.to_georuby.to_wgs84.spherical_distance if processed_geometry
+    end
 
     true
   end
