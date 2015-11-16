@@ -2,12 +2,6 @@ class Chouette::TimeTable < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   self.primary_key = "id"
 
-  # attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version, :comment
-  # attr_accessible :int_day_types,:monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday
-  # attr_accessible :start_date, :end_date
-  # attr_accessible :dates_attributes,:periods_attributes
-  # attr_accessible :tag_list, :tag_search
-
   acts_as_taggable
   
   attr_accessor :monday,:tuesday,:wednesday,:thursday,:friday,:saturday,:sunday  

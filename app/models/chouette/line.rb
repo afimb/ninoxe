@@ -2,13 +2,6 @@ class Chouette::Line < Chouette::TridentActiveRecord
   # FIXME http://jira.codehaus.org/browse/JRUBY-6358
   self.primary_key = "id"
 
-  # attr_accessible :transport_mode, :network_id, :company_id, :objectid, :object_version
-  # attr_accessible :creation_time, :creator_id, :name, :number, :published_name, :transport_mode_name
-  # attr_accessible :registration_number, :comment, :mobility_restricted_suitability, :int_user_needs
-  # attr_accessible :flexible_service
-  # attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
-  # attr_accessible :url, :color, :text_color
-
   belongs_to :company
   belongs_to :network
   has_many :routes, :dependent => :destroy
@@ -19,10 +12,7 @@ class Chouette::Line < Chouette::TridentActiveRecord
 
   has_many :footnotes, :inverse_of => :line, :validate => :true, :dependent => :destroy
   accepts_nested_attributes_for :footnotes, :reject_if => :all_blank, :allow_destroy => true
-  #attr_accessible :footnotes_attributes
 
-  #attr_accessible :group_of_lines, :group_of_line_ids, :group_of_line_tokens
-  #attr_accessible :url, :color, :text_color
   attr_reader :group_of_line_tokens
   attr_accessor :transport_mode
 

@@ -10,14 +10,6 @@ class Chouette::AccessPoint < Chouette::TridentActiveRecord
   
   attr_accessor :access_point_type
   attr_writer :coordinates
-
-  # attr_accessible :objectid, :object_version, :creation_time, :creator_id, :name, :comment
-  # attr_accessible :longitude, :latitude, :long_lat_type
-  # attr_accessible :country_code, :street_name, :zip_code, :city_name
-  # attr_accessible :openning_time, :closing_time, :access_type, :access_point_type
-  # attr_accessible :mobility_restricted_suitability, :stairs_availability, :lift_availability
-  # attr_accessible :stop_area_id
-  # attr_accessible :coordinates
   
   validates_presence_of :name
   validates_presence_of :access_type

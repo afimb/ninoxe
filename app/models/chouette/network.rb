@@ -7,11 +7,7 @@ class Chouette::Network < Chouette::TridentActiveRecord
   attr_accessor :source_type_name
 
   validates_format_of :registration_number, :with => %r{\A[0-9A-Za-z_-]+\Z}, :allow_nil => true, :allow_blank => true
-
   validates_presence_of :name
-
-  # attr_accessible :objectid, :object_version, :creation_time, :creator_id, :version_date, :description, :name
-  # attr_accessible :registration_number, :source_name, :source_type, :source_identifier, :comment
 
   def self.object_id_key
     "PTNetwork"
