@@ -19,7 +19,7 @@ module Chouette
       if record.first_departure_time == record.last_departure_time
         record.errors[:last_departure_time] << I18n.t('activerecord.errors.models.journey_frequency.end_must_be_different_from_first')
       end
-      if record.scheduled_headway_interval.strftime( "%H%M%S%N" ) == Time.current.midnight.strftime( "%H%M%S%N" )
+      if record.scheduled_headway_interval.blank? || (record.scheduled_headway_interval.strftime( "%H%M%S%N" ) == Time.current.midnight.strftime( "%H%M%S%N" ))
         record.errors[:scheduled_headway_interval] << I18n.t('activerecord.errors.models.journey_frequency.scheduled_headway_interval_greater_than_zero')
       end
     end
@@ -28,7 +28,6 @@ module Chouette
   class JourneyFrequency < ActiveRecord
     belongs_to :vehicle_journey_frequency, foreign_key: 'vehicle_journey_id'
     belongs_to :timeband
-    validates :vehicle_journey_id,   presence: true
     validates :first_departure_time, presence: true
     validates :last_departure_time,  presence: true
     validates :scheduled_headway_interval, presence: true
