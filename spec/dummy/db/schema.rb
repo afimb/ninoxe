@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922093109) do
+ActiveRecord::Schema.define(version: 20151124145016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -170,6 +170,20 @@ ActiveRecord::Schema.define(version: 20150922093109) do
     t.integer "group_of_line_id", limit: 8
     t.integer "line_id",          limit: 8
   end
+
+  create_table "journey_frequencies", force: true do |t|
+    t.integer  "vehicle_journey_id"
+    t.time     "scheduled_headway_interval",                 null: false
+    t.time     "first_departure_time",                       null: false
+    t.time     "last_departure_time"
+    t.boolean  "exact_time",                 default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "timeband_id"
+  end
+
+  add_index "journey_frequencies", ["timeband_id"], name: "index_journey_frequencies_on_timeband_id", using: :btree
+  add_index "journey_frequencies", ["vehicle_journey_id"], name: "index_journey_frequencies_on_vehicle_journey_id", using: :btree
 
   create_table "journey_patterns", force: true do |t|
     t.integer  "route_id",                limit: 8
@@ -343,20 +357,6 @@ ActiveRecord::Schema.define(version: 20150922093109) do
 
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
-  create_table "time_slots", force: true do |t|
-    t.string   "objectid",                     null: false
-    t.integer  "object_version"
-    t.datetime "creation_time"
-    t.string   "creator_id"
-    t.string   "name"
-    t.time     "beginning_slot_time"
-    t.time     "end_slot_time"
-    t.time     "first_departure_time_in_slot"
-    t.time     "last_departure_time_in_slot"
-  end
-
-  add_index "time_slots", ["objectid"], name: "time_slots_objectid_key", unique: true, using: :btree
-
   create_table "time_table_dates", force: true do |t|
     t.integer "time_table_id", limit: 8, null: false
     t.date    "date"
@@ -397,6 +397,18 @@ ActiveRecord::Schema.define(version: 20150922093109) do
   add_index "time_tables_vehicle_journeys", ["time_table_id"], name: "index_time_tables_vehicle_journeys_on_time_table_id", using: :btree
   add_index "time_tables_vehicle_journeys", ["vehicle_journey_id"], name: "index_time_tables_vehicle_journeys_on_vehicle_journey_id", using: :btree
 
+  create_table "timebands", force: true do |t|
+    t.string   "objectid",       null: false
+    t.integer  "object_version"
+    t.datetime "creation_time"
+    t.string   "creator_id"
+    t.string   "name"
+    t.time     "start_time",     null: false
+    t.time     "end_time",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "vehicle_journey_at_stops", force: true do |t|
     t.integer "vehicle_journey_id",             limit: 8
     t.integer "stop_point_id",                  limit: 8
@@ -404,9 +416,6 @@ ActiveRecord::Schema.define(version: 20150922093109) do
     t.string  "boarding_alighting_possibility"
     t.time    "arrival_time"
     t.time    "departure_time"
-    t.time    "waiting_time"
-    t.time    "elapse_duration"
-    t.time    "headway_frequency"
     t.string  "for_boarding"
     t.string  "for_alighting"
   end
@@ -417,9 +426,8 @@ ActiveRecord::Schema.define(version: 20150922093109) do
   create_table "vehicle_journeys", force: true do |t|
     t.integer  "route_id",                        limit: 8
     t.integer  "journey_pattern_id",              limit: 8
-    t.integer  "time_slot_id",                    limit: 8
     t.integer  "company_id",                      limit: 8
-    t.string   "objectid",                                  null: false
+    t.string   "objectid",                                              null: false
     t.integer  "object_version"
     t.datetime "creation_time"
     t.string   "creator_id"
@@ -433,6 +441,7 @@ ActiveRecord::Schema.define(version: 20150922093109) do
     t.integer  "number",                          limit: 8
     t.boolean  "mobility_restricted_suitability"
     t.boolean  "flexible_service"
+    t.integer  "journey_category",                          default: 0, null: false
   end
 
   add_index "vehicle_journeys", ["objectid"], name: "vehicle_journeys_objectid_key", unique: true, using: :btree
