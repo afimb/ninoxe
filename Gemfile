@@ -12,7 +12,7 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  gem 'pg'
+  gem 'pg', '>= 0.11.0'
   gem 'sqlite3'
 end
 

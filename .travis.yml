@@ -1,5 +1,12 @@
 sudo: false
 language: ruby
+addons:
+  postgresql: "9.3"
+  apt:
+    packages:
+    - libproj-dev
+    - libgeos-dev
+    - libffi-dev
 rvm:
   - 1.9.3
   - 2.1.7
@@ -28,9 +35,11 @@ notifications:
     - bruno@atnos.com
     - metienne@cityway.fr
     - zbouziane@cityway.fr
-before_install: "rm Gemfile.lock"
+before_install:
+  - "gem update bundler"
+  - "rm Gemfile.lock"
 before_script:
   - "bundle exec rake ci:db_travis_config"
   - "bundle exec rake db:create"
   - "bundle exec rake db:migrate"
-script: "bundle exec rake spec"  
+script: "bundle exec rake spec"
