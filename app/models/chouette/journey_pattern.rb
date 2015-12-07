@@ -11,6 +11,9 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
 
   validates_presence_of :route
 
+  enum section_status: { todo: 0, completed: 1, control: 2 }
+
+  after_initialize :control_route_sections
 
   # TODO: this a workarround
   # otherwise, we loose the first stop_point
@@ -66,5 +69,35 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
       vjas.destroy
     end
   end
+
+  def control_route_sections
+    journey_pattern_section_all
+    i = 0
+    to_control = false
+    stop_area_ids = self.stop_points.map(&:stop_area_id)
+    stop_area_ids.each_cons(2) do |a|
+      jps = @route_sections_orders[i]
+      i += 1
+      unless jps
+        to_control = true
+        next
+      end
+      unless [jps.route_section.departure.id, jps.route_section.arrival.id] == a
+        jps.destroy
+        to_control = true
+      end
+    end
+    to_control ? self.control! : self.completed!
+  end
+
+  protected
+
+  def journey_pattern_section_all
+    @route_sections_orders = {}
+    self.journey_pattern_sections.all.map do |journey_pattern_section|
+      @route_sections_orders[journey_pattern_section.rank] = journey_pattern_section
+    end
+  end
+
 end
 
