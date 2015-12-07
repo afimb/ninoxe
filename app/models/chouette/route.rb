@@ -64,6 +64,8 @@ class Chouette::Route < Chouette::TridentActiveRecord
 
   before_destroy :dereference_opposite_route
 
+  after_commit :journey_patterns_control_route_sections
+
   def geometry_presenter
     Chouette::Geometry::RoutePresenter.new self
   end
@@ -164,6 +166,12 @@ class Chouette::Route < Chouette::TridentActiveRecord
     end
 
     return true
+  end
+
+  def journey_patterns_control_route_sections
+    self.journey_patterns.each do |jp|
+      jp.control_route_sections
+    end
   end
 
   protected
