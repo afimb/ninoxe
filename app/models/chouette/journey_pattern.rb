@@ -13,7 +13,8 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
 
   enum section_status: { todo: 0, completed: 1, control: 2 }
 
-  after_initialize :control_route_sections
+  attr_accessor  :control_checked
+  after_update :control_route_sections, :unless => "control_checked"
 
   # TODO: this a workarround
   # otherwise, we loose the first stop_point
@@ -71,10 +72,14 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
   end
 
   def control_route_sections
+    stop_area_ids = self.stop_points.map(&:stop_area_id)
+    control_route_sections_by_stop_areas(stop_area_ids)
+  end
+
+  def control_route_sections_by_stop_areas(stop_area_ids)
     journey_pattern_section_all
     i = 0
     to_control = false
-    stop_area_ids = self.stop_points.map(&:stop_area_id)
     stop_area_ids.each_cons(2) do |a|
       jps = @route_sections_orders[i]
       i += 1
@@ -87,6 +92,7 @@ class Chouette::JourneyPattern < Chouette::TridentActiveRecord
         to_control = true
       end
     end
+    self.control_checked = true
     to_control ? self.control! : self.completed!
   end
 
