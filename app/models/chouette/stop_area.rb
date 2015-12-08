@@ -17,6 +17,9 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
   attr_accessor :children_ids
   attr_writer :coordinates
 
+  after_update :journey_patterns_control_route_sections,
+               if: Proc.new { |stop_area| ['boarding_position', 'quay'].include? stop_area.stop_area_type }
+
   validates_format_of :registration_number, :with => %r{\A[\d\w_\-]+\Z}, :allow_blank => true
   validates_presence_of :name
   validates_presence_of :area_type
@@ -309,5 +312,12 @@ class Chouette::StopArea < Chouette::TridentActiveRecord
     sa
   end
 
+  def journey_patterns_control_route_sections
+    if self.changed_attributes['latitude'] || self.changed_attributes['longitude']
+      self.stop_points.each do |stop_point|
+        stop_point.route.journey_patterns.completed.map{ |jp| jp.control! }
+      end
+    end
+  end
 
 end
