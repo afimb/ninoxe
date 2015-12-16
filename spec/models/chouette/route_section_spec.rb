@@ -55,15 +55,15 @@ RSpec.describe Chouette::RouteSection, :type => :model do
 
     end
 
-    context "with a processor" do
-
-      it "should use the processor result" do
-        subject.processor = Proc.new { |s| sample_geometry }
-        subject.process_geometry
-        subject.processor = nil
-        expect(subject.processed_geometry).to eq(sample_geometry)
-      end
-    end
+    # context "with a processor" do
+    #
+    #   it "should use the processor result" do
+    #     subject.processor = Proc.new { |s| sample_geometry }
+    #     subject.process_geometry
+    #     subject.processor = nil
+    #     expect(subject.processed_geometry).to eq(sample_geometry)
+    #   end
+    # end
   end
 
   describe "#distance" do
@@ -73,8 +73,6 @@ RSpec.describe Chouette::RouteSection, :type => :model do
       it "should return the right distance" do
         subject.input_geometry = sample_geometry
         subject.process_geometry
-        subject.process_distance
-
         expect(subject.distance).to eq(sample_geometry.to_georuby.spherical_distance)
       end
     end
@@ -84,7 +82,6 @@ RSpec.describe Chouette::RouteSection, :type => :model do
       it "should return the right distance" do
         subject.input_geometry = sample_geometry
         subject.process_geometry
-        subject.process_distance
         expect(subject.distance).to eq(sample_geometry.to_georuby.spherical_distance)
       end
     end

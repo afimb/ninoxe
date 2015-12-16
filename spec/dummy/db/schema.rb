@@ -173,18 +173,30 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
   end
 
   create_table "journey_frequencies", force: true do |t|
-    t.integer  "vehicle_journey_id"
-    t.time     "scheduled_headway_interval",                 null: false
-    t.time     "first_departure_time",                       null: false
+    t.integer  "vehicle_journey_id",         limit: 8
+    t.time     "scheduled_headway_interval",                           null: false
+    t.time     "first_departure_time",                                 null: false
     t.time     "last_departure_time"
     t.boolean  "exact_time",                 default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "timeband_id"
+    t.integer  "timeband_id",                limit: 8
   end
 
   add_index "journey_frequencies", ["timeband_id"], name: "index_journey_frequencies_on_timeband_id", using: :btree
   add_index "journey_frequencies", ["vehicle_journey_id"], name: "index_journey_frequencies_on_vehicle_journey_id", using: :btree
+
+  create_table "journey_pattern_sections", force: true do |t|
+    t.integer  "journey_pattern_id", limit: 8, null: false
+    t.integer  "route_section_id",   limit: 8, null: false
+    t.integer  "rank",                         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "journey_pattern_sections", ["journey_pattern_id", "route_section_id", "rank"], :name => "index_jps_on_journey_pattern_id_and_route_section_id_and_rank", :unique => true
+  add_index "journey_pattern_sections", ["journey_pattern_id"], :name => "index_journey_pattern_sections_on_journey_pattern_id"
+  add_index "journey_pattern_sections", ["route_section_id"], :name => "index_journey_pattern_sections_on_route_section_id"
 
   create_table "journey_patterns", force: true do |t|
     t.integer  "route_id",                limit: 8
@@ -198,6 +210,7 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
     t.string   "published_name"
     t.integer  "departure_stop_point_id", limit: 8
     t.integer  "arrival_stop_point_id",   limit: 8
+    t.integer  "section_status",                    default: 0, null: false
   end
 
   add_index "journey_patterns", ["objectid"], name: "journey_patterns_objectid_key", unique: true, using: :btree
@@ -268,14 +281,14 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
   add_index "pt_links", ["objectid"], name: "pt_links_objectid_key", unique: true, using: :btree
 
   create_table "route_sections", force: true do |t|
-    t.integer  "departure_id"
-    t.integer  "arrival_id"
-    t.string   "objectid",                                                    null: false
+    t.integer  "departure_id",       limit: 8
+    t.integer  "arrival_id",         limit: 8
+    t.string   "objectid",                                                       null: false
     t.integer  "object_version"
     t.datetime "creation_time"
     t.string   "creator_id"
-    t.spatial  "input_geometry",     limit: {:srid=>0, :type=>"line_string"}
-    t.spatial  "processed_geometry", limit: {:srid=>0, :type=>"line_string"}
+    t.spatial  "input_geometry",     limit: {:srid=>4326, :type=>"line_string"}
+    t.spatial  "processed_geometry", limit: {:srid=>4326, :type=>"line_string"}
     t.float    "distance"
     t.boolean  "no_processing"
   end
@@ -461,6 +474,7 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
   add_index "vehicle_journeys", ["objectid"], name: "vehicle_journeys_objectid_key", unique: true, using: :btree
   add_index "vehicle_journeys", ["route_id"], name: "index_vehicle_journeys_on_route_id", using: :btree
 
+  Foreigner.load
   add_foreign_key "access_links", "access_points", name: "aclk_acpt_fkey", dependent: :delete
   add_foreign_key "access_links", "stop_areas", name: "aclk_area_fkey", dependent: :delete
 
@@ -472,6 +486,12 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
   add_foreign_key "group_of_lines_lines", "group_of_lines", name: "groupofline_group_fkey", dependent: :delete
   add_foreign_key "group_of_lines_lines", "lines", name: "groupofline_line_fkey", dependent: :delete
 
+  add_foreign_key "journey_frequencies", "timebands", name: "journey_frequencies_timeband_id_fk", dependent: :nullify
+  add_foreign_key "journey_frequencies", "vehicle_journeys", name: "journey_frequencies_vehicle_journey_id_fk", dependent: :nullify
+
+  add_foreign_key "journey_pattern_sections", "journey_patterns", name: "journey_pattern_sections_journey_pattern_id_fk", dependent: :delete
+  add_foreign_key "journey_pattern_sections", "route_sections", name: "journey_pattern_sections_route_section_id_fk", dependent: :delete
+
   add_foreign_key "journey_patterns", "routes", name: "jp_route_fkey", dependent: :delete
   add_foreign_key "journey_patterns", "stop_points", name: "arrival_point_fkey", column: "arrival_stop_point_id", dependent: :nullify
   add_foreign_key "journey_patterns", "stop_points", name: "departure_point_fkey", column: "departure_stop_point_id", dependent: :nullify
@@ -481,6 +501,9 @@ ActiveRecord::Schema.define(version: 2015110517100832) do
 
   add_foreign_key "lines", "companies", name: "line_company_fkey", dependent: :nullify
   add_foreign_key "lines", "networks", name: "line_ptnetwork_fkey", dependent: :nullify
+
+  add_foreign_key "route_sections", "stop_areas", name: "route_sections_arrival_id_fk", column: "arrival_id", dependent: :delete
+  add_foreign_key "route_sections", "stop_areas", name: "route_sections_departure_id_fk", column: "departure_id", dependent: :delete
 
   add_foreign_key "routes", "lines", name: "route_line_fkey", dependent: :delete
   add_foreign_key "routes", "routes", name: "route_opposite_route_fkey", column: "opposite_route_id", dependent: :nullify
