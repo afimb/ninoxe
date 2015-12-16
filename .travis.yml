@@ -28,9 +28,12 @@ notifications:
     - bruno@atnos.com
     - metienne@cityway.fr
     - zbouziane@cityway.fr
-before_install: "rm Gemfile.lock"
+before_install:
+  - gem update bundler
+  - rm Gemfile.lock
 before_script:
-  - "bundle exec rake ci:db_travis_config"
-  - "bundle exec rake db:create"
-  - "bundle exec rake db:migrate"
-script: "bundle exec rake spec"  
+  - export JRUBY_OPTS="-J-XX:MaxPermSize=128m"
+  - bundle exec rake ci:db_travis_config
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+script: bundle exec rake spec
