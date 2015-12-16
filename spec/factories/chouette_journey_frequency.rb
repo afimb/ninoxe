@@ -1,7 +1,6 @@
 FactoryGirl.define do
 
   factory :journey_frequency, class: Chouette::JourneyFrequency do
-    vehicle_journey_id { 1 }
     timeband
     scheduled_headway_interval { Time.current }
     first_departure_time { timeband.start_time }
@@ -9,7 +8,6 @@ FactoryGirl.define do
   end
 
   factory :journey_frequency_first_departure_time_invalid, class: Chouette::JourneyFrequency do
-    vehicle_journey_id { 1 }
     timeband
     scheduled_headway_interval { Time.current }
     first_departure_time { timeband.start_time - 1.minute }
@@ -17,7 +15,6 @@ FactoryGirl.define do
   end
 
   factory :journey_frequency_last_departure_time_invalid, class: Chouette::JourneyFrequency do
-    vehicle_journey_id { 1 }
     timeband
     scheduled_headway_interval { Time.current }
     first_departure_time { timeband.start_time }
@@ -25,7 +22,6 @@ FactoryGirl.define do
   end
 
   factory :journey_frequency_departure_time_invalid, class: Chouette::JourneyFrequency do
-    vehicle_journey_id { 1 }
     timeband
     scheduled_headway_interval { Time.current }
     first_departure_time { '00:00' }
@@ -33,7 +29,6 @@ FactoryGirl.define do
   end
 
   factory :journey_frequency_scheduled_headway_interval_invalid, class: Chouette::JourneyFrequency do
-    vehicle_journey_id { 1 }
     timeband
     scheduled_headway_interval { '00:00' }
     first_departure_time { timeband.start_time }
