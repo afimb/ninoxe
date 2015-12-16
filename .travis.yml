@@ -1,5 +1,12 @@
 sudo: false
 language: ruby
+addons:
+  postgresql: "9.3"
+  apt:
+    packages:
+    - libproj-dev
+    - libgeos-dev
+    - libffi-dev
 rvm:
   - 1.9.3
   - 2.1.7

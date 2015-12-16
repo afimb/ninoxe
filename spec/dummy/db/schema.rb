@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151124145016) do
+ActiveRecord::Schema.define(version: 2015110517100832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   create_table "access_links", force: true do |t|
     t.integer  "access_point_id",                        limit: 8
@@ -265,6 +266,19 @@ ActiveRecord::Schema.define(version: 20151124145016) do
   end
 
   add_index "pt_links", ["objectid"], name: "pt_links_objectid_key", unique: true, using: :btree
+
+  create_table "route_sections", force: true do |t|
+    t.integer  "departure_id"
+    t.integer  "arrival_id"
+    t.string   "objectid",                                                    null: false
+    t.integer  "object_version"
+    t.datetime "creation_time"
+    t.string   "creator_id"
+    t.spatial  "input_geometry",     limit: {:srid=>0, :type=>"line_string"}
+    t.spatial  "processed_geometry", limit: {:srid=>0, :type=>"line_string"}
+    t.float    "distance"
+    t.boolean  "no_processing"
+  end
 
   create_table "routes", force: true do |t|
     t.integer  "line_id",           limit: 8
