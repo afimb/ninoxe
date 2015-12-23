@@ -11,7 +11,7 @@ class Chouette::RouteSection < Chouette::TridentActiveRecord
     joins("INNER JOIN stop_areas #{endpoint} ON #{endpoint}.id = route_sections.#{endpoint}_id").where(["#{endpoint}.name ilike ?", "%#{name}%"])
   end
   scope :by_line_id, ->(line_id) do
-    where [ "route_sections.id in (SELECT unnest(journey_patterns.route_section_ids) FROM journey_patterns INNER JOIN routes ON journey_patterns.route_id = routes.id WHERE routes.line_id = ?)", line_id ]
+    joins(:journey_pattern_sections, :journey_patterns).joins('INNER JOIN routes ON journey_patterns.route_id = routes.id').where("routes.line_id = #{line_id}")
   end
 
   def stop_areas
