@@ -8,6 +8,8 @@ module Chouette
     has_many :journey_frequencies, dependent: :destroy, foreign_key: 'vehicle_journey_id'
     accepts_nested_attributes_for :journey_frequencies, allow_destroy: true
 
+    validate :require_at_least_one_frequency
+
     def self.matrix(vehicle_journeys)
       hash = {}
       vehicle_journeys.each do |vj|
@@ -60,5 +62,8 @@ module Chouette
       self.journey_category = :frequency
     end
 
+    def require_at_least_one_frequency
+      errors.add(:base, I18n.t('vehicle_journey_frequency.require_at_least_one_frequency')) unless journey_frequencies.size > 0
+    end
   end
 end
