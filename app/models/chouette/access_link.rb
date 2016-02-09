@@ -13,7 +13,7 @@ module Chouette
 
     def self.nullable_attributes
       [:link_distance, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration,
-        :mobility_restricted_traveller_duration]
+        :mobility_restricted_traveller_duration, :link_type]
     end
 
     def access_link_type

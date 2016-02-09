@@ -11,7 +11,7 @@ class Chouette::ConnectionLink < Chouette::TridentActiveRecord
 
   def self.nullable_attributes
     [:link_distance, :default_duration, :frequent_traveller_duration, :occasional_traveller_duration,
-      :mobility_restricted_traveller_duration]
+      :mobility_restricted_traveller_duration, :link_type]
   end
 
   def connection_link_type
