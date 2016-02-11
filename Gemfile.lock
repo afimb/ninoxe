@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ninoxe (1.2.5)
+    ninoxe (1.3.0)
       activerecord (~> 4.1.1)
       activerecord-postgis-adapter
       acts-as-taggable-on (>= 3)
@@ -61,7 +61,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
-    dbf (3.0.2)
+    dbf (3.0.5)
     deep_cloneable (2.0.2)
       activerecord (>= 3.1.0, < 5.0.0)
     diff-lcs (1.2.5)
@@ -77,7 +77,7 @@ GEM
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
     ffi (1.9.10)
-    ffi-geos (1.1.0)
+    ffi-geos (1.1.1)
       ffi (>= 1.0.0)
     foreigner (1.7.4)
       activerecord (>= 3.0.0)
